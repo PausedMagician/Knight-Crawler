@@ -1,0 +1,76 @@
+@startuml Knight Crawler
+abstract class Item extends MonoBehaviour
+namespace WeaponsSystem {
+    abstract class Item
+    abstract class Weapon extends Item {
+        + int damage
+        + attack()
+    }
+    class Melee extends Weapon
+    class Ranged extends Weapon {
+        + float range
+    }
+    class Magic extends Weapon {
+        + int manaConsumption
+    }
+
+    class ShortSword extends Melee
+    class LongSword extends Melee
+    class ShortBow extends Ranged
+    class LongBow extends Ranged
+    class Fireball extends Magic
+    class MagicMissile extends Magic
+}
+namespace AISystem {
+    abstract class AI extends MonoBehaviour {
+        + int Health
+        + int Attack
+        + void Wander()
+        + void Chase()
+        + void Attack()
+    }
+    class BrawlerAI extends AI {
+
+    }
+    class RangerAI extends AI {
+
+    }
+    class NPC extends AI {
+        + bool Attacked
+    }
+}
+
+class Bonfire extends MonoBehaviour {
+    + void Rest()
+}
+
+class GameController {
+    + {static} GameController Singleton
+    + Bonfire lastRested
+}
+
+class Inventory {
+    + Player player
+    + item[] items
+    + EquipWeapon()
+    + AddItem()
+    + RemoveItem()
+}
+
+class Player extends MonoBehaviour {
+    + Weapon equippedWeapon
+    + Inventory inventory
+    - HandleInput()
+    - Dodge()
+    + EquipWeapon() : Weapon equippedWeapon
+}
+
+
+
+
+Player "1" *-down-* "1" Inventory
+GameController -left-|> MonoBehaviour
+GameController "1" *-down-* "1" Bonfire
+
+
+@enduml
