@@ -58,6 +58,8 @@ class Inventory {
 }
 
 class Player extends MonoBehaviour {
+    + float movementSpeed
+    + Rigidbody2D rb
     + Weapon equippedWeapon
     + Inventory inventory
     - HandleInput() : void
