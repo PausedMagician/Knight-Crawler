@@ -6,11 +6,11 @@ namespace WeaponsSystem {
         + int damage
         + attack()
     }
-    class Melee extends Weapon
-    class Ranged extends Weapon {
+    abstract class Melee extends Weapon
+    abstract class Ranged extends Weapon {
         + float range
     }
-    class Magic extends Weapon {
+    abstract class Magic extends Weapon {
         + int manaConsumption
     }
 
@@ -60,8 +60,10 @@ class Inventory {
 class Player extends MonoBehaviour {
     + Weapon equippedWeapon
     + Inventory inventory
-    - HandleInput()
-    - Dodge()
+    - HandleInput() : void
+    - Move() : void
+    - Dodge() : void
+    - Attack(): void
     + EquipWeapon() : Weapon equippedWeapon
 }
 
