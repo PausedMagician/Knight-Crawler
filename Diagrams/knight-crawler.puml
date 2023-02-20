@@ -10,6 +10,11 @@ namespace WeaponsSystem {
         + int damage
         + int maxCombo
         - int combo
+        + Sprite sprite
+        + string name
+        + int cost
+        + int level
+        + int rarity
         + attack()
     }
     abstract class Melee extends Weapon
@@ -59,8 +64,13 @@ namespace WeaponsSystem {
 }
 namespace ArmorSystem {
     abstract class Item
-    class Armor extends Item {
+    abstract class Armor extends Item {
         + List<Effect> effects
+        + Sprite sprite
+        + string name
+        + int cost
+        + int level
+        + int rarity
     }
     abstract class Effect {
         + int amount
@@ -109,24 +119,28 @@ class GameController {
     + Bonfire lastRested
 }
 
-class Inventory {
+class Inventory extends MonoBehaviour {
     + Player player
-    + item[] items
-    + EquipWeapon()
-    + AddItem()
-    + RemoveItem()
+    + List<Item> items
+    + EquipWeapon() : Weapon
+    + EquipArmor() : Armor
+    + AddItem() : void
+    + RemoveItem() : void
 }
 
 abstract class Player extends MonoBehaviour {
     + float movementSpeed
     + Rigidbody2D rb
     + Weapon equippedWeapon
+    + Armor equippedArmor
     + Inventory inventory
     - HandleInput() : void
     - Move() : void
     - Dodge() : void
     - Attack(): void
+    - Die() : void
     + EquipWeapon() : Weapon equippedWeapon
+    + EquipArmor() : Armor equippedArmor
 }
 class Knight extends Player {
     + float movementSpeed
