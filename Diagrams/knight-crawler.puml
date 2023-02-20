@@ -1,9 +1,15 @@
 @startuml Knight Crawler
-abstract class Item extends MonoBehaviour
+skinparam linetype polyline
+
+abstract class Item
+Item -right-|> MonoBehaviour
+
 namespace WeaponsSystem {
     abstract class Item
     abstract class Weapon extends Item {
         + int damage
+        + int maxCombo
+        - int combo
         + attack()
     }
     abstract class Melee extends Weapon
@@ -14,12 +20,66 @@ namespace WeaponsSystem {
         + int manaConsumption
     }
 
-    class ShortSword extends Melee
-    class LongSword extends Melee
-    class ShortBow extends Ranged
-    class LongBow extends Ranged
-    class Fireball extends Magic
-    class MagicMissile extends Magic
+    class ShortSword extends Melee {
+        + int damage
+        + int maxCombo
+        - int combo
+        + attack()
+    }
+    class LongSword extends Melee {
+        + int damage
+        + int maxCombo
+        - int combo
+        + attack()
+    }
+    class ShortBow extends Ranged {
+        + int damage
+        + int maxCombo
+        - int combo
+        + attack()
+    }
+    class LongBow extends Ranged {
+        + int damage
+        + int maxCombo
+        - int combo
+        + attack()
+    }
+    class Fireball extends Magic {
+        + int damage
+        + int maxCombo
+        - int combo
+        + attack()
+    }
+    class MagicMissile extends Magic {
+        + int damage
+        + int maxCombo
+        - int combo
+        + attack()
+    }
+}
+namespace ArmorSystem {
+    abstract class Item
+    class Armor extends Item {
+        + List<Effect> effects
+    }
+    abstract class Effect {
+        + int amount
+    }
+    class DamageReduction extends Effect {
+        + int amount
+    }
+    class HealthRegen extends Effect {
+        + int amount
+    }
+    class HealthBoost extends Effect {
+        + int amount
+    }
+    class MovementSpeed extends Effect {
+        + int amount
+    }
+
+    Effect .right. Armor
+
 }
 namespace AISystem {
     abstract class AI extends MonoBehaviour {
@@ -57,7 +117,51 @@ class Inventory {
     + RemoveItem()
 }
 
-class Player extends MonoBehaviour {
+abstract class Player extends MonoBehaviour {
+    + float movementSpeed
+    + Rigidbody2D rb
+    + Weapon equippedWeapon
+    + Inventory inventory
+    - HandleInput() : void
+    - Move() : void
+    - Dodge() : void
+    - Attack(): void
+    + EquipWeapon() : Weapon equippedWeapon
+}
+class Knight extends Player {
+    + float movementSpeed
+    + Rigidbody2D rb
+    + Weapon equippedWeapon
+    + Inventory inventory
+    - HandleInput() : void
+    - Move() : void
+    - Dodge() : void
+    - Attack(): void
+    + EquipWeapon() : Weapon equippedWeapon
+}
+class Archer extends Player {
+    + float movementSpeed
+    + Rigidbody2D rb
+    + Weapon equippedWeapon
+    + Inventory inventory
+    - HandleInput() : void
+    - Move() : void
+    - Dodge() : void
+    - Attack(): void
+    + EquipWeapon() : Weapon equippedWeapon
+}
+class Mage extends Player {
+    + float movementSpeed
+    + Rigidbody2D rb
+    + Weapon equippedWeapon
+    + Inventory inventory
+    - HandleInput() : void
+    - Move() : void
+    - Dodge() : void
+    - Attack(): void
+    + EquipWeapon() : Weapon equippedWeapon
+}
+class Jester extends Player {
     + float movementSpeed
     + Rigidbody2D rb
     + Weapon equippedWeapon
@@ -71,8 +175,7 @@ class Player extends MonoBehaviour {
 
 
 
-
-Player "1" *-down-* "1" Inventory
+Player "1" *-left-* "1" Inventory
 GameController -left-|> MonoBehaviour
 GameController "1" *-down-* "1" Bonfire
 
