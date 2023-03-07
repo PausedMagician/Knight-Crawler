@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Magic : Weapon
+[CreateAssetMenu(fileName = "Magic", menuName = "Knight-Crawler/Items/Weapons", order = 1)]
+public class Magic : Weapon
 {
     public int manaConsumption;
+    public Sprite projectileSprite;
 
     public Magic(string name, int damage, int cost, int level) : base(name, damage, cost, level) {
         this.name = name;
