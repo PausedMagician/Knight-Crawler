@@ -28,21 +28,27 @@ public class Player : MonoBehaviour
         Move();
     }
 
+    Vector2 right_hand = new Vector2(0.25f, 0), left_hand = new Vector2(-0.25f, 0);
+
     void HandleInput() {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = mousePosition - (Vector2)transform.position;
         if(direction.x < 0) {
-            Debug.DrawRay(transform.position - new Vector3(0.25f, 0, 0), direction.normalized, Color.green, 1f);
+            Debug.DrawRay((Vector2)transform.position + left_hand, direction.normalized, Color.green, 1f);
             weaponManifesto.spriteRenderer.flipX = true;
-            weaponManifesto.spriteRenderer.flipY = false;
-            weaponManifesto.gameObject.transform.localPosition = new Vector3(-0.25f, 0, 0);
-            weaponManifesto.gameObject.transform.localRotation = Quaternion.Euler(Vector3.Angle(direction.normalized, Vector3.up) * Vector3.forward);
+            Vector2 weaponDirection = mousePosition - (Vector2)weaponManifesto.transform.position;
+            weaponManifesto.gameObject.transform.localPosition = Vector3.Lerp(weaponManifesto.gameObject.transform.localPosition, left_hand, 0.1f);
+            //rotate weapon to face mouse
+            Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(-Vector3.forward, weaponDirection), 0.1f);
+            weaponManifesto.transform.rotation = rotation;
         } else {
-            Debug.DrawRay(transform.position + new Vector3(0.25f, 0, 0), direction.normalized, Color.green, 1f);
+            Debug.DrawRay((Vector2)transform.position + right_hand, direction.normalized, Color.green, 1f);
             weaponManifesto.spriteRenderer.flipX = false;
-            weaponManifesto.spriteRenderer.flipY = true;
-            weaponManifesto.gameObject.transform.localPosition = new Vector3(0.25f, 0, 0);
-            weaponManifesto.gameObject.transform.localRotation = Quaternion.Euler(Vector3.Angle(direction.normalized, -Vector3.up) * Vector3.forward);
+            Vector2 weaponDirection = mousePosition - (Vector2)weaponManifesto.transform.position;
+            weaponManifesto.gameObject.transform.localPosition = Vector3.Lerp(weaponManifesto.gameObject.transform.localPosition, right_hand, 0.1f);
+            //rotate weapon to face mouse
+            Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, weaponDirection), 0.1f);
+            weaponManifesto.transform.rotation = rotation;
         }
 
         
