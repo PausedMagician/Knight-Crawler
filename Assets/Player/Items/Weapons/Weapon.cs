@@ -41,3 +41,10 @@ public enum AnimationSet
     medium,
     heavy
 }
+
+public enum AnimationType
+{
+    melee,
+    ranged,
+    magic
+}

@@ -55,11 +55,15 @@ public class Player : MonoBehaviour
         //rotate weapon to face mouse
         Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, direction), 0.1f*Time.deltaTime*100);
         weaponManifesto.transform.rotation = rotation;
-        weaponManifesto.weaponPrefab.transform.rotation = Quaternion.Slerp(weaponManifesto.weaponPrefab.transform.rotation, Quaternion.LookRotation(Vector3.forward, (mousePosition - (Vector2)weaponManifesto.weaponPrefab.transform.position)), 0.1f*Time.deltaTime*100);
+        weaponManifesto.container.transform.rotation = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (mousePosition - (Vector2)weaponManifesto.container.transform.position)), 0.1f*Time.deltaTime*100);
         
         movementDirection.x = Input.GetAxisRaw("Horizontal");
         movementDirection.y = Input.GetAxisRaw("Vertical");
         
+        if(Input.GetMouseButtonDown(0)) {
+            Attack();
+        }
+
     }
 
     void Move() {
@@ -71,7 +75,9 @@ public class Player : MonoBehaviour
     }
 
     void Attack() {
-
+        if(equippedWeapon != null) {
+            weaponManifesto.Attack();
+        }
     }
 
     void Die() {
