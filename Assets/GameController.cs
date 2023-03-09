@@ -39,18 +39,25 @@ public sealed class GameController : MonoBehaviour
     private void Start() {
         player = GameObject.FindObjectOfType<Player>();
         Melee thing = ScriptableObject.CreateInstance<Melee>();
-        thing.name = "Sword";
-        thing.damage = 10;
-        thing.cost = 10;
-        thing.level = 1;
-        thing.sprite = meleeSprites[0];
-        player.inventory.AddItem(thing);
-        player.inventory.AddItem(thing);
+        for (int i = 0; i < 6; i++)
+        {
+            int selected  = Random.Range(0, meleeSprites.Length);
+            thing.name = meleeSprites[selected].name + " Sword";
+            thing.damage = 10;
+            thing.cost = 10;
+            thing.level = 1;
+            thing.sprite = meleeSprites[selected];
+            thing.maxCombo = 3;
+            thing.animationSet = (AnimationSet)Random.Range(0, 3);
+            player.inventory.AddItem(thing);
+        }
         player.inventory.EquipWeapon(thing);
     }
 
     private void UpdateSprites() {
         meleeSprites = Resources.LoadAll<Sprite>("Sprites/Melee/");
+        Debug.Log(meleeSprites.Length);
+        Debug.Log(meleeSprites);
         rangedSprites = Resources.LoadAll<Sprite>("Sprites/Ranged/");
         magicSprites = Resources.LoadAll<Sprite>("Sprites/Magic/");
     }

@@ -14,7 +14,11 @@ public class Inventory : MonoBehaviour
 
     //EquipWeapon function
     public Weapon EquipWeapon(Weapon weapon) {
-        player.EquipWeapon(weapon);
+        Weapon tempWeapon = player.EquipWeapon(weapon);
+        if(tempWeapon != null) {
+            items.Add(tempWeapon);
+        }
+        RemoveItem(weapon);
         return weapon;
     }
 

@@ -12,6 +12,7 @@ public abstract class Weapon : Item
     public int cost;
     public int level;
     public int rarity;
+    public AnimationSet animationSet;
 
     public Weapon(string name, int damage, int cost, int level) {
         this.name = name;
@@ -32,4 +33,11 @@ public abstract class Weapon : Item
             combo = 0;
         }
     }
+}
+
+public enum AnimationSet
+{
+    light,
+    medium,
+    heavy
 }
