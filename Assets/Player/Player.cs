@@ -6,11 +6,17 @@ public class Player : MonoBehaviour
 {
 
     public float movementSpeed = 5f;
+    public float sprintspeed = 1.3f;
+    public float dodge_multiply = 10f;
+    public bool dodging = false;
     public Rigidbody2D rb;
     public Weapon equippedWeapon;
     public WeaponManifesto weaponManifesto;
     public Armor equippedArmor;
     public Inventory inventory;
+    
+
+    public int hearts = 3;
 
     void Start()
     {
@@ -19,6 +25,8 @@ public class Player : MonoBehaviour
 
     Vector2 movementDirection = new Vector2(0, 0);
 
+    Vector2 dodgeDirection = new Vector2(0,0);
+
     void Update()
     {
         HandleInput();
@@ -26,6 +34,9 @@ public class Player : MonoBehaviour
 
     void FixedUpdate() {
         Move();
+        Dodge();
+        Die();
+    
     }
 
     Vector2 right_hand = new Vector2(0.25f, 0), left_hand = new Vector2(-0.25f, 0);
@@ -59,19 +70,29 @@ public class Player : MonoBehaviour
         
         movementDirection.x = Input.GetAxisRaw("Horizontal");
         movementDirection.y = Input.GetAxisRaw("Vertical");
-        
+
         if(Input.GetMouseButtonDown(0)) {
             Attack();
         }
-
+        
     }
 
     void Move() {
-        rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
+        if (Input.GetKey((KeyCode.LeftShift)))
+        {
+            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * sprintspeed * Time.fixedDeltaTime);
+        }else
+        {
+                rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
+        }
     }
 
     void Dodge() {
-        
+        if(Input.GetKey(KeyCode.Space) && dodging == false ){
+            // dodging = true;
+            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime * dodge_multiply);
+            // dodging = false;
+        } 
     }
 
     void Attack() {
@@ -81,7 +102,14 @@ public class Player : MonoBehaviour
     }
 
     void Die() {
-
+        if (Input.GetKeyDown((KeyCode.G)) && dodging == false)
+        {
+            hearts -- ;
+        }
+        if (hearts <= 0 )
+        {
+            Debug.Log("Dead");
+        }
     }
     
     public Weapon EquipWeapon(Weapon weapon) {
