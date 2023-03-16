@@ -28,9 +28,6 @@ public class Inventory : MonoBehaviour
     public Player player;
     public List<Item> items = new List<Item>();
 
-    public delegate void OnInventoryChanged();
-    public OnInventoryChanged onInventoryChangedCallback;
-
     private void Start() {
 
     }
@@ -66,17 +63,13 @@ public class Inventory : MonoBehaviour
     //AddItem function
     public void AddItem(Item item) {
         items.Add(item);
-        if(onInventoryChangedCallback != null) {
-            onInventoryChangedCallback.Invoke();
-        }
+        InventoryUI.OnInventoryChanged();
     }
 
     //RemoveItem function
     public void RemoveItem(Item item) {
         items.Remove(item);
-        if(onInventoryChangedCallback != null) {
-            onInventoryChangedCallback.Invoke();
-        }
+        InventoryUI.OnInventoryChanged();
     }
 
 }

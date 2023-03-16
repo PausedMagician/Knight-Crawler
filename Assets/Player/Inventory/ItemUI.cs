@@ -26,7 +26,7 @@ public class ItemUI : MonoBehaviour
 
     public void UseItem() {
         if(item is Weapon) {
-            Debug.Log("Equipping weapon");
+            // Debug.Log("Equipping weapon");
             Inventory.GetInstance().EquipWeapon((Weapon)item);
         } else if(item is Armor) {
             Inventory.GetInstance().EquipArmor((Armor)item);
@@ -39,7 +39,7 @@ public class ItemUI : MonoBehaviour
 
     public void UnequipItem() {
         if(item is Weapon) {
-            Debug.Log("Unequipping weapon");
+            // Debug.Log("Unequipping weapon");
             Inventory.GetInstance().UnequipWeapon();
         } else if(item is Armor) {
             Inventory.GetInstance().UnequipArmor();

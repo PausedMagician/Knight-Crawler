@@ -32,6 +32,11 @@ public sealed class GameController : MonoBehaviour
     public Sprite[] rangedSprites;
     public Sprite[] magicSprites;
 
+    public Sprite[] lightArmorSprites;
+    public Sprite[] mediumArmorSprites;
+    public Sprite[] heavyArmorSprites;
+    public Sprite[][] armorSprites = new Sprite[3][];
+
     private void Awake() {
         UpdateSprites();   
     }
@@ -54,11 +59,38 @@ public sealed class GameController : MonoBehaviour
             player.inventory.AddItem(thing);
         }
         player.inventory.EquipWeapon(thing);
+        Armor armor = null;
+        for (int i = 0; i < 3; i++)
+        {
+            armor = ScriptableObject.CreateInstance<Armor>();
+            armor.armorType = (ArmorType)Random.Range(0, 3);
+            int selected = Random.Range(0, armorSprites[(int)armor.armorType].Length);
+            armor.itemName = armorSprites[(int)armor.armorType][selected].name + " Armor";
+            armor.cost = 10;
+            armor.level = 1;
+            armor.sprite = armorSprites[(int)armor.armorType][selected];
+            armor.rarity = (Rarity)Random.Range(0, 5);
+            armor.effects.Add(Effect.CreateEffect(ArmorEffector.Defense, 10));
+            for (int eff = 0; eff < 3; eff++)
+            {
+                armor.effects.Add(Effect.CreateEffect((ArmorEffector)Random.Range(0, 7), 10));
+            }
+            player.inventory.AddItem(armor);
+        }
+        player.inventory.EquipArmor(armor);
     }
 
     private void UpdateSprites() {
-        meleeSprites = Resources.LoadAll<Sprite>("Sprites/Melee/");
-        rangedSprites = Resources.LoadAll<Sprite>("Sprites/Ranged/");
-        magicSprites = Resources.LoadAll<Sprite>("Sprites/Magic/");
+        meleeSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Melee/");
+        rangedSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Ranged/");
+        magicSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Magic/");
+
+        lightArmorSprites = Resources.LoadAll<Sprite>("Sprites/Armor/Light/");
+        mediumArmorSprites = Resources.LoadAll<Sprite>("Sprites/Armor/Medium/");
+        heavyArmorSprites = Resources.LoadAll<Sprite>("Sprites/Armor/Heavy/");
+        armorSprites[0] = lightArmorSprites;
+        armorSprites[1] = mediumArmorSprites;
+        armorSprites[2] = heavyArmorSprites;
+
     }
 }

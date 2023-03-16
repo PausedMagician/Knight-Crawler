@@ -60,7 +60,7 @@ public class TooltipManager : MonoBehaviour
 
     public void ShowWeaponTooltip(Weapon weapon)
     {
-        Debug.Log("Showing weapon tooltip");
+        // Debug.Log("Showing weapon tooltip");
         tooltip.Find("Name").GetComponent<TextMeshProUGUI>().text = weapon.name;
         // tooltip.Find("Description").GetComponent<TextMeshProUGUI>().text = weapon.description;
         string finalString = "";
@@ -76,12 +76,21 @@ public class TooltipManager : MonoBehaviour
 
     public void ShowArmorTooltip(Armor armor)
     {
-        Debug.Log("Showing armor tooltip");
+        // Debug.Log("Showing armor tooltip");
+        tooltip.Find("Name").GetComponent<TextMeshProUGUI>().text = armor.name;
+        // tooltip.Find("Description").GetComponent<TextMeshProUGUI>().text = armor.description;
+        string finalString = "";
+        finalString += "Level: " + armor.level + "\n";
+        finalString += "Rarity: " + armor.rarity + "\n";
+        finalString += "Type: " + armor.armorType.ToString() + "\n";
+        finalString += armor.GetEffectsString() + "\n";
+        finalString += "Value: " + armor.cost + "\n";
+        tooltip.Find("Stats").GetComponent<TextMeshProUGUI>().text = finalString;
     }
 
     public void HideTooltip()
     {
-        Debug.Log("Hiding tooltip");
+        // Debug.Log("Hiding tooltip");
         tooltipParent.gameObject.SetActive(false);
     }
 }

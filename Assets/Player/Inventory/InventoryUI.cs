@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,11 +34,19 @@ public class InventoryUI : MonoBehaviour
     public Transform equippedWeaponParent;
     public Transform equippedArmorParent;
 
+    public static Action OnInventoryChanged;
+
     void Start()
     {
         this.inventory = Inventory.GetInstance();
-        inventory.onInventoryChangedCallback += UpdateUI;
         this.canvas = this.GetComponentInChildren<Canvas>();
+    }
+
+    private void OnEnable() {
+        OnInventoryChanged += UpdateUI;
+    }
+    private void OnDisable() {
+        OnInventoryChanged -= UpdateUI;
     }
 
     void DebugList(List<Item> list, string name = "List") {
@@ -46,6 +55,7 @@ public class InventoryUI : MonoBehaviour
 
     void UpdateUI() {
         // Debug.Log("Updating UI");
+        this.inventory = Inventory.GetInstance();
         // List.except method for items that are in the inventory but not in the UI.
 
         // List.intersect method for items that are in the UI but not in the inventory.
@@ -104,7 +114,7 @@ public class InventoryUI : MonoBehaviour
     }
 
     public void ToggleInventory() {
-        Debug.Log("Opening Inventory");
+        // Debug.Log("Opening Inventory");
         if(!this.canvas) {
             Debug.LogWarning("No canvas found!\nAttempting to find one...");
             this.canvas = this.GetComponentInChildren<Canvas>();

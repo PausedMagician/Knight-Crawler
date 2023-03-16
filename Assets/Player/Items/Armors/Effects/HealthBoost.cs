@@ -7,5 +7,7 @@ public class HealthBoost : Effect
     public HealthBoost(int amount)
     {
         this.amount = amount;
+        this.name = "Health Boost";
+        this.description = "Increases max health by " + amount;
     }
 }
