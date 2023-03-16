@@ -5,6 +5,26 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
+    #region Singleton
+    public static Player instance;
+
+    void Awake () {
+        if(instance != null) {
+            Debug.LogWarning("More than one instance of Player found!");
+            return;
+        }
+        instance = this;
+    }
+
+    public static Player GetInstance() {
+        if(instance == null)
+            Debug.LogWarning("Player instance is null!\nAttempting to find one...");
+            instance = FindObjectOfType<Player>();
+        return instance;
+    }
+
+    #endregion
+
     public float movementSpeed = 5f;
     public float sprintspeed = 1.3f;
     public float dodge_multiply = 10f;
@@ -62,7 +82,7 @@ public class Player : MonoBehaviour
         //     weaponManifesto.transform.rotation = rotation;
         // }
 
-        Debug.DrawRay((Vector2)transform.position, direction.normalized, Color.green, 1f);
+        // Debug.DrawRay((Vector2)transform.position, direction.normalized, Color.green, 1f);
         //rotate weapon to face mouse
         Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, direction), 0.1f*Time.deltaTime*100);
         weaponManifesto.transform.rotation = rotation;
@@ -71,8 +91,12 @@ public class Player : MonoBehaviour
         movementDirection.x = Input.GetAxisRaw("Horizontal");
         movementDirection.y = Input.GetAxisRaw("Vertical");
 
-        if(Input.GetMouseButtonDown(0)) {
+        if(Input.GetMouseButtonDown(0) && !Time.timeScale.Equals(0)) {
             Attack();
+        }
+
+        if(Input.GetKeyDown(KeyCode.I)) {
+            InventoryUI.GetInstance().ToggleInventory();
         }
         
     }
@@ -83,12 +107,12 @@ public class Player : MonoBehaviour
             rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * sprintspeed * Time.fixedDeltaTime);
         }else
         {
-                rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
         }
     }
 
     void Dodge() {
-        if(Input.GetKey(KeyCode.Space) && dodging == false ){
+        if(Input.GetKey(KeyCode.Space) && !dodging){
             // dodging = true;
             rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime * dodge_multiply);
             // dodging = false;
@@ -114,14 +138,27 @@ public class Player : MonoBehaviour
     
     public Weapon EquipWeapon(Weapon weapon) {
         Weapon tempWeapon = equippedWeapon;
-        equippedWeapon = weapon;
-        Debug.Log("Updating");
-        weaponManifesto.UpdateWeapon();
+        this.equippedWeapon = weapon;
+        this.weaponManifesto.UpdateWeapon();
         return tempWeapon;
     }
+
+    public Weapon UnEquipWeapon() {
+        Weapon tempWeapon = equippedWeapon;
+        this.equippedWeapon = null;
+        this.weaponManifesto.UpdateWeapon();
+        return tempWeapon;
+    }
+
     public Armor EquipArmor(Armor armor) {
         Armor tempArmor = equippedArmor;
-        equippedArmor = armor;
+        this.equippedArmor = armor;
+        return tempArmor;
+    }
+
+    public Armor UnEquipArmor() {
+        Armor tempArmor = equippedArmor;
+        this.equippedArmor = null;
         return tempArmor;
     }
 

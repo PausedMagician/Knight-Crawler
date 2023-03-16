@@ -3,5 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Item : ScriptableObject {
-    public string itemName { get; set; }
+    public string itemName;
+    public Sprite sprite;
+    
 }

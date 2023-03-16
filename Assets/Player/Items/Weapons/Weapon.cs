@@ -7,12 +7,11 @@ public abstract class Weapon : Item
     public int damage;
     public int maxCombo;
     int combo;
-    public Sprite sprite;
-    new public string name;
     public int cost;
     public int level;
-    public int rarity;
+    public Rarity rarity;
     public AnimationSet animationSet;
+    
 
     public Weapon(string name, int damage, int cost, int level) {
         this.name = name;
@@ -47,4 +46,12 @@ public enum AnimationType
     melee,
     ranged,
     magic
+}
+
+public enum Rarity {
+    common,
+    uncommon,
+    rare,
+    epic,
+    legendary
 }

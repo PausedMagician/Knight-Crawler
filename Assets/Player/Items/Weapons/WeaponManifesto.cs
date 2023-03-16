@@ -6,7 +6,7 @@ public class WeaponManifesto : MonoBehaviour {
     public GameObject container;
     public GameObject weaponPrefab;
     [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Animator animator;
+    public Animator animator;
     [Header("Weapon Stats")]
     [SerializeField] int combo = 0;
     [SerializeField] int maxCombo = 3;
@@ -19,14 +19,21 @@ public class WeaponManifesto : MonoBehaviour {
     }
 
     public void Attack() {
-        animator.enabled = true;
-        animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
+        if(rebind) {
+            animator.Rebind();
+            animator.SetInteger("MaxCombo", maxCombo);
+            animator.SetInteger("AnimationSet", (int)animationSet);
+            animator.SetInteger("AnimationType", (int)animationType);
+            rebind = false;
+        }
         animator.SetTrigger("Attack");
-        Debug.Log(string.Format("{0} {1} Attack {2}", animationType, animationSet, combo));
     }
 
+    PolygonCollider2D coll;
+    bool rebind;
     public void UpdateWeapon() {
         if(player.equippedWeapon != null) {
+            // Debug.Log("Weapon not null");
             spriteRenderer.sprite = player.equippedWeapon.sprite;
             maxCombo = player.equippedWeapon.maxCombo;
             animationSet = player.equippedWeapon.animationSet;
@@ -40,31 +47,24 @@ public class WeaponManifesto : MonoBehaviour {
             animator.SetInteger("MaxCombo", maxCombo);
             animator.SetInteger("AnimationSet", (int)animationSet);
             animator.SetInteger("AnimationType", (int)animationType);
-            
-            PolygonCollider2D coll;
-            if(coll = weaponPrefab.GetComponent<PolygonCollider2D>()) {
-                Destroy(coll);
-                coll = weaponPrefab.AddComponent<PolygonCollider2D>();
-                coll.enabled = false;
-            } else {
-                coll = weaponPrefab.AddComponent<PolygonCollider2D>();
-                coll.enabled = false;
+            foreach (PolygonCollider2D collider2D in weaponPrefab.GetComponents<PolygonCollider2D>())
+            {
+                Destroy(collider2D);
             }
-            coll = null;
-            Debug.Log(string.Format("{0} {1} Attack {2}", animationType, animationSet, combo));
+            coll = weaponPrefab.AddComponent<PolygonCollider2D>();
         } else {
+            // Debug.Log("Weapon null");
             spriteRenderer.sprite = null;
             combo = 0;
             maxCombo = 3;
             animationType = AnimationType.melee;
-            PolygonCollider2D coll;
-            if(coll = weaponPrefab.GetComponent<PolygonCollider2D>()) {
-                Destroy(coll);
-                coll = weaponPrefab.AddComponent<PolygonCollider2D>();
-                coll.enabled = false;
+            foreach (PolygonCollider2D collider2D in weaponPrefab.GetComponents<PolygonCollider2D>())
+            {
+                Destroy(collider2D);
             }
-            coll = null;
+            coll = weaponPrefab.AddComponent<PolygonCollider2D>();
         }
-        animator.Rebind();
+        coll.enabled = false;
+        rebind = true;
     }
 }

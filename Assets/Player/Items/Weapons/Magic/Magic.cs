@@ -9,7 +9,7 @@ public class Magic : Weapon
     public Sprite projectileSprite;
 
     public Magic(string name, int damage, int cost, int level) : base(name, damage, cost, level) {
-        this.name = name;
+        this.itemName = name;
         this.damage = damage;
         this.cost = cost;
         this.level = level;
