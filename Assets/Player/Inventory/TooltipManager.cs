@@ -23,7 +23,6 @@ public class TooltipManager : MonoBehaviour
     }
     #endregion
 
-    public Transform tooltipParent;
     public RectTransform tooltip;
 
     public static Action<Item> OnMouseHover;
@@ -40,8 +39,14 @@ public class TooltipManager : MonoBehaviour
 
 
     private void Update() {
-        if(tooltipParent.gameObject.activeInHierarchy) {
-            tooltipParent.position = new Vector2(Input.mousePosition.x + tooltip.sizeDelta.x/2, Input.mousePosition.y - tooltip.sizeDelta.y/2);
+        if(tooltip.gameObject.activeInHierarchy) {
+            if(Input.mousePosition.x + tooltip.rect.width > Screen.width) {
+                tooltip.position = new Vector2(Screen.width - tooltip.rect.width, Input.mousePosition.y);
+            } else if(Input.mousePosition.y - tooltip.rect.height*2 < 0) {
+                tooltip.position = new Vector2(Input.mousePosition.x, tooltip.rect.height*2);
+            } else {
+                tooltip.position = Input.mousePosition;
+            }
         }
     }
 
@@ -55,19 +60,19 @@ public class TooltipManager : MonoBehaviour
         {
             ShowArmorTooltip((Armor)item);
         }
-        tooltipParent.gameObject.SetActive(true);
+        tooltip.gameObject.SetActive(true);
     }
 
     public void ShowWeaponTooltip(Weapon weapon)
     {
         // Debug.Log("Showing weapon tooltip");
-        tooltip.Find("Name").GetComponent<TextMeshProUGUI>().text = weapon.name;
+        tooltip.Find("Name").GetComponent<TextMeshProUGUI>().text = weapon.itemName;
         // tooltip.Find("Description").GetComponent<TextMeshProUGUI>().text = weapon.description;
         string finalString = "";
         finalString += "Level: " + weapon.level + "\n";
         finalString += "Rarity: " + weapon.rarity + "\n";
         finalString += "Type: " + weapon.animationSet.ToString() + "\n";
-        finalString += "Damage: " + weapon.damage + "\n";
+        finalString += weapon.GetEffectsString() + "\n";
         finalString += "Max Combo: " + weapon.maxCombo + "\n";
         finalString += "Value: " + weapon.cost + "\n";
         tooltip.Find("Stats").GetComponent<TextMeshProUGUI>().text = finalString;
@@ -77,7 +82,7 @@ public class TooltipManager : MonoBehaviour
     public void ShowArmorTooltip(Armor armor)
     {
         // Debug.Log("Showing armor tooltip");
-        tooltip.Find("Name").GetComponent<TextMeshProUGUI>().text = armor.name;
+        tooltip.Find("Name").GetComponent<TextMeshProUGUI>().text = armor.itemName;
         // tooltip.Find("Description").GetComponent<TextMeshProUGUI>().text = armor.description;
         string finalString = "";
         finalString += "Level: " + armor.level + "\n";
@@ -91,6 +96,6 @@ public class TooltipManager : MonoBehaviour
     public void HideTooltip()
     {
         // Debug.Log("Hiding tooltip");
-        tooltipParent.gameObject.SetActive(false);
+        tooltip.gameObject.SetActive(false);
     }
 }

@@ -11,11 +11,10 @@ public abstract class Weapon : Item
     public int level;
     public Rarity rarity;
     public AnimationSet animationSet;
-    
+    public List<Effect> effects;
 
-    public Weapon(string name, int damage, int cost, int level) {
+    public Weapon(string name, int cost, int level) {
         this.name = name;
-        this.damage = damage;
         this.cost = cost;
         this.level = level;
     }
@@ -32,6 +31,21 @@ public abstract class Weapon : Item
             combo = 0;
         }
     }
+
+    public string GetEffectsString() {
+        string effectsString = "";
+        foreach (Effect effect in effects) {
+            effectsString += effect.name + ": " + effect.amount + "\n";
+        }
+        return effectsString;
+    }
+
+
+    public override string ToString() {
+        return name + "\n" + "\nCost: " + cost + "\nLevel: " + level + "\nRarity: " + rarity;
+    }
+
+
 }
 
 public enum AnimationSet

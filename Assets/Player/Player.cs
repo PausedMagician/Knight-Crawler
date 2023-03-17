@@ -98,6 +98,11 @@ public class Player : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.I)) {
             InventoryUI.GetInstance().ToggleInventory();
         }
+
+        if(Input.GetKeyDown(KeyCode.Alpha1)) {
+            Debug.Log(equippedWeapon);
+            Debug.Log(equippedWeapon.effects.ToDebugString());
+        }
         
     }
 

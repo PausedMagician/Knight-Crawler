@@ -166,7 +166,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemUI: {fileID: 0}
-  item: {fileID: 0}
 --- !u!1 &5580992649498987639
 GameObject:
   m_ObjectHideFlags: 0
