@@ -16,8 +16,7 @@ public class Bonfire : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Debug.LogWarning("HI");
-            hearts = 3;
+            Debug.LogWarning("HI");        
         }
     }
 }
