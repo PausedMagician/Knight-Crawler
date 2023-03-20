@@ -6,26 +6,29 @@ using System.Globalization;
 
 public sealed class GameController : MonoBehaviour
 {
-    private static volatile GameController instance;
-    private static Object syncRootObject = new Object();
+    #region Singleton
+    public static GameController instance;
 
-    public static GameController Instance
+    void Awake()
     {
-        get
+        UpdateSprites();
+        if (instance != null)
         {
-            if (instance == null)
-            {
-                lock (syncRootObject)
-                {
-                    if (instance == null)
-                    {
-                        instance = new GameController();
-                    }
-                }
-            }
-            return instance;
+            Debug.LogWarning("More than one instance of Player found!");
+            return;
         }
+        instance = this;
     }
+
+    public static GameController GetInstance()
+    {
+        if (instance == null)
+            Debug.LogWarning("Player instance is null!\nAttempting to find one...");
+        instance = FindObjectOfType<GameController>();
+        return instance;
+    }
+
+    #endregion
 
     public static Bonfire lastRested;
     public static Player player;
@@ -38,11 +41,6 @@ public sealed class GameController : MonoBehaviour
     public Sprite[] mediumArmorSprites;
     public Sprite[] heavyArmorSprites;
     public Sprite[][] armorSprites = new Sprite[3][];
-
-    private void Awake()
-    {
-        UpdateSprites();
-    }
 
     private void Start()
     {
@@ -84,9 +82,9 @@ public sealed class GameController : MonoBehaviour
 
     int GetPoints(Rarity rarity, int level)
     {
-        float k1 = 0.001f;
-        float k2 = -1;
-        float k3 = -0.6f;
+        // float k1 = 0.001f;
+        // float k2 = -1;
+        // float k3 = -0.6f;
         // int points = (int)Mathf.Round((level * Mathf.Pow((int)rarity + 1, k3) * Mathf.Pow(10, level * k1) + 5 * Mathf.Pow((int)rarity + 1, k2)));
         int points = Mathf.RoundToInt(level * ((int)rarity+1 / 5 * 1.25f) + ((int)rarity + 1) * 5);
         return points;

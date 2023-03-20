@@ -5,7 +5,11 @@ using System.Linq;
 
 public class AI : Humanoid
 {
-
+    new void Start() {
+        base.Start();
+        EquipArmor(GameController.GetInstance().CreateArmor(Rarity.common, 1));
+        EquipWeapon(GameController.GetInstance().CreateMelee(Rarity.common, 1));
+    }
     new void FixedUpdate() {
         CheckDirections();
         //For loop that finds highest float in IDictionary
@@ -83,6 +87,10 @@ public class AI : Humanoid
             }
         }
         Vector2 player = Player.GetInstance().transform.position;
+        if(Vector2.Distance(worldSpace, player) < 2f)
+        {
+            Attack();
+        }
         weight += Vector2.Distance(worldSpace, player) * playerWeight;
         return weight;
     }

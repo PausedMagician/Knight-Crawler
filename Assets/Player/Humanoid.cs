@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class Humanoid : MonoBehaviour
 {
     [Header("Main Settings")]
@@ -21,8 +22,18 @@ public class Humanoid : MonoBehaviour
     public Vector2 movementDirection = new Vector2(0, 0);
     public float dodgeTimer = 0f;
 
-    private void Start() {
+    private void OnValidate() {
+        if(!weaponManifesto) {
+            GameObject gam = Instantiate(Resources.Load<GameObject>("Prefabs/WeaponManifesto"), transform);
+            weaponManifesto = gam.GetComponent<WeaponManifesto>();
+            weaponManifesto.owner = this;
+        }
+        Start();
+    }
+
+    public void Start() {
         rb = GetComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
         weaponManifesto = GetComponentInChildren<WeaponManifesto>();
     }
 
@@ -35,16 +46,20 @@ public class Humanoid : MonoBehaviour
     }
 
     void Move() {
-        if (sprinting) {
-            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * sprintspeed * Time.fixedDeltaTime);
-            sprinting = false;
-        }else if (dodging) {
-            dodgeTimer = dodgeCooldown;
-            dodging = false;
-        } else if (dodgeTimer > 0.25f) {
-            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime * dodgeMultiplier);
+        if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
+            if (sprinting) {
+                rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * sprintspeed * Time.fixedDeltaTime);
+                sprinting = false;
+            }else if (dodging) {
+                dodgeTimer = dodgeCooldown;
+                dodging = false;
+            } else if (dodgeTimer > 0.25f) {
+                rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime * dodgeMultiplier);
+            } else {
+                rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
+            }
         } else {
-            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
+            movementDirection = Vector2.zero;
         }
     }
 
@@ -93,7 +108,7 @@ public class Humanoid : MonoBehaviour
 
 
     public override string ToString() {
-        return $"Name: {name}, Movement Speed: {movementSpeed}, Sprint Speed: {sprintspeed}, Dodge Multiplier: {dodgeMultiplier}, Hearts: {hearts}";
+        return $"Name: {name}, Movement Speed: {movementSpeed}, Sprint Speed: {sprintspeed}, Dodge Multiplier: {dodgeMultiplier}, Hearts: {hearts}\n Equipped Weapon: {equippedWeapon}, Equipped Armor: {equippedArmor}";
     }
 
 

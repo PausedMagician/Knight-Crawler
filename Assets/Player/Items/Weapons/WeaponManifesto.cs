@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class WeaponManifesto : MonoBehaviour {
     [Header("References")]
-    public Player player;
+    public Humanoid owner;
     public GameObject container;
     public GameObject weaponPrefab;
     [SerializeField] SpriteRenderer spriteRenderer;
     public Animator animator;
     [Header("Weapon Stats")]
-    [SerializeField] int combo = 0;
+    // [SerializeField] int combo = 0;
     [SerializeField] int maxCombo = 3;
     [SerializeField] AnimationType animationType = AnimationType.melee;
     [SerializeField] AnimationSet animationSet = AnimationSet.light;
@@ -32,16 +32,16 @@ public class WeaponManifesto : MonoBehaviour {
     PolygonCollider2D coll;
     bool rebind;
     public void UpdateWeapon() {
-        if(player.equippedWeapon != null) {
+        if(owner.equippedWeapon != null) {
             // Debug.Log("Weapon not null");
-            spriteRenderer.sprite = player.equippedWeapon.sprite;
-            maxCombo = player.equippedWeapon.maxCombo;
-            animationSet = player.equippedWeapon.animationSet;
-            if(player.equippedWeapon is Melee) {
+            spriteRenderer.sprite = owner.equippedWeapon.sprite;
+            maxCombo = owner.equippedWeapon.maxCombo;
+            animationSet = owner.equippedWeapon.animationSet;
+            if(owner.equippedWeapon is Melee) {
                 animationType = AnimationType.melee;
-            } else if(player.equippedWeapon is Ranged) {
+            } else if(owner.equippedWeapon is Ranged) {
                 animationType = AnimationType.ranged;
-            } else if(player.equippedWeapon is Magic) {
+            } else if(owner.equippedWeapon is Magic) {
                 animationType = AnimationType.magic;
             }
             animator.SetInteger("MaxCombo", maxCombo);
@@ -55,7 +55,7 @@ public class WeaponManifesto : MonoBehaviour {
         } else {
             // Debug.Log("Weapon null");
             spriteRenderer.sprite = null;
-            combo = 0;
+            // combo = 0;
             maxCombo = 3;
             animationType = AnimationType.melee;
             foreach (PolygonCollider2D collider2D in weaponPrefab.GetComponents<PolygonCollider2D>())

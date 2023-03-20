@@ -12,11 +12,7 @@ public class Bonfire : MonoBehaviour
 
 
     private void OnValidate() {
-        m_ObjectCollider = GetComponent<Collider2D>();
-        m_ObjectCollider.isTrigger = true;
-        if(active) {
-            GameController.lastRested = this;
-        }
+        Awake();
     }
     private void Awake() {
         m_ObjectCollider = GetComponent<Collider2D>();
