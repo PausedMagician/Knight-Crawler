@@ -40,7 +40,7 @@ public abstract class Effect
             if(effectors == maxEffectors - 1) {
                 amount = points;
             }
-            Debug.Log(amount);
+            // Debug.Log(amount);
             Effector effector = (Effector)Random.Range(0, System.Enum.GetNames(typeof(Effector)).Length);
             Effect effect = CreateEffect(effector, obj, amount);
             if (effect != null) {

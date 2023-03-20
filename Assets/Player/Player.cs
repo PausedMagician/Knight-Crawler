@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Humanoid
 {
 
     #region Singleton
@@ -25,41 +25,15 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    public float movementSpeed = 5f;
-    public float sprintspeed = 1.3f;
-    public float dodge_multiply = 10f;
-    public bool dodging = false;
-    public Rigidbody2D rb;
-    public Weapon equippedWeapon;
-    public WeaponManifesto weaponManifesto;
-    public Armor equippedArmor;
     public Inventory inventory;
     
-
-    public int hearts = 3;
-
-    void Start()
-    {
-        
-    }
-
-    Vector2 movementDirection = new Vector2(0, 0);
-
-    Vector2 dodgeDirection = new Vector2(0,0);
 
     void Update()
     {
         HandleInput();
     }
 
-    void FixedUpdate() {
-        Move();
-        Dodge();
-        Die();
-    
-    }
-
-    Vector2 right_hand = new Vector2(0.25f, 0), left_hand = new Vector2(-0.25f, 0);
+    // Vector2 right_hand = new Vector2(0.25f, 0), left_hand = new Vector2(-0.25f, 0);
 
     void HandleInput() {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -105,66 +79,6 @@ public class Player : MonoBehaviour
         }
         
     }
-
-    void Move() {
-        if (Input.GetKey((KeyCode.LeftShift)))
-        {
-            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * sprintspeed * Time.fixedDeltaTime);
-        }else
-        {
-            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
-        }
-    }
-
-    void Dodge() {
-        if(Input.GetKey(KeyCode.Space) && !dodging){
-            // dodging = true;
-            rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime * dodge_multiply);
-            // dodging = false;
-        } 
-    }
-
-    void Attack() {
-        if(equippedWeapon != null) {
-            weaponManifesto.Attack();
-        }
-    }
-
-    void Die() {
-        if (Input.GetKeyDown((KeyCode.G)) && dodging == false)
-        {
-            hearts -- ;
-        }
-        if (hearts <= 0 )
-        {
-            Debug.Log("Dead");
-        }
-    }
     
-    public Weapon EquipWeapon(Weapon weapon) {
-        Weapon tempWeapon = equippedWeapon;
-        this.equippedWeapon = weapon;
-        this.weaponManifesto.UpdateWeapon();
-        return tempWeapon;
-    }
-
-    public Weapon UnEquipWeapon() {
-        Weapon tempWeapon = equippedWeapon;
-        this.equippedWeapon = null;
-        this.weaponManifesto.UpdateWeapon();
-        return tempWeapon;
-    }
-
-    public Armor EquipArmor(Armor armor) {
-        Armor tempArmor = equippedArmor;
-        this.equippedArmor = armor;
-        return tempArmor;
-    }
-
-    public Armor UnEquipArmor() {
-        Armor tempArmor = equippedArmor;
-        this.equippedArmor = null;
-        return tempArmor;
-    }
 
 }
