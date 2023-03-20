@@ -24,7 +24,7 @@ public class AI : Humanoid
 
     public List<Vector2> points;
     public int amountOfPoints = 2;
-    public Vector2 lastKnowLocation;
+    public Vector2 lastKnownLocation;
     public float viewDistance = 10f;
 
     public void CheckDirections()
@@ -62,101 +62,123 @@ public class AI : Humanoid
         {
             if (hit.collider)
             {
-                if (!hit.collider.gameObject.GetComponent<Player>() && !hit.collider.gameObject.GetComponent<AI>() && !hit.collider.gameObject.GetComponent<Bonfire>())
+                if (hit.collider.gameObject.tag != "Player" && hit.collider.gameObject.layer != 6)
                 {
                     break;
-                }
-                else if (hit.collider.gameObject.GetComponent<Player>())
-                {
-                    // Debug.Log("Player found!");
-                    lastKnowLocation = player;
-                }
-            }
-        }
-
-        weights.Clear();
-        float PPDistance, TPDistance;
-        for (int i = 0; i < points.Count; i++)
-        {
-            if ((PPDistance = Vector2.Distance((Vector2)transform.position + points[i], lastKnowLocation)) < (TPDistance = Vector2.Distance((Vector2)transform.position, lastKnowLocation)))
-            {
-                weights.Add(points[i] * (TPDistance - PPDistance));
-            }
-            else
-            {
-                weights.Add(Vector2.zero);
-            }
-        }
-
-        //Normalize list
-        float max = weights.Max(x => x.magnitude);
-        for (int i = 0; i < weights.Count; i++)
-        {
-            weights[i] /= max;
-        }
-        // Debug.Log(weights.ToDebugString());
-        feathers.Clear();
-        //Check for walls
-        for (int i = 0; i < points.Count; i++)
-        {
-            RaycastHit2D[] fhits = Physics2D.RaycastAll(transform.position, points[i], 5f);
-            // Debug.DrawRay(transform.position, points[i], Color.red, 0.1f);
-            //Sort hits by distance
-            fhits = fhits.OrderBy(x => Vector2.Distance(x.point, transform.position)).ToArray();
-            foreach (RaycastHit2D hit in fhits)
-            {
-                if (hit.collider)
-                {
-                    if (hit.collider.gameObject.GetComponent<Player>() || hit.collider.gameObject.GetComponent<Bonfire>())
-                    {
-                        // Debug.Log("Player!");
-                        continue;
-                    }
-                    else if (hit.collider.gameObject.GetComponent<AI>() == this)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        feathers.Add(points[i] * (5f - hit.distance));
-                        // Debug.Log(points[i] * (5f - hit.distance));
-                        break;
-                    }
                 }
                 else
                 {
-                    feathers.Add(Vector2.zero);
-                    break;
+                    // Debug.Log("Player found!");
+                    lastKnownLocation = player;
                 }
             }
-            if (feathers.Count <= i)
+        }
+        if (Vector2.Distance(transform.position, lastKnownLocation) > 1.5f)
+        {
+            if (weights.Count != points.Count)
             {
-                feathers.Add(Vector2.zero);
+                weights.Clear();
+                float PPDistance;
+                float TPDistance = Vector2.Distance((Vector2)transform.position, lastKnownLocation);
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if ((PPDistance = Vector2.Distance((Vector2)transform.position + points[i], lastKnownLocation)) < TPDistance)
+                    {
+                        weights.Add(points[i] * (TPDistance - PPDistance));
+                    }
+                    else
+                    {
+                        weights.Add(Vector2.zero);
+                    }
+                }
             }
-        }
+            else
+            {
+                float PPDistance;
+                float TPDistance = Vector2.Distance((Vector2)transform.position, lastKnownLocation);
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if ((PPDistance = Vector2.Distance((Vector2)transform.position + points[i], lastKnownLocation)) < TPDistance)
+                    {
+                        weights[i] = points[i] * (TPDistance - PPDistance);
+                    }
+                    else
+                    {
+                        weights[i] = Vector2.zero;
+                    }
+                }
+            }
 
-        //Normalize list
-        max = feathers.Max(x => x.magnitude);
-        for (int i = 0; i < feathers.Count; i++)
-        {
-            feathers[i] /= max;
-        }
+            //Normalize list
+            float max = weights.Max(x => x.magnitude);
+            for (int i = 0; i < weights.Count; i++)
+            {
+                weights[i] /= max;
+            }
+            // Debug.Log(weights.ToDebugString());
+            feathers.Clear();
+            //Check for walls
+            for (int i = 0; i < points.Count; i++)
+            {
+                RaycastHit2D[] fhits = Physics2D.RaycastAll(transform.position, points[i], 5f);
+                // Debug.DrawRay(transform.position, points[i], Color.red, 0.1f);
+                //Sort hits by distance
+                fhits = fhits.OrderBy(x => Vector2.Distance(x.point, transform.position)).ToArray();
+                foreach (RaycastHit2D hit in fhits)
+                {
+                    if (hit.collider)
+                    {
+                        if (hit.collider.gameObject.layer == 6)
+                        {
+                            // Debug.Log("Player!");
+                            continue;
+                        }
+                        else if (hit.collider.gameObject.GetComponent<AI>() == this)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            feathers.Add(points[i] * (5f - hit.distance));
+                            // Debug.Log(points[i] * (5f - hit.distance));
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        feathers.Add(Vector2.zero);
+                        break;
+                    }
+                }
+                if (feathers.Count <= i)
+                {
+                    feathers.Add(Vector2.zero);
+                }
+            }
 
-        // Subtract feathers magnitude from weights
-        for (int i = 0; i < weights.Count; i++)
-        {
-            float diff = Mathf.Abs(weights[i].magnitude - feathers[i].magnitude);
-            weights[i] *= diff;
-        }
+            //Normalize list
+            max = feathers.Max(x => x.magnitude);
+            for (int i = 0; i < feathers.Count; i++)
+            {
+                feathers[i] /= max;
+            }
 
-        Vector2 average = Vector2.zero;
-        for (int i = 0; i < weights.Count; i++)
-        {
-            average += weights[i];
+            // Subtract feathers magnitude from weights
+            for (int i = 0; i < weights.Count; i++)
+            {
+                float diff = Mathf.Abs(weights[i].magnitude - feathers[i].magnitude);
+                weights[i] *= diff;
+            }
+
+            Vector2 average = Vector2.zero;
+            for (int i = 0; i < weights.Count; i++)
+            {
+                average += weights[i];
+            }
+            average /= weights.Count;
+            average = average.MNormalize();
+            movementDirection = average;
         }
-        average /= weights.Count;
-        average = average.MNormalize();
-        movementDirection = average;
 
     }
 
@@ -173,7 +195,7 @@ public class AI : Humanoid
         }
         Gizmos.color = Color.white;
         Gizmos.DrawSphere(transform.position, 0.1f);
-        Gizmos.DrawSphere(lastKnowLocation, 0.1f);
+        Gizmos.DrawSphere(lastKnownLocation, 0.1f);
     }
 }
 

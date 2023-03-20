@@ -65,10 +65,21 @@ public class Inventory : MonoBehaviour
         items.Add(item);
         InventoryUI.OnInventoryChanged();
     }
-
+    //AddItems function
+    public void AddItems(Item[] items) {
+        this.items.AddRange(items);
+        InventoryUI.OnInventoryChanged();
+    }
     //RemoveItem function
     public void RemoveItem(Item item) {
         items.Remove(item);
+        InventoryUI.OnInventoryChanged();
+    }
+    //RemoveItems function
+    public void RemoveItems(Item[] items) {
+        foreach(Item item in items) {
+            this.items.Remove(item);
+        }
         InventoryUI.OnInventoryChanged();
     }
 
