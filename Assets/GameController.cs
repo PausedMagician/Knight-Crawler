@@ -61,6 +61,9 @@ public sealed class GameController : MonoBehaviour
             player.inventory.AddItem(armor);
         }
         player.inventory.EquipArmor(armor);
+
+        StartGame();
+
     }
 
     private void UpdateSprites()
@@ -142,6 +145,11 @@ public sealed class GameController : MonoBehaviour
         armor.sprite = armorSprites[(int)armor.armorType][selected];
         armor.rarity = rarity;
         return armor;
+    }
+
+
+    public static void StartGame() {
+        Player.GetInstance().transform.position = lastRested.transform.position + new Vector3(0, 0.5f, 0);
     }
 
 

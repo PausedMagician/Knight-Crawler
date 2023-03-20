@@ -1,14 +1,28 @@
 
 using UnityEngine;
 
+[RequireComponent(typeof(PolygonCollider2D))]
 public class Bonfire : MonoBehaviour
 {
-    Collider m_ObjectCollider;
 
-    
-    void Start()
-    {
-        
+    public bool active = false;
+
+    public Collider2D m_ObjectCollider;
+
+
+    private void OnValidate() {
+        m_ObjectCollider = GetComponent<Collider2D>();
+        m_ObjectCollider.isTrigger = true;
+        if(active) {
+            GameController.lastRested = this;
+        }
+    }
+    private void Awake() {
+        m_ObjectCollider = GetComponent<Collider2D>();
+        m_ObjectCollider.isTrigger = true;
+        if(active) {
+            GameController.lastRested = this;
+        }
     }
 
     // Update is called once per frame
@@ -16,7 +30,7 @@ public class Bonfire : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Debug.LogWarning("HI");        
+            Debug.LogWarning("HI");
         }
     }
 }
