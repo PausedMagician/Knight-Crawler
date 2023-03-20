@@ -8,6 +8,7 @@ public class Humanoid : MonoBehaviour
     [Header("Main Settings")]
     public string name = "Humanoid";
     public int hearts = 3;
+    public int maxHealth = 100;
     public int health = 100;
     public float movementSpeed = 5f;
     public float sprintspeed = 1.3f;
@@ -35,6 +36,8 @@ public class Humanoid : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.freezeRotation = true;
         weaponManifesto = GetComponentInChildren<WeaponManifesto>();
+        weaponManifesto.owner = this;
+        health = maxHealth;
     }
 
     public void FixedUpdate() {

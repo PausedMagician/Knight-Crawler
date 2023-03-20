@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Globalization;
+using UnityEngine.Events;
 
 public sealed class GameController : MonoBehaviour
 {
@@ -41,6 +42,9 @@ public sealed class GameController : MonoBehaviour
     public Sprite[] mediumArmorSprites;
     public Sprite[] heavyArmorSprites;
     public Sprite[][] armorSprites = new Sprite[3][];
+
+    public static UnityAction OnBonfireUpdate;
+
 
     private void Start()
     {

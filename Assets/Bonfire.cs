@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-[RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(PolygonCollider2D), typeof(Animator))]
 public class Bonfire : MonoBehaviour
 {
 
@@ -9,6 +9,7 @@ public class Bonfire : MonoBehaviour
     public Vector2 spawnPoint;
 
     public Collider2D m_ObjectCollider;
+    Animator animator;
 
 
     private void OnValidate() {
@@ -20,8 +21,14 @@ public class Bonfire : MonoBehaviour
         if(active) {
             GameController.lastRested = this;
         }
+        GameController.OnBonfireUpdate += UpdateBonfire;
     }
-
+    public void UpdateBonfire() {
+        if(active) {
+            GameController.lastRested = this;
+        }
+        animator.SetBool("Active", active);
+    }
     // Update is called once per frame
     void OnTriggerStay2D(Collider2D coll)
     {
