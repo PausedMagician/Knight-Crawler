@@ -20,7 +20,7 @@ public class AI : Humanoid
                 movementDirection = weights.Keys.ElementAt(i);
             }
         }
-        Debug.Log(movementDirection);
+        // Debug.Log(movementDirection);
         base.FixedUpdate();
     }
 

@@ -666,19 +666,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf67027c147a3de4387dccc75d4742a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: Humanoid
+  hearts: 3
+  health: 100
   movementSpeed: 5
   sprintspeed: 1.3
   dodgeMultiplier: 10
+  dodgeCooldown: 1
   dodging: 0
   sprinting: 0
   rb: {fileID: 293176822}
   equippedWeapon: {fileID: 0}
   weaponManifesto: {fileID: 0}
   equippedArmor: {fileID: 0}
-  hearts: 3
   movementDirection: {x: 0, y: 0}
+  dodgeTimer: 0
   points: []
-  pointsDuplicator: 2
+  pointsDuplicator: 8
 --- !u!4 &293176821
 Transform:
   m_ObjectHideFlags: 0
@@ -2024,7 +2028,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -9000}
+  m_AnchoredPosition: {x: 0, y: -11400}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &891773589
@@ -2076,6 +2080,7 @@ GameObject:
   - component: {fileID: 912075956}
   - component: {fileID: 912075955}
   - component: {fileID: 912075957}
+  - component: {fileID: 912075958}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -2170,6 +2175,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &912075958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912075954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20be7b4738f390c4f9bfeb0bbc5e176f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &994881605
 GameObject:
   m_ObjectHideFlags: 0
@@ -23196,17 +23213,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22be66c7b8365fd49aa9f7ba7c278ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: Humanoid
+  hearts: 3
+  health: 100
   movementSpeed: 7
   sprintspeed: 1.3
   dodgeMultiplier: 10
+  dodgeCooldown: 1
   dodging: 0
   sprinting: 0
   rb: {fileID: 1267404947}
   equippedWeapon: {fileID: 0}
   weaponManifesto: {fileID: 11989176}
   equippedArmor: {fileID: 0}
-  hearts: 3
   movementDirection: {x: 0, y: 0}
+  dodgeTimer: 0
   inventory: {fileID: 415357864}
 --- !u!212 &1267404945
 SpriteRenderer:

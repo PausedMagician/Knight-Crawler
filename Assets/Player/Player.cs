@@ -61,21 +61,25 @@ public class Player : Humanoid
         Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, direction), 0.1f*Time.deltaTime*100);
         weaponManifesto.transform.rotation = rotation;
         weaponManifesto.container.transform.rotation = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (mousePosition - (Vector2)weaponManifesto.container.transform.position)), 0.1f*Time.deltaTime*100);
-        
-        movementDirection.x = Input.GetAxisRaw("Horizontal");
-        movementDirection.y = Input.GetAxisRaw("Vertical");
-
-        if(Input.GetMouseButtonDown(0) && !Time.timeScale.Equals(0)) {
+        if(dodgeTimer <= 0) {
+            movementDirection.x = Input.GetAxisRaw("Horizontal");
+            movementDirection.y = Input.GetAxisRaw("Vertical");
+        }
+        // Left Click or R2 on controller
+        if(Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Joystick1Button7) && !Time.timeScale.Equals(0)) {
             Attack();
         }
-
-        if(Input.GetKeyDown(KeyCode.I)) {
-            InventoryUI.GetInstance().ToggleInventory();
+        // Left Shift or Circle on controller
+        if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.Joystick1Button2)) {
+            sprinting = true;
         }
 
-        if(Input.GetKeyDown(KeyCode.Alpha1)) {
-            Debug.Log(equippedWeapon);
-            Debug.Log(equippedWeapon.effects.ToDebugString());
+        if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button1) && !Time.timeScale.Equals(0) && dodgeTimer <= 0 && movementDirection.magnitude > 0) {
+            dodging = true;
+        }
+
+        if(Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Joystick1Button9)) {
+            InventoryUI.GetInstance().ToggleInventory();
         }
         
     }

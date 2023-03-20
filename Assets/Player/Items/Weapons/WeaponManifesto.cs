@@ -65,6 +65,7 @@ public class WeaponManifesto : MonoBehaviour {
             coll = weaponPrefab.AddComponent<PolygonCollider2D>();
         }
         coll.enabled = false;
+        coll.isTrigger = true;
         rebind = true;
     }
 }
