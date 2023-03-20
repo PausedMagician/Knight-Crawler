@@ -6,6 +6,7 @@ public class Bonfire : MonoBehaviour
 {
 
     public bool active = false;
+    public Vector2 spawnPoint;
 
     public Collider2D m_ObjectCollider;
 
@@ -32,5 +33,10 @@ public class Bonfire : MonoBehaviour
         {
             Debug.LogWarning("HI");
         }
+    }
+
+    private void OnDrawGizmosSelected() {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere((Vector2)transform.position + spawnPoint, 0.5f);
     }
 }

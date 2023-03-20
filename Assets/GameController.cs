@@ -149,7 +149,7 @@ public sealed class GameController : MonoBehaviour
 
 
     public static void StartGame() {
-        Player.GetInstance().transform.position = lastRested.transform.position + new Vector3(0, 0.5f, 0);
+        Player.GetInstance().transform.position = (Vector2)lastRested.transform.position + lastRested.spawnPoint;
     }
 
 
