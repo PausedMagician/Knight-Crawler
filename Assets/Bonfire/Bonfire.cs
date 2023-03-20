@@ -9,7 +9,7 @@ public class Bonfire : MonoBehaviour
     public Vector2 spawnPoint;
 
     public Collider2D m_ObjectCollider;
-    Animator animator;
+    public Animator animator;
 
 
     private void OnValidate() {
@@ -18,8 +18,9 @@ public class Bonfire : MonoBehaviour
     private void Awake() {
         m_ObjectCollider = GetComponent<Collider2D>();
         m_ObjectCollider.isTrigger = true;
+        animator = GetComponent<Animator>();
         if(active) {
-            GameController.lastRested = this;
+            GameController.SetLastRested(this);
         }
         GameController.OnBonfireUpdate += UpdateBonfire;
     }

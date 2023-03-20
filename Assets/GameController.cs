@@ -32,6 +32,10 @@ public sealed class GameController : MonoBehaviour
     #endregion
 
     public static Bonfire lastRested;
+    public static void SetLastRested(Bonfire bonfire) {
+        lastRested = bonfire;
+        OnBonfireUpdate?.Invoke();
+    }
     public static Player player;
 
     public Sprite[] meleeSprites;
