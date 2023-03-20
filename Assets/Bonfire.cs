@@ -1,18 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class Bonfire : MonoBehaviour
 {
-    // Start is called before the first frame update
+    Collider m_ObjectCollider;
+
+    
     void Start()
     {
         
     }
 
     // Update is called once per frame
-    void Update()
+    void OnTriggerStay2D(Collider2D coll)
     {
-        
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.LogWarning("HI");        
+        }
     }
 }
