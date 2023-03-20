@@ -26,7 +26,7 @@ public class Bonfire : MonoBehaviour
     }
     public void UpdateBonfire() {
         if(active) {
-            GameController.lastRested = this;
+            GameController.SetLastRested(this);
         }
         animator.SetBool("Active", active);
     }
