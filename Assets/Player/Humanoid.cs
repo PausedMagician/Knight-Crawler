@@ -6,7 +6,7 @@ using UnityEngine;
 public class Humanoid : MonoBehaviour
 {
     [Header("Main Settings")]
-    public string name = "Humanoid";
+    public string Name = "Humanoid";
     public int hearts = 3;
     public int maxHealth = 100;
     public int health = 100;
@@ -111,7 +111,7 @@ public class Humanoid : MonoBehaviour
 
 
     public override string ToString() {
-        return $"Name: {name}, Movement Speed: {movementSpeed}, Sprint Speed: {sprintspeed}, Dodge Multiplier: {dodgeMultiplier}, Hearts: {hearts}\n Equipped Weapon: {equippedWeapon}, Equipped Armor: {equippedArmor}";
+        return $"Name: {Name}, Movement Speed: {movementSpeed}, Sprint Speed: {sprintspeed}, Dodge Multiplier: {dodgeMultiplier}, Hearts: {hearts}\n Equipped Weapon: {equippedWeapon}, Equipped Armor: {equippedArmor}";
     }
 
 

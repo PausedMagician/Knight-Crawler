@@ -713,7 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf67027c147a3de4387dccc75d4742a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Little Man
+  Name: Humanoid
   hearts: 3
   maxHealth: 100
   health: 100
@@ -729,8 +729,12 @@ MonoBehaviour:
   equippedArmor: {fileID: 0}
   movementDirection: {x: 0, y: 0}
   dodgeTimer: 0
+  weights: []
+  feathers: []
   points: []
-  pointsDuplicator: 8
+  amountOfPoints: 16
+  lastKnowLocation: {x: 0, y: 0}
+  viewDistance: 25
 --- !u!4 &293176821
 Transform:
   m_ObjectHideFlags: 0
@@ -2109,7 +2113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -18400}
+  m_AnchoredPosition: {x: 0, y: -23200}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &891773589
@@ -23511,7 +23515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22be66c7b8365fd49aa9f7ba7c278ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Humanoid
+  Name: Humanoid
   hearts: 3
   maxHealth: 100
   health: 100

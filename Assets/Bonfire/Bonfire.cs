@@ -25,9 +25,6 @@ public class Bonfire : MonoBehaviour
         GameController.OnBonfireUpdate += UpdateBonfire;
     }
     public void UpdateBonfire() {
-        if(active) {
-            GameController.SetLastRested(this);
-        }
         animator.SetBool("Active", active);
     }
     // Update is called once per frame
@@ -35,7 +32,11 @@ public class Bonfire : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Debug.LogWarning("HI");
+            if(active) {
+                // Rest();
+            } else {
+                GameController.SetLastRested(this);
+            }
         }
     }
 

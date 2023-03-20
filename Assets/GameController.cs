@@ -179,6 +179,16 @@ public static class ListExtensions
             }
         }
     }
+
+    public static string ToDebugString(this List<Vector2> vectors) {
+        string s = "";
+        foreach (Vector2 vector in vectors)
+        {
+            s += vector.ToString() + "\n";
+        }
+        return s;
+    }
+
     public static string ToDebugString(this List<Effect> effects) {
         string s = "";
         foreach (Effect effect in effects)
