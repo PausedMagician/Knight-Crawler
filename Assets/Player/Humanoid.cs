@@ -25,9 +25,9 @@ public class Humanoid : MonoBehaviour
 
     private void OnValidate() {
         if(!weaponManifesto) {
-            GameObject gam = Instantiate(Resources.Load<GameObject>("Prefabs/WeaponManifesto"), transform);
-            weaponManifesto = gam.GetComponent<WeaponManifesto>();
-            weaponManifesto.owner = this;
+            // GameObject gam = Instantiate(Resources.Load<GameObject>("Prefabs/WeaponManifesto"), transform);
+            // weaponManifesto = gam.GetComponent<WeaponManifesto>();
+            // weaponManifesto.owner = this;
         }
         Start();
     }
@@ -36,7 +36,11 @@ public class Humanoid : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.freezeRotation = true;
         weaponManifesto = GetComponentInChildren<WeaponManifesto>();
-        weaponManifesto.owner = this;
+        if(!weaponManifesto) {
+            GameObject gam = Instantiate(Resources.Load<GameObject>("Prefabs/WeaponManifesto"), transform);
+            weaponManifesto = gam.GetComponent<WeaponManifesto>();
+            weaponManifesto.owner = this;
+        }
         health = maxHealth;
     }
 

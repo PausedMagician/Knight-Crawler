@@ -2,16 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : ScriptableObject {
+public class Item : ScriptableObject
+{
     public string itemName;
     public Sprite sprite;
-    
+
     public static string ToDebugString(Item[] items)
     {
         string s = "";
         foreach (Item item in items)
         {
-            if(item is Weapon) {
+            if (item is Weapon)
+            {
                 Weapon weapon = item as Weapon;
                 s += "Name: " + weapon.itemName + " ";
                 s += "Level: " + weapon.level + " ";
@@ -21,7 +23,9 @@ public class Item : ScriptableObject {
                 s += "Max Combo: " + weapon.maxCombo + " ";
                 s += "Value: " + weapon.cost + "\n";
                 Debug.Log(s);
-            } else if (item is Armor) {
+            }
+            else if (item is Armor)
+            {
                 Armor armor = item as Armor;
                 s += "Name: " + armor.itemName + " ";
                 s += "Level: " + armor.level + " ";
@@ -30,7 +34,9 @@ public class Item : ScriptableObject {
                 s += armor.GetEffectsString() + " ";
                 s += "Value: " + armor.cost + "\n";
                 Debug.Log(s);
-            } else {
+            }
+            else
+            {
                 s += item.itemName + "\n";
                 Debug.Log(s);
             }
@@ -42,17 +48,22 @@ public class Item : ScriptableObject {
         string s = "";
         foreach (Item item in items)
         {
-            if(item is Weapon) {
+            if (item is Weapon)
+            {
                 Weapon weapon = item as Weapon;
                 s += "Name: " + weapon.itemName + " ";
                 s += "Lvl: " + weapon.level + "\n";
                 Debug.Log(s);
-            } else if (item is Armor) {
+            }
+            else if (item is Armor)
+            {
                 Armor armor = item as Armor;
                 s += "Name: " + armor.itemName + " ";
                 s += "Lvl: " + armor.level + "\n";
                 Debug.Log(s);
-            } else {
+            }
+            else
+            {
                 s += item.itemName + "\n";
                 Debug.Log(s);
             }
