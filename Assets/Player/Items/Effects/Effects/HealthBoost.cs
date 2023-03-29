@@ -6,6 +6,8 @@ public class HealthBoost : Effect
 {
     public HealthBoost(int amount, Item obj)
     {
+        this.type = EffectType.Buff;
+        this.amountType = AmountType.Flat;
         this.amount = amount;
         this.name = "Max Health";
         if(obj is Weapon) {

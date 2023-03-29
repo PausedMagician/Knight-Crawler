@@ -6,6 +6,8 @@ public class Tracking : Effect
 {
     public Tracking(int amount, Item obj)
     {
+        this.type = EffectType.Buff;
+        this.amountType = AmountType.Percentage;
         this.amount = amount;
         this.name = "Tracking";
         if(obj is Weapon) {

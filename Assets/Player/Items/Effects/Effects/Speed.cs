@@ -6,6 +6,8 @@ public class Speed : Effect
 {
     public Speed(int amount, Item obj)
     {
+        this.type = EffectType.Buff;
+        this.amountType = AmountType.Percentage;
         this.amount = amount;
         if(obj is Weapon) {
             this.name = "Attack Speed";

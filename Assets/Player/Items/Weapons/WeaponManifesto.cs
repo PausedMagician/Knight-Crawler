@@ -67,6 +67,6 @@ public class WeaponManifesto : MonoBehaviour {
         coll.enabled = false;
         coll.isTrigger = true;
         rebind = true;
-        RangedManifesto.updateManifesto();
+        // RangedManifesto.updateManifesto();
     }
 }

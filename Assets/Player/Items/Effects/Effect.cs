@@ -7,6 +7,8 @@ public abstract class Effect
     public int amount;
     public string name;
     public string description;
+    public EffectType type;
+    public AmountType amountType;
     public static Effect CreateEffect<T>(Effector effector, T obj, int amount) where T : Item {
         switch ((effector, obj)) {
             case (Effector.Damage, Weapon):
@@ -66,4 +68,16 @@ public enum Effector
     HealthRegen,
     Speed,
     Tracking
+}
+
+public enum EffectType
+{
+    Damage,
+    Buff
+}
+
+public enum AmountType
+{
+    Flat,
+    Percentage
 }

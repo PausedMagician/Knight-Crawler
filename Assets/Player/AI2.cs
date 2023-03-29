@@ -145,6 +145,12 @@ public class AI2 : Humanoid
         return points.ToArray();
     }
 
+    public override void Die()
+    {
+        base.Die();
+        this.state = AIState.Dead;
+        agent.isStopped = true;
+    }
 
     private void OnDrawGizmos()
     {

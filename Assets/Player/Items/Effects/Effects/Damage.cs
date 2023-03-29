@@ -6,6 +6,8 @@ public class Damage : Effect
 {
     public Damage(int amount, Item obj)
     {
+        this.type = EffectType.Damage;
+        this.amountType = AmountType.Flat;
         this.amount = amount;
         if(obj is Weapon) {
             this.name = "Damage";

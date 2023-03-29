@@ -6,6 +6,8 @@ public class DamagePercentage : Effect
 {
     public DamagePercentage(int amount, Item obj)
     {
+        this.type = EffectType.Damage;
+        this.amountType = AmountType.Percentage;
         this.amount = amount;
         if(obj is Weapon) {
             this.name = "Damage %";

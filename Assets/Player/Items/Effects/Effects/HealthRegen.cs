@@ -6,6 +6,8 @@ public class HealthRegen : Effect
 {
     public HealthRegen(int amount, Item obj)
     {
+        this.type = EffectType.Buff;
+        this.amountType = AmountType.Flat;
         this.amount = amount;
         if(obj is Weapon) {
             this.name = "Vampirism";

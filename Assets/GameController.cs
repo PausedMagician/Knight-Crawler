@@ -153,6 +153,41 @@ public sealed class GameController : MonoBehaviour
         return armor;
     }
 
+    public static int CalculateDamage(Weapon weapon, Armor hitting) {
+        int Damage = 0;
+        if(weapon == null) {
+            return Damage;
+        }
+        for (int i = 0; i < weapon.effects.Count; i++)
+        {
+            Effect effect = weapon.effects[i];
+            if(effect.type == EffectType.Damage) {
+                if(effect.amountType == AmountType.Flat) {
+                    Damage += effect.amount;
+                } else {
+                    Damage *= (1 + (effect.amount/100));
+                }
+            }
+        }
+        if(hitting == null) {
+            return Damage;
+        }
+        for (int i = 0; i < hitting.effects.Count; i++)
+        {
+            Effect effect = hitting.effects[i];
+            if(effect.type == EffectType.Damage) {
+                if(effect.amountType == AmountType.Flat) {
+                    Damage -= effect.amount;
+                } else {
+                    Damage /= (1 + (effect.amount/100));
+                }
+            }
+        }
+        if(Damage < 0) {
+            Damage = 0;
+        }
+        return Damage;
+    }
 
     public static void StartGame() {
         if(lastRested != null) {

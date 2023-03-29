@@ -46,7 +46,6 @@ public class Humanoid : MonoBehaviour
 
     public void FixedUpdate() {
         Move();
-        Die();
         if (dodgeTimer > 0) {
             dodgeTimer -= Time.fixedDeltaTime;
         }
@@ -76,11 +75,15 @@ public class Humanoid : MonoBehaviour
         }
     }
 
-    void Die() {
-        if (Input.GetKeyDown((KeyCode.G)) && dodging == false)
-        {
-            hearts -- ;
+    public void TakeDamage(Weapon weapon) {
+        this.health -= GameController.CalculateDamage(weapon, equippedArmor);
+        if(health <= 0) {
+            health = 0;
+            Die();
         }
+    }
+
+    public virtual void Die() {
         if (hearts <= 0 )
         {
             Debug.LogWarning("Dead");

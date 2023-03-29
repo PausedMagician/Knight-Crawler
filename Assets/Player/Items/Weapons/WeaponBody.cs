@@ -1,11 +1,14 @@
 using UnityEngine;
 
 public class WeaponBody : MonoBehaviour {
+    WeaponManifesto weaponManifesto;
+    private void Awake() {
+        weaponManifesto = gameObject.GetComponentInParent<WeaponManifesto>();
+    }
     private void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log("Triggered");
-        if(other.GetComponent<Humanoid>()) {
-            Debug.Log("Hit enemy");
-            Debug.Log(other.gameObject.GetComponent<Humanoid>());
+        Humanoid humanoid;
+        if(humanoid = other.GetComponent<Humanoid>()) {
+            humanoid.TakeDamage(weaponManifesto.owner.equippedWeapon);
         }
     }
 }
