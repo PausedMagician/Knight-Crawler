@@ -37,6 +37,14 @@ public class AI2 : Humanoid
 
     new private void FixedUpdate()
     {
+        if (sprinting)
+        {
+            agent.speed = sprintspeed;
+        }
+        else
+        {
+            agent.speed = movementSpeed;
+        }
         // Check what state it should be in.
         CheckState();
 
@@ -45,11 +53,17 @@ public class AI2 : Humanoid
         {
             case AIState.Idle:
                 break;
+            case AIState.Wander:
+                Wander();
+                break;
             case AIState.Patrol:
+                Patrol();
                 break;
             case AIState.Chase:
+                Chase();
                 break;
             case AIState.Attack:
+                Attack();
                 break;
             case AIState.Flee:
                 RunAway();
@@ -62,6 +76,7 @@ public class AI2 : Humanoid
     }
 
 
+    public bool targetInSight = false;
     void CheckState()
     {
         if (state == AIState.Dead)
@@ -70,11 +85,26 @@ public class AI2 : Humanoid
         }
         if (timer > 0)
         {
+            if (Mathf.Round(timer) % 5 == 0 && target != null)
+            {
+                RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, target.transform.position - transform.position, viewDistance).OrderBy(h => h.distance).ToArray();
+                if(hits.Length > 0) {
+                    if (hits[0].collider.gameObject.GetComponent<Humanoid>() == target)
+                    {
+                        targetInSight = true;
+                    }
+                }
+            }
+            if (targetInSight)
+            {
+                timer += Time.fixedDeltaTime/2;
+            }
             timer -= Time.fixedDeltaTime;
         }
         else
         {
             state = defaultState;
+            target = null;
             timer = timerMax;
         }
         if (health < maxHealth * (25 / 100))
@@ -82,11 +112,89 @@ public class AI2 : Humanoid
             state = AIState.Flee;
             return;
         }
+        if (state == AIState.Chase)
+        {
+            switch (equippedWeapon)
+            {
+                case Melee melee:
+                    if (Vector2.Distance(target.transform.position, transform.position) < 1f)
+                    {
+                        state = AIState.Attack;
+                    }
+                    break;
+                case Ranged ranged:
+
+                    break;
+                case Magic magic:
+
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
+    [Header("Patrol")]
+    public int patrolIndex = 0;
+    public List<Vector2> patrolPoints;
+    public Vector2 patrolTarget;
+    public float patrolTimer;
+    public Vector2 patrolTimerValues = new Vector2(3, 5);
+    void Patrol()
+    {
+        if (patrolTimer <= 0)
+        {
+            patrolTarget = patrolPoints[patrolIndex] + new Vector2(Random.Range(-1, 1), Random.Range(-1, 1)).normalized * 0.5f;
+            patrolIndex++;
+            agent.SetDestination(patrolTarget);
+            if (patrolIndex > patrolPoints.Count - 1)
+            {
+                patrolIndex = 0;
+            }
+            patrolTimer = Random.Range(patrolTimerValues.x, patrolTimerValues.y);
+        }
+        else if(Vector2.Distance(patrolTarget, transform.position) < 1f)
+        {
+            // Debug.Log("Close " + Vector2.Distance(patrolTarget, transform.position));
+            if(Mathf.Round(patrolTimer) % 2 == 0 && Mathf.Round(patrolTimer) != 0) {
+                Vector2 point;
+                if(patrolIndex == 0) {
+                    point = patrolPoints[patrolPoints.Count - 1];
+                } else {
+                    point = patrolPoints[patrolIndex-1];
+                }
+                agent.SetDestination(point + new Vector2(Random.Range(-1, 1), Random.Range(-1, 1)).normalized * 0.5f);
+            }
+            patrolTimer -= Time.fixedDeltaTime;
+        } else {
+            // ????? what the fuck happened
+        }
+    }
 
+    [Header("Wander")]
+    Vector2 wanderTarget;
+    void Wander()
+    {
 
-    List<Vector2> possiblePoints = new List<Vector2>();
+    }
+
+    [Header("Chase")]
+    Vector2 chaseTarget;
+    void Chase()
+    {
+        chaseTarget = (transform.position - target.transform.position).normalized * 0.4f;
+        if (Vector2.Distance(chaseTarget, transform.position) < 5f && Vector2.Distance(chaseTarget, transform.position) > 2f)
+        {
+            sprinting = true;
+        }
+        else
+        {
+            sprinting = false;
+        }
+        agent.SetDestination(chaseTarget);
+    }
+    [Header("Flee")]
+    public List<Vector2> possiblePoints = new List<Vector2>();
     void RunAway()
     {
         if (target == null)
@@ -102,7 +210,7 @@ public class AI2 : Humanoid
         else
         {
             // Points around player.
-            possiblePoints = FindPointsAround(12, viewDistance*1.5f).ToList();
+            possiblePoints = FindPointsAround(12, viewDistance * 1.5f).ToList();
             if (possiblePoints.Count == 0)
             {
                 return;
@@ -121,6 +229,7 @@ public class AI2 : Humanoid
             Debug.DrawLine(transform.position, closestPoint, Color.red);
         }
     }
+
 
 
     Vector2[] FindPointsAround(int amountOfPoints, float distance)
@@ -156,24 +265,66 @@ public class AI2 : Humanoid
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, viewDistance);
-        Gizmos.color = Color.green;
-        if (possiblePoints != null)
+        switch (state)
         {
-            for (int i = 0; i < possiblePoints.Count; i++)
-            {
-                Gizmos.DrawSphere(possiblePoints[i], 0.5f);
-            }
+            case AIState.Idle:
+                break;
+            case AIState.Wander:
+                break;
+            case AIState.Patrol:
+                Gizmos.color = Color.green;
+                if (patrolPoints != null)
+                {
+                    for (int i = 0; i < patrolPoints.Count; i++)
+                    {
+                        Gizmos.DrawSphere(patrolPoints[i], 0.5f);
+                    }
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawSphere(patrolTarget, 0.5f);
+                }
+                break;
+            case AIState.Chase:
+                break;
+            case AIState.Attack:
+                break;
+            case AIState.Flee:
+                Gizmos.color = Color.green;
+                if (possiblePoints != null)
+                {
+                    for (int i = 0; i < possiblePoints.Count; i++)
+                    {
+                        Gizmos.DrawSphere(possiblePoints[i], 0.5f);
+                    }
+                }
+                break;
+            case AIState.Dead:
+                break;
+            default:
+                break;
         }
     }
 
     public enum AIState
     {
         Idle,
+        Wander,
         Patrol,
         Chase,
         Attack,
         Flee,
         Dead
+    }
+
+    public void reset() {
+        state = defaultState;
+        target = null;
+        targetInSight = false;
+        chaseTarget = Vector2.zero;
+        patrolTarget = Vector2.zero;
+        wanderTarget = Vector2.zero;
+        timer = timerMax;
+        patrolTimer = 0;
+        possiblePoints = new List<Vector2>();
     }
 
 }
