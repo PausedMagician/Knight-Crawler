@@ -18,6 +18,10 @@ public class Armor : Item
         return effectsString;
     }
 
+    public override string ToString() {
+        return name + "\n" + "\nCost: " + cost + "\nLevel: " + level + "\nRarity: " + rarity + "\nEffects: " + GetEffectsString();
+    }
+
 }
 
 public enum ArmorType

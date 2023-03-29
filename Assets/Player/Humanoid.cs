@@ -69,7 +69,18 @@ public class Humanoid : MonoBehaviour
         }
     }
 
-    protected void Attack() {
+    protected void TurnWeapon(Vector2 _transform, Vector2 target, float _time) {
+        if(target == Vector2.zero) {
+            return;
+        }
+        Vector2 direction = target - _transform;
+
+        Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, direction), 0.1f * _time * 100);
+        weaponManifesto.transform.rotation = rotation;
+        weaponManifesto.container.transform.rotation = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (target - (Vector2)weaponManifesto.container.transform.position)), 0.1f * _time * 100);
+    }
+
+    protected virtual void Attack() {
         if(equippedWeapon != null) {
             weaponManifesto.Attack();
         }
@@ -119,6 +130,13 @@ public class Humanoid : MonoBehaviour
 
     public override string ToString() {
         return $"Name: {Name}, Movement Speed: {movementSpeed}, Sprint Speed: {sprintspeed}, Dodge Multiplier: {dodgeMultiplier}, Hearts: {hearts}\n Equipped Weapon: {equippedWeapon}, Equipped Armor: {equippedArmor}";
+    }
+
+
+    private void OnMouseDown() {
+        if(DebugMenu.selecting) {
+            DebugMenu.GetInstance().OpenSelectMenu(this);
+        }
     }
 
 

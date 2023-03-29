@@ -42,7 +42,7 @@ public abstract class Weapon : Item
 
 
     public override string ToString() {
-        return name + "\n" + "\nCost: " + cost + "\nLevel: " + level + "\nRarity: " + rarity;
+        return name + "\n" + "\nCost: " + cost + "\nLevel: " + level + "\nRarity: " + rarity + "\nEffects: " + GetEffectsString();
     }
 
 

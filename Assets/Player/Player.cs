@@ -42,30 +42,8 @@ public class Player : Humanoid
     void HandleInput()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = mousePosition - (Vector2)transform.position;
-        // if(direction.x < 0) {
-        //     Debug.DrawRay((Vector2)transform.position + left_hand, direction.normalized, Color.green, 1f);
-        //     // weaponManifesto.spriteRenderer.flipX = true;
-        //     Vector2 weaponDirection = mousePosition - (Vector2)weaponManifesto.transform.position;
-        //     weaponManifesto.gameObject.transform.localPosition = Vector3.Lerp(weaponManifesto.gameObject.transform.localPosition, left_hand, 0.1f*Time.deltaTime*100);
-        //     //rotate weapon to face mouse
-        //     Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(-Vector3.forward, weaponDirection), 0.1f*Time.deltaTime*100);
-        //     weaponManifesto.transform.rotation = rotation;
-        // } else {
-        //     Debug.DrawRay((Vector2)transform.position + right_hand, direction.normalized, Color.green, 1f);
-        //     weaponManifesto.spriteRenderer.flipX = true;
-        //     Vector2 weaponDirection = mousePosition - (Vector2)weaponManifesto.transform.position;
-        //     weaponManifesto.gameObject.transform.localPosition = Vector3.Lerp(weaponManifesto.gameObject.transform.localPosition, right_hand, 0.1f*Time.deltaTime*100);
-        //     //rotate weapon to face mouse
-        //     Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, weaponDirection), 0.1f*Time.deltaTime*100);
-        //     weaponManifesto.transform.rotation = rotation;
-        // }
-
-        // Debug.DrawRay((Vector2)transform.position, direction.normalized, Color.green, 1f);
         //rotate weapon to face mouse
-        Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, direction), 0.1f * Time.deltaTime * 100);
-        weaponManifesto.transform.rotation = rotation;
-        weaponManifesto.container.transform.rotation = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (mousePosition - (Vector2)weaponManifesto.container.transform.position)), 0.1f * Time.deltaTime * 100);
+        TurnWeapon(transform.position, mousePosition, Time.deltaTime);
         if (dodgeTimer <= 0)
         {
             movementDirection.x = Input.GetAxisRaw("Horizontal");
