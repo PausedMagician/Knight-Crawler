@@ -44,6 +44,12 @@ public class Humanoid : MonoBehaviour
         health = maxHealth;
     }
 
+    public void update() {
+        if (Input.GetKey(KeyCode.G)) {
+            hearts--;
+        }
+    }
+
     public void FixedUpdate() {
         Move();
         if (dodgeTimer > 0) {
@@ -95,9 +101,13 @@ public class Humanoid : MonoBehaviour
     }
 
     public virtual void Die() {
-        if (hearts <= 0 )
+        if (hearts <= 0 && GameController.lastRested != null)
         {
-            Debug.LogWarning("Dead");
+            
+        }else if(hearts <= 0 && GameController.lastRested == null) {
+
+            transform.position = new Vector3(0, 0, 0);
+        
         }
     }
     

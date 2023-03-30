@@ -17,7 +17,11 @@ public class Player : Humanoid
         }
         instance = this;
     }
-
+    public void update() {
+        if (Input.GetKeyDown(KeyCode.G)) {
+            hearts--;
+        }
+    }
     public static Player GetInstance()
     {
         if (instance == null)
