@@ -90,8 +90,11 @@ public class Humanoid : MonoBehaviour
         Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, direction), 0.1f * _time * 100);
         // Debug.Log(rotation);
         weaponManifesto.transform.rotation = rotation;
-        Quaternion rotation2 = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (target - (Vector2)weaponManifesto.container.transform.position)), 0.1f * _time * 100);
+        Quaternion rotation2 = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (target - (Vector2)weaponManifesto.container.transform.position)) * Quaternion.Euler(0, 0, extraDegrees), 0.1f * _time * 100);
         // Debug.Log(rotation2);
+        // if(extraDegrees != 0f) {
+        //     rotation2 *= Quaternion.Euler(0, 0, extraDegrees);
+        // }
         weaponManifesto.container.transform.rotation = rotation2;
     }
 
