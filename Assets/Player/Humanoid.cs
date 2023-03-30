@@ -101,16 +101,29 @@ public class Humanoid : MonoBehaviour
         }
     }
 
-    public void TakeDamage(Weapon weapon) {
+    public int TakeDamage(Weapon weapon, Humanoid attacker) {
         if(dodgeTimer > 0.1f) {
-            return;
+            return 0;
         }
         onDamage?.Invoke();
-        this.health -= GameController.CalculateDamage(weapon, equippedArmor);
+        this.health -= GameController.CalculateDamage(weapon, equippedArmor, out int heal);
         if(health <= 0) {
             health = 0;
             Die();
         }
+        if(this is AI2) {
+            AI2 ai = this as AI2;
+            ai.target = attacker;
+        }
+        return heal;
+    }
+
+    public void Heal(int heal) {
+        this.health += heal;
+        if(health > maxHealth) {
+            health = maxHealth;
+        }
+        onDamage?.Invoke();
     }
 
     public void Regen() {

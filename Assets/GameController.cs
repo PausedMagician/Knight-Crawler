@@ -165,8 +165,9 @@ public sealed class GameController : MonoBehaviour
         return armor;
     }
 
-    public static int CalculateDamage(Weapon weapon, Armor hitting) {
+    public static int CalculateDamage(Weapon weapon, Armor hitting, out int heal) {
         int Damage = 0;
+        heal = 0;
         if(weapon == null) {
             return Damage;
         }
@@ -178,6 +179,12 @@ public sealed class GameController : MonoBehaviour
                     Damage += effect.amount;
                 } else {
                     Damage *= (1 + (effect.amount/100));
+                }
+            } else if (effect.specificType == Effector.HealthRegen) {
+                if(effect.amountType == AmountType.Flat) {
+                    heal += effect.amount;
+                } else {
+                    heal *= (1 + (effect.amount/100));
                 }
             }
         }
