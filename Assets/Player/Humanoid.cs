@@ -102,7 +102,7 @@ public class Humanoid : MonoBehaviour
     }
 
     public int TakeDamage(Weapon weapon, Humanoid attacker) {
-        if(dodgeTimer > 0.1f) {
+        if(dodgeTimer > 0f || health == 0) {
             return 0;
         }
         onDamage?.Invoke();
