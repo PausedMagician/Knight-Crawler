@@ -10,7 +10,7 @@ public abstract class Effect
     public Effector specificType;
     public EffectType type;
     public AmountType amountType;
-    public static Effect CreateEffect<T>(Effector effector, T obj, int amount, AmountType amountType) where T : Item {
+    public static Effect CreateEffect<T>(Effector effector, T obj, int amount, AmountType amountType) where T : ItemData {
         switch ((effector, obj)) {
             case (Effector.Damage, Weapon):
             case (Effector.Damage, Armor):
@@ -32,7 +32,7 @@ public abstract class Effect
         }
     }
 
-    public static List<Effect> CreateEffects<T>(int points, int maxEffectors, T obj) where T : Item {
+    public static List<Effect> CreateEffects<T>(int points, int maxEffectors, T obj) where T : ItemData {
         List<Effect> effects = new List<Effect>();
         int effectors = 0;
         while (points > 0 && effectors < maxEffectors) {

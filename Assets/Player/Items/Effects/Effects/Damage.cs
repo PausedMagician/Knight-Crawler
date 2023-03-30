@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Damage : Effect
 {
-    public Damage(int amount, Item obj, AmountType amountType)
+    public Damage(int amount, ItemData obj, AmountType amountType)
     {
         this.specificType = Effector.Damage;
         this.type = EffectType.Damage;

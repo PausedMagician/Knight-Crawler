@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Speed : Effect
 {
-    public Speed(int amount, Item obj, AmountType amountType)
+    public Speed(int amount, ItemData obj, AmountType amountType)
     {
         this.specificType = Effector.Speed;
         this.type = EffectType.Buff;

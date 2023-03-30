@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : ScriptableObject
+public class ItemData : ScriptableObject
 {
     public string itemName;
     public Sprite sprite;
 
-    public static string ToDebugString(Item[] items)
+    public static string ToDebugString(ItemData[] items)
     {
         string s = "";
-        foreach (Item item in items)
+        foreach (ItemData item in items)
         {
             if (item is Weapon)
             {
@@ -43,10 +43,10 @@ public class Item : ScriptableObject
         }
         return s;
     }
-    public static string ToDebugStringShort(Item[] items)
+    public static string ToDebugStringShort(ItemData[] items)
     {
         string s = "";
-        foreach (Item item in items)
+        foreach (ItemData item in items)
         {
             if (item is Weapon)
             {

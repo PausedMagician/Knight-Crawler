@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tracking : Effect
 {
-    public Tracking(int amount, Item obj, AmountType amountType)
+    public Tracking(int amount, ItemData obj, AmountType amountType)
     {
         this.specificType = Effector.Tracking;
         this.type = EffectType.Buff;

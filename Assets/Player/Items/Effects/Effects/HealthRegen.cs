@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HealthRegen : Effect
 {
-    public HealthRegen(int amount, Item obj, AmountType amountType)
+    public HealthRegen(int amount, ItemData obj, AmountType amountType)
     {
         this.specificType = Effector.HealthRegen;
         this.type = EffectType.Buff;

@@ -49,7 +49,7 @@ public class InventoryUI : MonoBehaviour
         OnInventoryChanged -= UpdateUI;
     }
 
-    void DebugList(List<Item> list, string name = "List") {
+    void DebugList(List<ItemData> list, string name = "List") {
         Debug.Log(name + string.Join(", ", list.Select(item => item.itemName).ToArray()));
     }
 
@@ -61,8 +61,8 @@ public class InventoryUI : MonoBehaviour
         // List.intersect method for items that are in the UI but not in the inventory.
 
         // List.union method for items that are in the UI and in the inventory.
-        List<Item> diff = new List<Item>();
-        List<Item> existing = this.itemsParent.GetComponentsInChildren<ItemUI>().Select(itemUI => itemUI.item).ToList();
+        List<ItemData> diff = new List<ItemData>();
+        List<ItemData> existing = this.itemsParent.GetComponentsInChildren<ItemUI>().Select(itemUI => itemUI.item).ToList();
         
         // DebugList(existing, "Existing: ");
         // DebugList(this.inventory.items, "Inventory: ");

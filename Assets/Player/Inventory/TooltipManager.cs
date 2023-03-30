@@ -25,7 +25,7 @@ public class TooltipManager : MonoBehaviour
 
     public RectTransform tooltip;
 
-    public static Action<Item> OnMouseHover;
+    public static Action<ItemData> OnMouseHover;
     public static Action OnMouseExit;
 
     private void OnEnable() {
@@ -50,7 +50,7 @@ public class TooltipManager : MonoBehaviour
         }
     }
 
-    public void ShowTooltip(Item item)
+    public void ShowTooltip(ItemData item)
     {
         if (item is Weapon)
         {

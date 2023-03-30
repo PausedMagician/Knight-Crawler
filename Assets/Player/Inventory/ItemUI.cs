@@ -6,12 +6,12 @@ using TMPro;
 
 public class ItemUI : MonoBehaviour
 {
-    public Item item;
+    public ItemData item;
     public Weapon weapon;
     public TextMeshProUGUI text;
     public Image image;
 
-    public void SetItem(Item item) {
+    public void SetItem(ItemData item) {
         if(item == null) {
             this.item = null;
             this.text.text = "";

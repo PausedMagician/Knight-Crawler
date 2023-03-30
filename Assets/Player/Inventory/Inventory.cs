@@ -29,7 +29,7 @@ public class Inventory : MonoBehaviour
 
 
     public Player player;
-    public List<Item> items = new List<Item>();
+    public List<ItemData> items = new List<ItemData>();
 
     private void Start()
     {
@@ -71,27 +71,27 @@ public class Inventory : MonoBehaviour
     }
 
     //AddItem function
-    public void AddItem(Item item)
+    public void AddItem(ItemData item)
     {
         items.Add(item);
         InventoryUI.OnInventoryChanged();
     }
     //AddItems function
-    public void AddItems(Item[] items)
+    public void AddItems(ItemData[] items)
     {
         this.items.AddRange(items);
         InventoryUI.OnInventoryChanged();
     }
     //RemoveItem function
-    public void RemoveItem(Item item)
+    public void RemoveItem(ItemData item)
     {
         items.Remove(item);
         InventoryUI.OnInventoryChanged();
     }
     //RemoveItems function
-    public void RemoveItems(Item[] items)
+    public void RemoveItems(ItemData[] items)
     {
-        foreach (Item item in items)
+        foreach (ItemData item in items)
         {
             this.items.Remove(item);
         }
