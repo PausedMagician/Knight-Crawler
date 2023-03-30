@@ -7,28 +7,26 @@ public abstract class Effect
     public int amount;
     public string name;
     public string description;
+    public Effector specificType;
     public EffectType type;
     public AmountType amountType;
-    public static Effect CreateEffect<T>(Effector effector, T obj, int amount) where T : Item {
+    public static Effect CreateEffect<T>(Effector effector, T obj, int amount, AmountType amountType) where T : Item {
         switch ((effector, obj)) {
             case (Effector.Damage, Weapon):
             case (Effector.Damage, Armor):
-                return new Damage(amount, obj);
-            case (Effector.DamagePercentage, Weapon):
-            case (Effector.DamagePercentage, Armor):
-                return new DamagePercentage(amount, obj);
+                return new Damage(amount, obj, amountType);
             case (Effector.HealthBoost, Armor):
-                return new HealthBoost(amount, obj);
+                return new HealthBoost(amount, obj, amountType);
             case (Effector.HealthRegen, Melee):
             case (Effector.HealthRegen, Magic):
             case (Effector.HealthRegen, Armor):
-                return new HealthRegen(amount, obj);
+                return new HealthRegen(amount, obj, amountType);
             case (Effector.Speed, Weapon):
             case (Effector.Speed, Armor):
-                return new Speed(amount, obj);
+                return new Speed(amount, obj, amountType);
             case (Effector.Tracking, Ranged):
             case (Effector.Tracking, Magic):
-                return new Tracking(amount, obj);
+                return new Tracking(amount, obj, amountType);
             default:
                 return null;
         }
@@ -44,7 +42,7 @@ public abstract class Effect
             }
             // Debug.Log(amount);
             Effector effector = (Effector)Random.Range(0, System.Enum.GetNames(typeof(Effector)).Length);
-            Effect effect = CreateEffect(effector, obj, amount);
+            Effect effect = CreateEffect(effector, obj, amount, (AmountType)Random.Range(0, 2));
             if (effect != null) {
                 points -= amount;
                 effectors++;
@@ -55,7 +53,11 @@ public abstract class Effect
     }
 
     public override string ToString() {
-        return name + ": " + amount;
+        string extra = "";
+        if(this.amountType == AmountType.Percentage) {
+            extra += " %";
+        }
+        return name + ": +" + amount + extra;
     }
 
 }
@@ -63,7 +65,6 @@ public abstract class Effect
 public enum Effector
 {
     Damage,
-    DamagePercentage,
     HealthBoost,
     HealthRegen,
     Speed,

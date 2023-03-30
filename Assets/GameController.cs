@@ -48,7 +48,8 @@ public sealed class GameController : MonoBehaviour
     public Sprite[][] armorSprites = new Sprite[3][];
 
     public static UnityAction OnBonfireUpdate;
-
+    public static UnityAction Tick;
+    public static float TickTimer;
 
     private void Start()
     {
@@ -71,6 +72,17 @@ public sealed class GameController : MonoBehaviour
         StartGame();
 
     }
+
+
+    private void Update() {
+        if(TickTimer <= 0) {
+            Tick?.Invoke();
+            TickTimer = 1f;
+        } else {
+            TickTimer -= Time.deltaTime;
+        }
+    }
+
 
     private void UpdateSprites()
     {
@@ -104,7 +116,7 @@ public sealed class GameController : MonoBehaviour
         int maxEffects = (int)rarity + 2;
         Melee melee = ScriptableObject.CreateInstance<Melee>();
         List<Effect> effects = new List<Effect>();
-        effects.Add(Effect.CreateEffect(Effector.Damage, melee, (int)points/4));
+        effects.Add(Effect.CreateEffect(Effector.Damage, melee, (int)points/4, AmountType.Flat));
         points -= (int)points/4;
         effects.AddRange(Effect.CreateEffects(points, maxEffects, melee));
         effects.TrimEffects();
@@ -134,7 +146,7 @@ public sealed class GameController : MonoBehaviour
         int maxEffects = (int)rarity + 2;
         Armor armor = ScriptableObject.CreateInstance<Armor>();
         List<Effect> effects = new List<Effect>();
-        effects.Add(Effect.CreateEffect(Effector.Damage, armor, (int)points/4));
+        effects.Add(Effect.CreateEffect(Effector.Damage, armor, (int)points/4, AmountType.Flat));
         points -= (int)points/4;
         effects.AddRange(Effect.CreateEffects(points, maxEffects, armor));
         effects.TrimEffects();

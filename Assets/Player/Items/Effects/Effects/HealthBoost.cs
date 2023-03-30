@@ -4,16 +4,23 @@ using UnityEngine;
 
 public class HealthBoost : Effect
 {
-    public HealthBoost(int amount, Item obj)
+    public HealthBoost(int amount, Item obj, AmountType amountType)
     {
+        this.specificType = Effector.HealthBoost;
         this.type = EffectType.Buff;
-        this.amountType = AmountType.Flat;
+        this.amountType = amountType;
         this.amount = amount;
-        this.name = "Max Health";
-        if(obj is Weapon) {
-            this.description = "Increases health by +" + amount;
-        } else if(obj is Armor) {
-            this.description = "Increases max health by +" + amount;
+        string extra = "";
+        if(amountType == AmountType.Percentage) {
+            extra += " %";
         }
+        if(obj is Weapon) {
+            this.name = "Health";
+            this.description = "Increases health by +" + amount + extra;
+        } else if(obj is Armor) {
+            this.name = "Health";
+            this.description = "Increases max health by +" + amount + extra;
+        }
+
     }
 }

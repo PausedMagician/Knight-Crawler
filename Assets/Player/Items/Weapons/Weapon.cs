@@ -35,7 +35,7 @@ public abstract class Weapon : Item
     public string GetEffectsString() {
         string effectsString = "";
         foreach (Effect effect in effects) {
-            effectsString += effect.name + ": " + effect.amount + "\n";
+            effectsString += effect.ToString() + "\n";
         }
         return effectsString;
     }
