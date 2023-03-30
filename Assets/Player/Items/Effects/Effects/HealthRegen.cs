@@ -4,22 +4,17 @@ using UnityEngine;
 
 public class HealthRegen : Effect
 {
-    public HealthRegen(int amount, Item obj, AmountType amountType)
+    public HealthRegen(int amount, Item obj)
     {
-        this.specificType = Effector.HealthRegen;
         this.type = EffectType.Buff;
-        this.amountType = amountType;
+        this.amountType = AmountType.Flat;
         this.amount = amount;
-        string extra = "";
-        if(amountType == AmountType.Percentage) {
-            extra += " %";
-        }
         if(obj is Weapon) {
             this.name = "Vampirism";
-            this.description = "Increases health gained on hit by +" + amount + extra;
+            this.description = "Increases health gained on hit by +" + amount;
         } else if(obj is Armor) {
             this.name = "Health Regen";
-            this.description = "Increases health regeneration by +" + amount + extra + " per health tick";
+            this.description = "Increases health regeneration by +" + amount + " per health tick";
         }
     }
 }

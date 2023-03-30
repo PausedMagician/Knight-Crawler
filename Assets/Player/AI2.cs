@@ -41,7 +41,7 @@ public class AI2 : Humanoid
     {
         if (sprinting)
         {
-            agent.speed = movementSpeed * sprintspeed;
+            agent.speed = sprintspeed;
         }
         else
         {
@@ -130,11 +130,16 @@ public class AI2 : Humanoid
             switch (equippedWeapon)
             {
                 case Melee melee:
-                    TurnWeapon(transform.position, target.transform.position, Time.fixedDeltaTime);
+                    if (Vector2.Distance(target.transform.position, transform.position) < 1f)
+                    {
+                        state = AIState.Attack;
+                    }
                     break;
                 case Ranged ranged:
+
+                    break;
                 case Magic magic:
-                    TurnWeapon(transform.position, target.transform.position, Time.fixedDeltaTime, 45);
+
                     break;
                 default:
                     break;
@@ -214,7 +219,7 @@ public class AI2 : Humanoid
         switch (equippedWeapon)
         {
             case Melee:
-                chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (agent.radius * 2.5f));
+                chaseTarget = (transform.position - target.transform.position).normalized * 0.4f;
                 if (Vector2.Distance(chaseTarget, transform.position) < 5f && Vector2.Distance(chaseTarget, transform.position) > 2f)
                 {
                     sprinting = true;
@@ -222,13 +227,6 @@ public class AI2 : Humanoid
                 else
                 {
                     sprinting = false;
-                }
-                if(Vector2.Distance(chaseTarget, transform.position) < agent.radius * 2) {
-                    if(!attacking) {
-                        attacking = true;
-                        agent.isStopped = true;
-                        Invoke("Attack", 0.2f);
-                    }
                 }
                 agent.SetDestination(chaseTarget);
                 break;
@@ -245,9 +243,9 @@ public class AI2 : Humanoid
                 }
                 else
                 {
+                    TurnWeapon(transform.position, target.transform.position, Time.fixedDeltaTime);
                     if (!attacking)
                     {
-                        attacking = true;
                         agent.isStopped = true;
                         Invoke("Attack", 0.25f);
                     }

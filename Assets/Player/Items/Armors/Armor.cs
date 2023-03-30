@@ -13,7 +13,7 @@ public class Armor : Item
     public string GetEffectsString() {
         string effectsString = "";
         foreach (Effect effect in effects) {
-            effectsString += effect.ToString() + "\n";
+            effectsString += effect.name + ": " + effect.amount + "\n";
         }
         return effectsString;
     }

@@ -4,22 +4,17 @@ using UnityEngine;
 
 public class Speed : Effect
 {
-    public Speed(int amount, Item obj, AmountType amountType)
+    public Speed(int amount, Item obj)
     {
-        this.specificType = Effector.Speed;
         this.type = EffectType.Buff;
-        this.amountType = amountType;
+        this.amountType = AmountType.Percentage;
         this.amount = amount;
-        string extra = "";
-        if(amountType == AmountType.Percentage) {
-            extra += " %";
-        }
         if(obj is Weapon) {
             this.name = "Attack Speed";
-            this.description = "Increases attack speed by +" + amount + extra;
+            this.description = "Increases attack speed by +" + amount + "%";
         } else if(obj is Armor) {
             this.name = "Movement Speed";
-            this.description = "Increases movement speed by +" + amount + extra;
+            this.description = "Increases movement speed by +" + amount + "%";
         }
     }
 }

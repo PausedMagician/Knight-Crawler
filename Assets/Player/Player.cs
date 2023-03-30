@@ -17,7 +17,11 @@ public class Player : Humanoid
         }
         instance = this;
     }
-
+    public void update() {
+        if (Input.GetKeyDown(KeyCode.G)) {
+            hearts--;
+        }
+    }
     public static Player GetInstance()
     {
         if (instance == null)
@@ -43,7 +47,7 @@ public class Player : Humanoid
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //rotate weapon to face mouse
-        TurnWeapon(transform.position, mousePosition, Time.deltaTime, 45);
+        TurnWeapon(transform.position, mousePosition, Time.deltaTime);
         if (dodgeTimer <= 0)
         {
             movementDirection.x = Input.GetAxisRaw("Horizontal");

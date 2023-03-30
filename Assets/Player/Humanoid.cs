@@ -11,7 +11,6 @@ public class Humanoid : MonoBehaviour
     public int hearts = 3;
     public int maxHealth = 100;
     public int health = 100;
-    public int regenSpeed = 2;
     public float movementSpeed = 5f;
     public float sprintspeed = 1.3f;
     public float dodgeMultiplier = 10f;
@@ -56,6 +55,12 @@ public class Humanoid : MonoBehaviour
         health = maxHealth;
     }
 
+    public void update() {
+        if (Input.GetKey(KeyCode.G)) {
+            hearts--;
+        }
+    }
+
     public void FixedUpdate() {
         Move();
         if (dodgeTimer > 0) {
@@ -81,18 +86,15 @@ public class Humanoid : MonoBehaviour
         }
     }
 
-    protected void TurnWeapon(Vector2 _transform, Vector2 target, float _time, float extraDegrees = 0f) {
+    protected void TurnWeapon(Vector2 _transform, Vector2 target, float _time) {
         if(target == Vector2.zero) {
             return;
         }
         Vector2 direction = target - _transform;
 
         Quaternion rotation = Quaternion.Slerp(weaponManifesto.transform.rotation, Quaternion.LookRotation(Vector3.forward, direction), 0.1f * _time * 100);
-        // Debug.Log(rotation);
         weaponManifesto.transform.rotation = rotation;
-        Quaternion rotation2 = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (target - (Vector2)weaponManifesto.container.transform.position)), 0.1f * _time * 100);
-        // Debug.Log(rotation2);
-        weaponManifesto.container.transform.rotation = rotation2;
+        weaponManifesto.container.transform.rotation = Quaternion.Slerp(weaponManifesto.container.transform.rotation, Quaternion.LookRotation(Vector3.forward, (target - (Vector2)weaponManifesto.container.transform.position)), 0.1f * _time * 100);
     }
 
     protected virtual void Attack() {
@@ -144,9 +146,13 @@ public class Humanoid : MonoBehaviour
     }
 
     public virtual void Die() {
-        if (hearts <= 0 )
+        if (hearts <= 0 && GameController.lastRested != null)
         {
-            Debug.LogWarning("Dead");
+            
+        }else if(hearts <= 0 && GameController.lastRested == null) {
+
+            transform.position = new Vector3(0, 0, 0);
+        
         }
     }
     

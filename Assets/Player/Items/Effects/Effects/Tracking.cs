@@ -4,22 +4,17 @@ using UnityEngine;
 
 public class Tracking : Effect
 {
-    public Tracking(int amount, Item obj, AmountType amountType)
+    public Tracking(int amount, Item obj)
     {
-        this.specificType = Effector.Tracking;
         this.type = EffectType.Buff;
-        this.amountType = amountType;
+        this.amountType = AmountType.Percentage;
         this.amount = amount;
-        string extra = "";
-        if(amountType == AmountType.Percentage) {
-            extra += " %";
-        }
         this.name = "Tracking";
         if(obj is Weapon) {
-            this.description = "Increases tracking by +" + amount + extra;
+            this.description = "Increases tracking by +" + amount + "%";
         } else if(obj is Armor) {
             this.name = "Movement Speed";
-            this.description = "Increases movement speed by +" + amount + extra;
+            this.description = "Increases movement speed by +" + amount + "%";
         }
     }
 }
