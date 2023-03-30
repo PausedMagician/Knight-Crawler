@@ -43,7 +43,13 @@ public class Player : Humanoid
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //rotate weapon to face mouse
-        TurnWeapon(transform.position, mousePosition, Time.deltaTime, 45);
+        if(equippedWeapon) {
+            if(equippedWeapon is Melee) {
+                TurnWeapon(transform.position, mousePosition, Time.deltaTime);
+            } else {
+                TurnWeapon(transform.position, mousePosition, Time.deltaTime, 45f);
+            }
+        }
         if (dodgeTimer <= 0)
         {
             movementDirection.x = Input.GetAxisRaw("Horizontal");
