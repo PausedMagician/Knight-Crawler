@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Humanoid : MonoBehaviour
@@ -24,7 +24,17 @@ public class Humanoid : MonoBehaviour
     public Armor equippedArmor;
     public Vector2 movementDirection = new Vector2(0, 0);
     public float dodgeTimer = 0f;
-    public Action onDamage;
+    public List<Humanoid> targetedBy = new List<Humanoid>();
+    public UnityAction onDamage;
+
+
+    private void OnEnable() {
+        GameController.Tick += Regen;
+    }
+    private void OnDisable() {
+        GameController.Tick -= Regen;
+    }
+
     private void OnValidate() {
         if(!weaponManifesto) {
             // GameObject gam = Instantiate(Resources.Load<GameObject>("Prefabs/WeaponManifesto"), transform);
@@ -95,7 +105,7 @@ public class Humanoid : MonoBehaviour
         if(dodgeTimer > 0.1f) {
             return;
         }
-        onDamage();
+        onDamage?.Invoke();
         this.health -= GameController.CalculateDamage(weapon, equippedArmor);
         if(health <= 0) {
             health = 0;
@@ -104,16 +114,32 @@ public class Humanoid : MonoBehaviour
     }
 
     public void Regen() {
+        if(targetedBy.Count > 0) {
+            return;
+        }
+        if(health == maxHealth) {
+            return;
+        }
         if(!equippedArmor) {
             health += regenSpeed;
+            return;
         }
         Effect effect;
+        float toRegen = regenSpeed;
         for (int i = 0; i < equippedArmor.effects.Count; i++)
         {
             effect = equippedArmor.effects[i];
             if(effect.specificType == Effector.HealthRegen) {
-                health += regenSpeed + effect.amount;
+                if(effect.amountType == AmountType.Percentage) {
+                    toRegen *= (1f + ((float)effect.amount / 100));
+                } else {
+                    toRegen += regenSpeed + effect.amount;
+                }
             }
+        }
+        health += Mathf.RoundToInt(toRegen);
+        if(health > maxHealth) {
+            health = maxHealth;
         }
     }
 

@@ -84,6 +84,10 @@ public class AI2 : Humanoid
     {
         if (state == AIState.Dead)
         {
+            if(target) {
+                target.targetedBy.Remove(this as Humanoid);
+                target = null;
+            }
             return;
         }
         if (timer > 0)
@@ -108,6 +112,7 @@ public class AI2 : Humanoid
         else
         {
             state = defaultState;
+            target.targetedBy.Remove(this as Humanoid);
             target = null;
             timer = timerMax;
         }
@@ -119,6 +124,9 @@ public class AI2 : Humanoid
         if (state == AIState.Chase)
         {
             Chase();
+            if(!target.targetedBy.Contains(this as Humanoid)) {
+                target.targetedBy.Add(this);
+            }
             switch (equippedWeapon)
             {
                 case Melee melee:
