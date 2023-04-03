@@ -108,12 +108,12 @@ TextureImporter:
       name: TX Player_0
       rect:
         serializedVersion: 2
-        x: 6
-        y: 70
-        width: 21
-        height: 22
+        x: 0
+        y: 96
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -129,12 +129,12 @@ TextureImporter:
       name: TX Player_1
       rect:
         serializedVersion: 2
-        x: 38
-        y: 70
-        width: 21
-        height: 48
+        x: 32
+        y: 96
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -150,18 +150,18 @@ TextureImporter:
       name: TX Player_2
       rect:
         serializedVersion: 2
-        x: 69
-        y: 70
-        width: 21
-        height: 45
+        x: 64
+        y: 96
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dc6b6072c39c4974e986e22349e5eb00
+      spriteID: 62c26cd411985fc4ca7a55eb4305b56b
       internalID: 2102167
       vertices: []
       indices: 
@@ -171,18 +171,18 @@ TextureImporter:
       name: TX Player_3
       rect:
         serializedVersion: 2
-        x: 99
-        y: 68
-        width: 27
-        height: 28
+        x: 0
+        y: 64
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5573689c30732fa498851fbe6b4150f7
+      spriteID: 6d9cc3d769676ba4aadf3f5659a03233
       internalID: 1005573361
       vertices: []
       indices: 
@@ -192,19 +192,61 @@ TextureImporter:
       name: TX Player_4
       rect:
         serializedVersion: 2
-        x: 6
-        y: 92
-        width: 21
-        height: 22
+        x: 32
+        y: 64
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1b1500dfecb3535418d3eb9158bc9922
+      spriteID: 47ec05168ec4ae542965e5fa420d5954
       internalID: 1377090971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Player_5
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9ba08c0f1308304f91ac2e5e5fd4308
+      internalID: -447327028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Player_6
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e938b4ca9e9d6214a8f3e2ee6130eee0
+      internalID: 1605605507
       vertices: []
       indices: 
       edges: []
@@ -220,8 +262,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      TX Player_5: -447327028
       TX Player_1: 792855208
       TX Player_0: 761866089
+      TX Player_6: 1605605507
       TX Player_3: 1005573361
       TX Player_4: 1377090971
       TX Player_2: 2102167

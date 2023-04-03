@@ -54,6 +54,7 @@ public class Projectile : MonoBehaviour
     void Die()
     {
         speed = 0;
+        Destroy(gameObject, 15f);
         this.enabled = false;
     }
 
