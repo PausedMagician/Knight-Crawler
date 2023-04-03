@@ -1,4 +1,5 @@
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,9 +11,15 @@ public sealed class GameController : MonoBehaviour
     #region Singleton
     public static GameController instance;
 
+    public static JObject names;
+    public static JArray firstNames, surNames;
+
     void Awake()
     {
         UpdateSprites();
+        names = JObject.Parse(GameController.LoadResourceTextfile("NamesLarger.json"));
+        firstNames = names.GetValue("firstName") as JArray;
+        surNames = names.GetValue("lastName") as JArray;
         if (instance != null)
         {
             Debug.LogWarning("More than one instance of Player found!");
@@ -32,7 +39,8 @@ public sealed class GameController : MonoBehaviour
     #endregion
 
     public static Bonfire lastRested;
-    public static void SetLastRested(Bonfire bonfire) {
+    public static void SetLastRested(Bonfire bonfire)
+    {
         lastRested = bonfire;
         OnBonfireUpdate?.Invoke();
     }
@@ -81,11 +89,15 @@ public sealed class GameController : MonoBehaviour
     }
 
 
-    private void Update() {
-        if(TickTimer <= 0) {
+    private void Update()
+    {
+        if (TickTimer <= 0)
+        {
             Tick?.Invoke();
             TickTimer = 1f;
-        } else {
+        }
+        else
+        {
             TickTimer -= Time.deltaTime;
         }
     }
@@ -115,7 +127,7 @@ public sealed class GameController : MonoBehaviour
         // float k2 = -1;
         // float k3 = -0.6f;
         // int points = (int)Mathf.Round((level * Mathf.Pow((int)rarity + 1, k3) * Mathf.Pow(10, level * k1) + 5 * Mathf.Pow((int)rarity + 1, k2)));
-        int points = Mathf.RoundToInt(level * ((int)rarity+1 / 5 * 1.25f) + ((int)rarity + 1) * 5);
+        int points = Mathf.RoundToInt(level * ((int)rarity + 1 / 5 * 1.25f) + ((int)rarity + 1) * 5);
         return points;
     }
 
@@ -125,8 +137,8 @@ public sealed class GameController : MonoBehaviour
         int maxEffects = (int)rarity + 2;
         Melee melee = ScriptableObject.CreateInstance<Melee>();
         List<Effect> effects = new List<Effect>();
-        effects.Add(Effect.CreateEffect(Effector.Damage, melee, (int)points/4, AmountType.Flat));
-        points -= (int)points/4;
+        effects.Add(Effect.CreateEffect(Effector.Damage, melee, (int)points / 4, AmountType.Flat));
+        points -= (int)points / 4;
         effects.AddRange(Effect.CreateEffects(points, maxEffects, melee));
         effects.TrimEffects();
         int selected = Random.Range(0, meleeSprites.Length);
@@ -137,7 +149,7 @@ public sealed class GameController : MonoBehaviour
         }
         melee.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {meleeSprites[selected].name}{selectedEffect}");
         melee.effects = effects;
-        if(points > 100) {melee.cost = (int)Mathf.Round(points * 0.1f) * 10;} else {melee.cost = points;}
+        if (points > 100) { melee.cost = (int)Mathf.Round(points * 0.1f) * 10; } else { melee.cost = points; }
         melee.level = level;
         melee.sprite = meleeSprites[selected];
         melee.maxCombo = Random.Range(2, 4);
@@ -152,8 +164,8 @@ public sealed class GameController : MonoBehaviour
         int maxEffects = (int)rarity + 2;
         Ranged ranged = ScriptableObject.CreateInstance<Ranged>();
         List<Effect> effects = new List<Effect>();
-        effects.Add(Effect.CreateEffect(Effector.Damage, ranged, (int)points/4, AmountType.Flat));
-        points -= (int)points/4;
+        effects.Add(Effect.CreateEffect(Effector.Damage, ranged, (int)points / 4, AmountType.Flat));
+        points -= (int)points / 4;
         effects.AddRange(Effect.CreateEffects(points, maxEffects, ranged));
         effects.TrimEffects();
         int selected = Random.Range(0, rangedSprites.Length);
@@ -164,7 +176,7 @@ public sealed class GameController : MonoBehaviour
         }
         ranged.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {rangedSprites[selected].name}{selectedEffect}");
         ranged.effects = effects;
-        if(points > 100) {ranged.cost = (int)Mathf.Round(points * 0.1f) * 10;} else {ranged.cost = points;}
+        if (points > 100) { ranged.cost = (int)Mathf.Round(points * 0.1f) * 10; } else { ranged.cost = points; }
         ranged.level = level;
         ranged.sprite = rangedSprites[selected];
         ranged.maxCombo = Random.Range(2, 4);
@@ -184,8 +196,8 @@ public sealed class GameController : MonoBehaviour
         int maxEffects = (int)rarity + 2;
         Armor armor = ScriptableObject.CreateInstance<Armor>();
         List<Effect> effects = new List<Effect>();
-        effects.Add(Effect.CreateEffect(Effector.Damage, armor, (int)points/4, AmountType.Flat));
-        points -= (int)points/4;
+        effects.Add(Effect.CreateEffect(Effector.Damage, armor, (int)points / 4, AmountType.Flat));
+        points -= (int)points / 4;
         effects.AddRange(Effect.CreateEffects(points, maxEffects, armor));
         effects.TrimEffects();
         int selected = Random.Range(0, armorSprites[(int)armor.armorType].Length);
@@ -194,60 +206,106 @@ public sealed class GameController : MonoBehaviour
         {
             selectedEffect = $" of {effects[1].name}";
         }
-        armor.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {armorSprites[(int)armor.armorType][selected].name}{selectedEffect}");;
+        armor.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {armorSprites[(int)armor.armorType][selected].name}{selectedEffect}"); ;
         armor.effects = effects;
-        if(points > 100) {armor.cost = (int)Mathf.Round(points * 0.1f) * 10;} else {armor.cost = points;}
+        if (points > 100) { armor.cost = (int)Mathf.Round(points * 0.1f) * 10; } else { armor.cost = points; }
         armor.level = level;
         armor.sprite = armorSprites[(int)armor.armorType][selected];
         armor.rarity = rarity;
         return armor;
     }
 
-    public static int CalculateDamage(Weapon weapon, Armor hitting, out int heal) {
+    public static int CalculateDamage(Weapon weapon, Armor hitting, out int heal)
+    {
         int Damage = 0;
         heal = 0;
-        if(weapon == null) {
+        if (weapon == null)
+        {
             return Damage;
         }
         for (int i = 0; i < weapon.effects.Count; i++)
         {
             Effect effect = weapon.effects[i];
-            if(effect.type == EffectType.Damage) {
-                if(effect.amountType == AmountType.Flat) {
+            if (effect.type == EffectType.Damage)
+            {
+                if (effect.amountType == AmountType.Flat)
+                {
                     Damage += effect.amount;
-                } else {
-                    Damage *= (1 + (effect.amount/100));
                 }
-            } else if (effect.specificType == Effector.HealthRegen) {
-                if(effect.amountType == AmountType.Flat) {
+                else
+                {
+                    Damage *= (1 + (effect.amount / 100));
+                }
+            }
+            else if (effect.specificType == Effector.HealthRegen)
+            {
+                if (effect.amountType == AmountType.Flat)
+                {
                     heal += effect.amount;
-                } else {
-                    heal *= (1 + (effect.amount/100));
+                }
+                else
+                {
+                    heal *= (1 + (effect.amount / 100));
                 }
             }
         }
-        if(hitting == null) {
+        if (hitting == null)
+        {
             return Damage;
         }
         for (int i = 0; i < hitting.effects.Count; i++)
         {
             Effect effect = hitting.effects[i];
-            if(effect.type == EffectType.Damage) {
-                if(effect.amountType == AmountType.Flat) {
+            if (effect.type == EffectType.Damage)
+            {
+                if (effect.amountType == AmountType.Flat)
+                {
                     Damage -= effect.amount;
-                } else {
-                    Damage /= (1 + (effect.amount/100));
+                }
+                else
+                {
+                    Damage /= (1 + (effect.amount / 100));
                 }
             }
         }
-        if(Damage < 0) {
+        if (Damage < 0)
+        {
             Damage = 0;
         }
         return Damage;
     }
 
-    public static void StartGame() {
-        if(lastRested != null) {
+    public static HumanoidName GetRandomName() {
+        HumanoidName returnName = new HumanoidName();
+        returnName.firstName = firstNames[Random.Range(0, firstNames.Count)].ToString();
+        List<string> surnames = new List<string>();
+        for (var i = 0; i < Random.Range(1, 3); i++)
+        {
+            surnames.Add(surNames[Random.Range(0, surNames.Count)].ToString());
+        }
+        returnName.surNames = surnames.ToArray();
+        returnName.fullName = returnName.firstName;
+        for (var i = 0; i < surnames.Count; i++)
+        {
+            returnName.fullName += " " + surnames[i];
+        }
+        return returnName;
+    }
+
+    public static string LoadResourceTextfile(string path)
+    {
+
+        string filePath = "Info/" + path.Replace(".json", "");
+
+        TextAsset targetFile = Resources.Load<TextAsset>(filePath);
+
+        return targetFile.text;
+    }
+
+    public static void StartGame()
+    {
+        if (lastRested != null)
+        {
             Player.GetInstance().transform.position = (Vector2)lastRested.transform.position + lastRested.spawnPoint;
         }
     }
@@ -274,7 +332,8 @@ public static class ListExtensions
         }
     }
 
-    public static string ToDebugString(this List<Vector2> vectors) {
+    public static string ToDebugString(this List<Vector2> vectors)
+    {
         string s = "";
         foreach (Vector2 vector in vectors)
         {
@@ -283,7 +342,8 @@ public static class ListExtensions
         return s;
     }
 
-    public static string ToDebugString(this List<Effect> effects) {
+    public static string ToDebugString(this List<Effect> effects)
+    {
         string s = "";
         foreach (Effect effect in effects)
         {

@@ -112,8 +112,10 @@ public class AI2 : Humanoid
         else
         {
             state = defaultState;
-            target.targetedBy.Remove(this as Humanoid);
-            target = null;
+            if(target) {
+                target.targetedBy.Remove(this as Humanoid);
+                target = null;
+            }
             timer = timerMax;
         }
         if (health < maxHealth * (25 / 100))

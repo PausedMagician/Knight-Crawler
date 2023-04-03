@@ -14,6 +14,8 @@ public class WeaponManifesto : MonoBehaviour
     [SerializeField] AnimationType animationType = AnimationType.melee;
     [SerializeField] AnimationSet animationSet = AnimationSet.light;
 
+    bool canAttack = true;
+
     private void Start()
     {
         spriteRenderer = weaponPrefab.GetComponent<SpriteRenderer>();
@@ -37,28 +39,36 @@ public class WeaponManifesto : MonoBehaviour
         else if (owner.equippedWeapon is Ranged)
         {
             Ranged weapon = owner.equippedWeapon as Ranged;
-            // Instantiate and shoot projectile
-            GameObject obj = new GameObject("Proejct", typeof(SpriteRenderer), typeof(Projectile));
-            obj.transform.position = container.transform.position + ((container.transform.up + container.transform.right).normalized * 0.25f);
-            Projectile projectile = obj.GetComponent<Projectile>();
-            projectile.shooter = owner;
-            projectile.speed = 5f;
-            projectile.direction = (container.transform.up + container.transform.right).normalized;
-            projectile.Rotate();
-            // Debug.Log($"F: {container.transform.forward}");
-            // Debug.DrawLine(transform.position, transform.position + container.transform.forward, Color.blue, 1f);
-            // Debug.Log($"U: {container.transform.up}");
-            // Debug.DrawLine(transform.position, transform.position + container.transform.up, Color.red, 1f);
-            // Debug.Log($"R: {container.transform.right}");
-            // Debug.DrawLine(transform.position, transform.position + container.transform.right, Color.green, 1f);
-            // Debug.DrawLine(transform.position, transform.position + (container.transform.up + container.transform.right).normalized, Color.cyan, 1f);
-            obj.gameObject.GetComponent<SpriteRenderer>().sprite = weapon.projectileSprite;
+            if(canAttack) {
+                canAttack = false;
+                // Instantiate and shoot projectile
+                GameObject obj = new GameObject("Proejct", typeof(SpriteRenderer), typeof(Projectile));
+                obj.transform.position = container.transform.position + ((container.transform.up + container.transform.right).normalized * 0.25f);
+                Projectile projectile = obj.GetComponent<Projectile>();
+                projectile.shooter = owner;
+                projectile.speed = 5f;
+                projectile.direction = (container.transform.up + container.transform.right).normalized;
+                projectile.Rotate();
+                // Debug.Log($"F: {container.transform.forward}");
+                // Debug.DrawLine(transform.position, transform.position + container.transform.forward, Color.blue, 1f);
+                // Debug.Log($"U: {container.transform.up}");
+                // Debug.DrawLine(transform.position, transform.position + container.transform.up, Color.red, 1f);
+                // Debug.Log($"R: {container.transform.right}");
+                // Debug.DrawLine(transform.position, transform.position + container.transform.right, Color.green, 1f);
+                // Debug.DrawLine(transform.position, transform.position + (container.transform.up + container.transform.right).normalized, Color.cyan, 1f);
+                obj.gameObject.GetComponent<SpriteRenderer>().sprite = weapon.projectileSprite;
+                Invoke("ResetAttack", weapon.GetAttackSpeed());
+            }
     
         }
         else
         {
 
         }
+    }
+
+    void ResetAttack() {
+        canAttack = true;
     }
 
     PolygonCollider2D coll;

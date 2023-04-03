@@ -12,7 +12,7 @@ public class SelectMenu : MonoBehaviour
     public TextMeshProUGUI armor;
 
     public void SetUp() {
-        humanoidName.text = selected.Name;
+        humanoidName.text = selected.Name.firstName + " " + selected.Name.surNames;
         health.text = $"{selected.health}/{selected.maxHealth}";
         if(selected.equippedWeapon) {
             weapon.text = selected.equippedWeapon.ToString();

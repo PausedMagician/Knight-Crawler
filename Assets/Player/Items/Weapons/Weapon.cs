@@ -40,6 +40,21 @@ public abstract class Weapon : ItemData
         return effectsString;
     }
 
+    public float GetAttackSpeed() {
+        float attackSpeed = 0.5f;
+        for (var i = 0; i < effects.Count; i++)
+        {
+            Effect effect = effects[i];
+            if(effect.specificType == Effector.Speed) {
+                if(effect.amountType == AmountType.Flat) {
+                    attackSpeed += effect.amount;
+                } else {
+                    attackSpeed *= (1 + ((float)effect.amount / 100));
+                }
+            }
+        }
+        return 1/attackSpeed;
+    }
 
     public override string ToString() {
         return name + "\n" + "\nCost: " + cost + "\nLevel: " + level + "\nRarity: " + rarity + "\nEffects: " + GetEffectsString();

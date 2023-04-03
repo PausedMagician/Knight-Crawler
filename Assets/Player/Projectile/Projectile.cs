@@ -8,7 +8,6 @@ public class Projectile : MonoBehaviour
     public Vector2 direction; //The direction the projectile is flying in.
     public float tracking; //Tracking in percentage, if tracking is 1 it will completely hone in on nearest enemy, if 0 it will go straight.
     public bool lasting; //If the sprite is everlasting af the projectile dies. If true it will leave a sprite behind forever.
-    bool rotationcheck_ = false;
 
     public Humanoid shooter; //Who shot the projectile
 
@@ -37,7 +36,6 @@ public class Projectile : MonoBehaviour
         var dir = direction;
         var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward) * Quaternion.Euler(0, 0, -45);
-        rotationcheck_ = true;
     }
 
     void Move(Vector2 to)
@@ -71,11 +69,17 @@ public class Projectile : MonoBehaviour
                 } else {
                     attacked.TakeDamage(shooter.equippedWeapon, shooter);
                     transform.SetParent(attacked.transform);
+                    Debug.Log($"{hit.collider.gameObject.name} was hit");
+                    transform.position = hit.point;
+                    return true;
                 }
+            } else if (hit.collider.isTrigger) {
+                return false;
+            } else {
+                Debug.Log($"{hit.collider.gameObject.name} was hit");
+                transform.position = hit.point;
+                return true;
             }
-            Debug.Log($"{hit.collider.gameObject.name} was hit");
-            transform.position = hit.point;
-            return true;
         }
         else
         {
