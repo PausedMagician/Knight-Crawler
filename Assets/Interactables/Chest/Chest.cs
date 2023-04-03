@@ -10,20 +10,23 @@ public class Chest : Interactable
     [SerializeField] GameObject drop;
     [SerializeField] float spread = 3f;
     int dropCount;
+    public Sprite OpenChest;
 
     public override void Interact()
     {
         base.Interact();
-        dropCount = Random.Range(2, 5);
-        Debug.Log(dropCount);
+        dropCount = Random.Range(1, 1);
+        // Debug.Log(dropCount);
         if (items.Length == 0)
         {
             while (dropCount > 0)
             {
                 dropCount -= 1;
                 Vector3 pos = transform.position;
-                pos.x += spread * UnityEngine.Random.value - spread / 2;
-                pos.y += spread * UnityEngine.Random.value - spread / 2;
+                // pos.x += spread * UnityEngine.Random.value - spread / 2;
+                pos.y += (spread * UnityEngine.Random.value - spread / 2);
+
+                Debug.Log(pos.y);
                 GameObject go = Instantiate(drop);
                 go.transform.position = pos;
 
@@ -40,5 +43,6 @@ public class Chest : Interactable
         // Inventory.GetInstance().AddItems(items);
         // interactedText.GetComponentInChildren<TextMeshProUGUI>().text = Item.ToDebugStringShort(items);
         isLocked = true;
+        this.gameObject.GetComponent<SpriteRenderer>().sprite = OpenChest;
     }
 }

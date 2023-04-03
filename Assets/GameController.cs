@@ -40,7 +40,9 @@ public sealed class GameController : MonoBehaviour
 
     public Sprite[] meleeSprites;
     public Sprite[] rangedSprites;
+    public Sprite[] rangedProjectileSprites;
     public Sprite[] magicSprites;
+    public Sprite[] magicProjectileSprites;
 
     public Sprite[] lightArmorSprites;
     public Sprite[] mediumArmorSprites;
@@ -54,10 +56,15 @@ public sealed class GameController : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindObjectOfType<Player>();
-        Melee thing = null;
+        Weapon thing = null;
         for (int i = 0; i < 15; i++)
         {
             thing = CreateMelee((Rarity)Random.Range(0, 5), Random.Range(1, 10));
+            player.inventory.AddItem(thing);
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            thing = CreateRanged((Rarity)Random.Range(0, 5), Random.Range(1, 10));
             player.inventory.AddItem(thing);
         }
         player.inventory.EquipWeapon(thing);
@@ -88,7 +95,9 @@ public sealed class GameController : MonoBehaviour
     {
         meleeSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Melee/");
         rangedSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Ranged/");
+        rangedProjectileSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Projectiles/Ranged/");
         magicSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Magic/");
+        magicProjectileSprites = Resources.LoadAll<Sprite>("Sprites/Weapons/Projectiles/Magic/");
 
         lightArmorSprites = Resources.LoadAll<Sprite>("Sprites/Armor/Light/");
         mediumArmorSprites = Resources.LoadAll<Sprite>("Sprites/Armor/Medium/");
@@ -137,7 +146,36 @@ public sealed class GameController : MonoBehaviour
         return melee;
     }
 
+    public Ranged CreateRanged(Rarity rarity, int level)
+    {
+        int points = GetPoints(rarity, level);
+        int maxEffects = (int)rarity + 2;
+        Ranged ranged = ScriptableObject.CreateInstance<Ranged>();
+        List<Effect> effects = new List<Effect>();
+        effects.Add(Effect.CreateEffect(Effector.Damage, ranged, (int)points/4, AmountType.Flat));
+        points -= (int)points/4;
+        effects.AddRange(Effect.CreateEffects(points, maxEffects, ranged));
+        effects.TrimEffects();
+        int selected = Random.Range(0, rangedSprites.Length);
+        string selectedEffect = "";
+        if (effects.Count > 1)
+        {
+            selectedEffect = $" of {effects[1].name}";
+        }
+        ranged.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {rangedSprites[selected].name}{selectedEffect}");
+        ranged.effects = effects;
+        if(points > 100) {ranged.cost = (int)Mathf.Round(points * 0.1f) * 10;} else {ranged.cost = points;}
+        ranged.level = level;
+        ranged.sprite = rangedSprites[selected];
+        ranged.maxCombo = Random.Range(2, 4);
+        ranged.animationSet = (AnimationSet)Random.Range(0, 3);
+        ranged.rarity = rarity;
 
+        ranged.projectileSprite = rangedProjectileSprites[0];
+        // rangedProjectileSprites.Length;
+
+        return ranged;
+    }
 
 
     public Armor CreateArmor(Rarity rarity, int level)
