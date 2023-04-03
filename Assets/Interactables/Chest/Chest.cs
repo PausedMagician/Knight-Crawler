@@ -11,9 +11,12 @@ public class Chest : Interactable
     [SerializeField] float spread = 3f;
     int dropCount;
     public Sprite OpenChest;
+    public ParticleSystem particles;
+
 
     public override void Interact()
     {
+        
         base.Interact();
         dropCount = Random.Range(1, 1);
         // Debug.Log(dropCount);
@@ -42,7 +45,8 @@ public class Chest : Interactable
         }
         // Inventory.GetInstance().AddItems(items);
         // interactedText.GetComponentInChildren<TextMeshProUGUI>().text = Item.ToDebugStringShort(items);
-        isLocked = true;
+        isLocked = true;    
+        particles.Play();
         this.gameObject.GetComponent<SpriteRenderer>().sprite = OpenChest;
     }
 }
