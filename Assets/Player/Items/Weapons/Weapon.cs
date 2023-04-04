@@ -9,7 +9,6 @@ public abstract class Weapon : ItemData
     int combo;
     public int cost;
     public int level;
-    public Rarity rarity;
     public AnimationSet animationSet;
     public List<Effect> effects;
 
@@ -75,12 +74,4 @@ public enum AnimationType
     melee,
     ranged,
     magic
-}
-
-public enum Rarity {
-    common,
-    uncommon,
-    rare,
-    epic,
-    legendary
 }

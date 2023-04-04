@@ -8,7 +8,6 @@ public class Armor : ItemData
     public ArmorType armorType;
     public int cost;
     public int level;
-    public Rarity rarity;
 
     public string GetEffectsString() {
         string effectsString = "";

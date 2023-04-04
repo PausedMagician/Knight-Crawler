@@ -6,6 +6,7 @@ public class ItemData : ScriptableObject
 {
     public string itemName;
     public Sprite sprite;
+    public Rarity rarity;
 
     public static string ToDebugString(ItemData[] items)
     {
@@ -71,4 +72,12 @@ public class ItemData : ScriptableObject
         return s;
     }
 
+}
+
+public enum Rarity {
+    common,
+    uncommon,
+    rare,
+    epic,
+    legendary
 }

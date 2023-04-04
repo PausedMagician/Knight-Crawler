@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
 
 [System.Serializable]
 public struct HumanoidName {
@@ -26,6 +27,7 @@ public class Humanoid : MonoBehaviour
     [Header("Script Variables")]
     public bool dodging = false, sprinting = false;
     public Rigidbody2D rb;
+    public TextMeshProUGUI nameText;
     public Weapon equippedWeapon;
     public WeaponManifesto weaponManifesto;
     public Armor equippedArmor;
@@ -61,6 +63,7 @@ public class Humanoid : MonoBehaviour
             weaponManifesto.owner = this;
         }
         Name = GameController.GetRandomName();
+        nameText.text = Name.fullName;
         health = maxHealth;
     }
 

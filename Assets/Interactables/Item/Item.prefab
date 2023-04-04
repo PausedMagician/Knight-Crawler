@@ -396,7 +396,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 057244e4348f94c4589b2b305f3b91bb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -417,7 +417,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2135585597343286014, guid: d9442d679343f1647a99a56f623aeec6, type: 3}
+  m_Sprite: {fileID: -2135585597343286014, guid: 5aa8b770bc43046bc8d993d0d5b7f4a5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -447,8 +447,13 @@ MonoBehaviour:
   interactTextTime: 2
   isInteractable: 0
   isLocked: 0
+  materials:
+  - {fileID: 2100000, guid: 057244e4348f94c4589b2b305f3b91bb, type: 2}
+  - {fileID: 2100000, guid: 8329e69974252104c87e10f28087ac1b, type: 2}
+  - {fileID: 2100000, guid: e6642e10a866caf4a8e9f0ac8979e65c, type: 2}
+  - {fileID: 2100000, guid: ac99cae807456b840972eec6fc4efe5a, type: 2}
+  - {fileID: 2100000, guid: cccd7396ef3fa3144b2f3e2e4df9c1c0, type: 2}
   items: []
-  m_Rigidbody: {fileID: 0}
 --- !u!50 &3491453819160933081
 Rigidbody2D:
   serializedVersion: 4

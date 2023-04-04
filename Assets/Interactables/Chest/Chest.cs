@@ -7,8 +7,7 @@ public class Chest : Interactable
 {
     public ItemData[] items;
 
-    [SerializeField] GameObject drop;
-    [SerializeField] float spread = 3f;
+    [SerializeField] GameObject itemPrefab;
     int dropCount;
     public Sprite OpenChest;
     public ParticleSystem particles;
@@ -18,21 +17,17 @@ public class Chest : Interactable
     {
         
         base.Interact();
-        dropCount = Random.Range(1, 1);
+        dropCount = Random.Range(1, 10);
         // Debug.Log(dropCount);
         if (items.Length == 0)
         {
             while (dropCount > 0)
             {
                 dropCount -= 1;
-                Vector3 pos = transform.position;
-                // pos.x += spread * UnityEngine.Random.value - spread / 2;
-                pos.y += (spread * UnityEngine.Random.value - spread / 2);
-
-                Debug.Log(pos.y);
-                GameObject go = Instantiate(drop);
+                Vector2 pos = transform.position;
+                pos += new Vector2(Random.Range(-1f, 1f), Random.Range(-0.2f, -1f)).normalized * Random.Range(1.2f, 1.5f);
+                GameObject go = Instantiate(itemPrefab);
                 go.transform.position = pos;
-
             }
             // items = new Item[Random.Range(1, 4)];
             // for (int i = 0; i < items.Length; i++)
