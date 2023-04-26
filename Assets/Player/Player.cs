@@ -8,6 +8,7 @@ public class Player : Humanoid
     #region Singleton
     public static Player instance;
 
+
     void Awake()
     {
         if (instance != null)
@@ -16,6 +17,8 @@ public class Player : Humanoid
             return;
         }
         instance = this;
+
+    
     }
 
     public static Player GetInstance()

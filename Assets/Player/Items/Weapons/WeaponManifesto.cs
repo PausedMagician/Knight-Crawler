@@ -120,4 +120,6 @@ public class WeaponManifesto : MonoBehaviour
         rebind = true;
         // RangedManifesto.updateManifesto();
     }
+
+    
 }

@@ -34,7 +34,7 @@ public class SelectMenu : MonoBehaviour
         } else {
             level = Random.Range(1, 100);
         }
-        selected.EquipWeapon(GameController.GetInstance().CreateMelee((Rarity)Random.Range(0, 5), level));
+        selected.EquipWeapon(GameController.GetInstance().CreateRanged((Rarity)Random.Range(0, 5), level));
         SetUp();
     }
     public void NewArmor() {

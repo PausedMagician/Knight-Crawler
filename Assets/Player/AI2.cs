@@ -23,8 +23,13 @@ public class AI2 : Humanoid
 
     [Header("AI Variables")]
     public Humanoid target;
+    
     public float timer;
     public float timerMax = 30f;
+
+    CircularMovement circularMovement;
+    public Projectile projectile;
+    public float minaf = 3f;
 
     private void Awake()
     {
@@ -34,6 +39,8 @@ public class AI2 : Humanoid
         // obstacle = GetComponent<NavMeshObstacle>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        circularMovement = GameObject.Find("DetectionRange").GetComponent<CircularMovement>();
+
     }
 
 
@@ -236,27 +243,55 @@ public class AI2 : Humanoid
                 break;
             case Magic:
             case Ranged:
-                if (Vector2.Distance(transform.position, target.transform.position) < viewDistance * 0.33f)
-                {
-                    RunAway();
-                }
-                else if (Vector2.Distance(transform.position, target.transform.position) > viewDistance * 0.5f)
-                {
-                    chaseTarget = (transform.position - target.transform.position).normalized * viewDistance * 0.4f;
-                    agent.SetDestination(chaseTarget);
-                }
-                else
-                {
-                    if (!attacking)
-                    {
+            //     if (Vector2.Distance(transform.position, target.transform.position) < viewDistance * 0.1f)
+            //     {
+            //         RunAway();
+            //     }
+            //     else if (Vector2.Distance(transform.position, target.transform.position) > viewDistance * 0.5f)
+            //     {
+            //         chaseTarget = (transform.position - target.transform.position).normalized * viewDistance * 0.4f;
+            //         agent.SetDestination(chaseTarget);
+            //     }
+            //     else
+            //     {
+            //         if (!attacking)
+            //         {
+            //             attacking = true;
+            //             agent.isStopped = true;
+            //             Invoke("Attack", 0.25f);
+            //         }
+            //     }
+            //     break;
+            // default:
+            //     break;
+            
+            if (projectile.AIdodge() == true && dodgeTimer <= 0)
+            {
+                dodging = true;
+            }
+            
+            chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * 1.1f));
+            // Checkfor(transform.position, target.transform.position);
+            if (Vector2.Distance(chaseTarget, transform.position) < 5f && Vector2.Distance(chaseTarget, transform.position) > 2f)
+            {
+                sprinting = true;
+            }
+            if (circularMovement.Checkfor() == true)
+            {    
+                if(Vector2.Distance(chaseTarget, transform.position) < agent.radius * 1.75f) {
+                    if(!attacking) {
                         attacking = true;
                         agent.isStopped = true;
-                        Invoke("Attack", 0.25f);
+                        Invoke("Attack", 0.2f);
                     }
                 }
-                break;
-            default:
-                break;
+            } else if (circularMovement.Checkfor() == false)
+            {
+                chaseTarget = Vector2.MoveTowards(transform.position, target.transform.position * minaf, minaf );
+                Debug.Log(chaseTarget);
+            }
+            agent.SetDestination(chaseTarget);
+            break;
         }
     }
     [Header("Flee")]
@@ -391,6 +426,30 @@ public class AI2 : Humanoid
         Flee,
         Dead
     }
+
+
+    // bool Checkfor(Vector2 froms, Vector2 tos)
+    // {
+    //     Vector2 trueDirection = (tos - froms);
+    //     RaycastHit2D hit = Physics2D.Raycast(transform.position, trueDirection);
+    //     Debug.DrawRay(transform.position, trueDirection , Color.green);
+    //     if (hit.collider.gameObject.name == "Player")
+    //     {
+    //         Debug.Log("Player");
+    //         Debug.Log($"{hit.collider.gameObject.name} was hit");
+    //         return true;
+    //     }
+    //     else if (hit.collider.gameObject.name != "Player")
+    //     {
+    //         Debug.Log("Not Player");
+    //         Debug.Log($"{hit.collider.gameObject.name} was hit");
+    //         return false;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //     }
+    // }
 
     public void reset()
     {

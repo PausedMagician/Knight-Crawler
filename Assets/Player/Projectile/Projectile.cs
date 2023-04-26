@@ -21,6 +21,7 @@ public class Projectile : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 nextStep = Vector2.Lerp(transform.position, (Vector2)transform.position + (direction * speed), 0.1f);
+        AIdodge();
 
         if (!CheckDirection(transform.position, nextStep))
         {
@@ -32,7 +33,8 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public void Rotate() {
+    public void Rotate()
+    {
         var dir = direction;
         var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward) * Quaternion.Euler(0, 0, -45);
@@ -56,6 +58,28 @@ public class Projectile : MonoBehaviour
         this.enabled = false;
     }
 
+    public bool AIdodge()
+    {
+        Vector2 nextStep = Vector2.Lerp(transform.position, (Vector2)transform.position + direction, 1f);
+        Vector2 froms = transform.position;
+        Vector2 tos = nextStep;
+        Vector2 trueDirection = (tos - froms);
+        RaycastHit2D AIdodge = Physics2D.Raycast(transform.position, trueDirection);
+        Debug.DrawRay(transform.position, trueDirection, Color.green);
+        if (AIdodge.collider.gameObject.name == "AI (1)")
+        {
+            return true;
+        }
+        else if (AIdodge.collider.gameObject.name != "AI (1)")
+        {
+            return false;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     bool CheckDirection(Vector2 from, Vector2 to)
     {
         Vector2 trueDirection = (to - from);
@@ -63,20 +87,28 @@ public class Projectile : MonoBehaviour
         if (hit)
         {
             Humanoid attacked = hit.collider.GetComponent<Humanoid>();
-            if(attacked) {
-                if(attacked == shooter) {
+            if (attacked)
+            {
+                if (attacked == shooter)
+                {
                     return false;
-                } else {
+                }
+                else
+                {
                     attacked.TakeDamage(shooter.equippedWeapon, shooter);
                     transform.SetParent(attacked.transform);
-                    Debug.Log($"{hit.collider.gameObject.name} was hit");
+                    // Debug.Log($"{hit.collider.gameObject.name} was hit");
                     transform.position = hit.point;
                     return true;
                 }
-            } else if (hit.collider.isTrigger) {
+            }
+            else if (hit.collider.isTrigger)
+            {
                 return false;
-            } else {
-                Debug.Log($"{hit.collider.gameObject.name} was hit");
+            }
+            else
+            {
+                // Debug.Log($"{hit.collider.gameObject.name} was hit");
                 transform.position = hit.point;
                 return true;
             }

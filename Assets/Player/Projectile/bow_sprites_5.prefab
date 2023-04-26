@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1528529391364774237}
   - component: {fileID: 4948858892948568593}
   - component: {fileID: 4845968554284941309}
+  - component: {fileID: -5257206336073622728}
   m_Layer: 0
   m_Name: bow_sprites_5
   m_TagString: Untagged
@@ -106,3 +107,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!114 &-5257206336073622728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2214198852076512720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 317d490d850287f4583eff9255ce2a7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  direction: {x: 0, y: 0}
+  tracking: 0
+  lasting: 0
+  shooter: {fileID: 0}
