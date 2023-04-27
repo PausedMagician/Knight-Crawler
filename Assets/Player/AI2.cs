@@ -23,7 +23,7 @@ public class AI2 : Humanoid
 
     [Header("AI Variables")]
     public Humanoid target;
-    
+
     public float timer;
     public float timerMax = 30f;
 
@@ -39,7 +39,7 @@ public class AI2 : Humanoid
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         circularMovement = GameObject.Find("DetectionRange").GetComponent<CircularMovement>();
-        
+
 
     }
 
@@ -91,7 +91,8 @@ public class AI2 : Humanoid
     {
         if (state == AIState.Dead)
         {
-            if(target) {
+            if (target)
+            {
                 target.targetedBy.Remove(this as Humanoid);
                 target = null;
             }
@@ -119,7 +120,8 @@ public class AI2 : Humanoid
         else
         {
             state = defaultState;
-            if(target) {
+            if (target)
+            {
                 target.targetedBy.Remove(this as Humanoid);
                 target = null;
             }
@@ -133,7 +135,8 @@ public class AI2 : Humanoid
         if (state == AIState.Chase)
         {
             Chase();
-            if(!target.targetedBy.Contains(this as Humanoid)) {
+            if (!target.targetedBy.Contains(this as Humanoid))
+            {
                 target.targetedBy.Add(this);
             }
             switch (equippedWeapon)
@@ -185,11 +188,13 @@ public class AI2 : Humanoid
             if (Mathf.Round(patrolTimer) % 3 == 0 && Mathf.Round(patrolTimer) != 0 && Vector2.Distance(agent.destination, transform.position) < 0.05f)
             {
                 float x = Random.Range(0.5f, 1f);
-                if(Random.Range(0, 2) == 0) {
+                if (Random.Range(0, 2) == 0)
+                {
                     x *= -1;
                 }
                 float y = Random.Range(0.5f, 1f);
-                if(Random.Range(0, 2) == 0) {
+                if (Random.Range(0, 2) == 0)
+                {
                     y *= -1;
                 }
                 agent.SetDestination(point + new Vector2(y, x) * 1f);
@@ -201,9 +206,12 @@ public class AI2 : Humanoid
             // ????? what the fuck happened
         }
         Vector2 dir;
-        if(Vector2.Distance(agent.destination, transform.position) < 0.2f) {
+        if (Vector2.Distance(agent.destination, transform.position) < 0.2f)
+        {
             dir = Vector2.zero;
-        } else {
+        }
+        else
+        {
             dir = transform.position + agent.velocity;
         }
         TurnWeapon(transform.position, dir, Time.fixedDeltaTime);
@@ -232,8 +240,10 @@ public class AI2 : Humanoid
                 {
                     sprinting = false;
                 }
-                if(Vector2.Distance(chaseTarget, transform.position) < agent.radius * 2) {
-                    if(!attacking) {
+                if (Vector2.Distance(chaseTarget, transform.position) < agent.radius * 2)
+                {
+                    if (!attacking)
+                    {
                         attacking = true;
                         agent.isStopped = true;
                         Invoke("Attack", 0.2f);
@@ -243,51 +253,54 @@ public class AI2 : Humanoid
                 break;
             case Magic:
             case Ranged:
-            //     if (Vector2.Distance(transform.position, target.transform.position) < viewDistance * 0.1f)
-            //     {
-            //         RunAway();
-            //     }
-            //     else if (Vector2.Distance(transform.position, target.transform.position) > viewDistance * 0.5f)
-            //     {
-            //         chaseTarget = (transform.position - target.transform.position).normalized * viewDistance * 0.4f;
-            //         agent.SetDestination(chaseTarget);
-            //     }
-            //     else
-            //     {
-            //         if (!attacking)
-            //         {
-            //             attacking = true;
-            //             agent.isStopped = true;
-            //             Invoke("Attack", 0.25f);
-            //         }
-            //     }
-            //     break;
-            // default:
-            //     break;
-            
-            
-            chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * 1.1f));
-            // Checkfor(transform.position, target.transform.position);
-            if (Vector2.Distance(chaseTarget, transform.position) < 5f && Vector2.Distance(chaseTarget, transform.position) > 2f)
-            {
-                sprinting = true;
-            }
-            if (circularMovement.Checkfor() == true)
-            {    
-                if(Vector2.Distance(chaseTarget, transform.position) < agent.radius * 1.75f) {
-                    if(!attacking) {
-                        attacking = true;
-                        agent.isStopped = true;
-                        Invoke("Attack", 0.2f);
+                //     if (Vector2.Distance(transform.position, target.transform.position) < viewDistance * 0.1f)
+                //     {
+                //         RunAway();
+                //     }
+                //     else if (Vector2.Distance(transform.position, target.transform.position) > viewDistance * 0.5f)
+                //     {
+                //         chaseTarget = (transform.position - target.transform.position).normalized * viewDistance * 0.4f;
+                //         agent.SetDestination(chaseTarget);
+                //     }
+                //     else
+                //     {
+                //         if (!attacking)
+                //         {
+                //             attacking = true;
+                //             agent.isStopped = true;
+                //             Invoke("Attack", 0.25f);
+                //         }
+                //     }
+                //     break;
+                // default:
+                //     break;
+
+
+                chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * .5f));
+                // Checkfor(transform.position, target.transform.position);
+                if (Vector2.Distance(chaseTarget, transform.position) < 5f && Vector2.Distance(chaseTarget, transform.position) > 2f)
+                {
+                    sprinting = true;
+                }
+                if (circularMovement.Checkfor() == true)
+                {
+                    if (Vector2.Distance(chaseTarget, transform.position) < agent.radius * 1.75f)
+                    {
+                        if (!attacking)
+                        {
+                            attacking = true;
+                            agent.isStopped = true;
+                            Invoke("Attack", 0.2f);
+                        }
                     }
                 }
-            } else if (circularMovement.Checkfor() == false)
-            {
-                chaseTarget = Vector2.MoveTowards(transform.position, target.transform.position * minaf, minaf );
-                // Debug.Log(chaseTarget);
-            }
-            agent.SetDestination(chaseTarget);
-            break;
+                else if (circularMovement.Checkfor() == false)
+                {
+                    chaseTarget = Vector2.MoveTowards(transform.position, target.transform.position * minaf, minaf);
+                    // Debug.Log(chaseTarget);
+                }
+                agent.SetDestination(chaseTarget);
+                break;
         }
     }
     [Header("Flee")]
@@ -407,7 +420,8 @@ public class AI2 : Humanoid
                 break;
         }
         Gizmos.color = Color.magenta;
-        if(agent) {
+        if (agent)
+        {
             Gizmos.DrawWireSphere(agent.destination, 0.2f);
         }
     }
@@ -460,19 +474,39 @@ public class AI2 : Humanoid
         possiblePoints = new List<Vector2>();
     }
 
-    public void StartDodging(Projectile projectile) 
+    public void StartDodging(Projectile projectile)
     {
-        if(dodgeTimer <= 0) {
+        if (dodgeTimer <= 0)
+        {
             Vector2 shooterDirection = projectile.shooter.transform.position - transform.position;
             Vector2 dodgeDirection;
-            if(Random.Range(0, 2) == 1) {
+            if (Random.Range(0, 2) == 1)
+            {
                 dodgeDirection = new Vector2(-shooterDirection.y, shooterDirection.x);
-            } else {
+            }
+            else
+            {
                 dodgeDirection = new Vector2(shooterDirection.y, -shooterDirection.x);
             }
-            dodging = true;
-            agent.SetDestination(rb.position + dodgeDirection);
-            rb.MovePosition(rb.position + dodgeDirection * movementSpeed * Time.fixedDeltaTime * (dodgeMultiplier * .5f));
+            
+            RaycastHit2D hit;
+            hit = Physics2D.Raycast(transform.position, dodgeDirection, 5f);
+            // Debug.DrawRay(transform.position, dodgeDirection.normalized * 3f, Color.red, 6f);
+            if (hit.collider.gameObject)
+            {
+                dodgeDirection = dodgeDirection*-1;
+                dodging = true;
+                agent.SetDestination(rb.position + dodgeDirection);
+                rb.MovePosition(rb.position + dodgeDirection * movementSpeed * Time.fixedDeltaTime * dodgeMultiplier);
+            }else if (hit.collider.isTrigger)
+            {
+
+            }else
+            {
+                dodging = true;
+                agent.SetDestination(rb.position + dodgeDirection);
+                rb.MovePosition(rb.position + dodgeDirection * movementSpeed * Time.fixedDeltaTime * dodgeMultiplier);
+            }
         }
     }
 }

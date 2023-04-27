@@ -18,7 +18,7 @@ public class Player : Humanoid
         }
         instance = this;
 
-    
+
     }
 
     public static Player GetInstance()
@@ -46,10 +46,14 @@ public class Player : Humanoid
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //rotate weapon to face mouse
-        if(equippedWeapon) {
-            if(equippedWeapon is Melee) {
+        if (equippedWeapon)
+        {
+            if (equippedWeapon is Melee)
+            {
                 TurnWeapon(transform.position, mousePosition, Time.deltaTime);
-            } else {
+            }
+            else
+            {
                 TurnWeapon(transform.position, mousePosition, Time.deltaTime, 45f);
             }
         }
@@ -79,6 +83,8 @@ public class Player : Humanoid
         {
             InventoryUI.GetInstance().ToggleInventory();
         }
+
+
 
     }
 
