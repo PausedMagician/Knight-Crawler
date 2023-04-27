@@ -28,7 +28,6 @@ public class AI2 : Humanoid
     public float timerMax = 30f;
 
     CircularMovement circularMovement;
-    public Projectile projectile;
     public float minaf = 3f;
 
     private void Awake()
@@ -40,6 +39,7 @@ public class AI2 : Humanoid
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         circularMovement = GameObject.Find("DetectionRange").GetComponent<CircularMovement>();
+        
 
     }
 
@@ -265,10 +265,6 @@ public class AI2 : Humanoid
             // default:
             //     break;
             
-            if (projectile.AIdodge() == true && dodgeTimer <= 0)
-            {
-                dodging = true;
-            }
             
             chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * 1.1f));
             // Checkfor(transform.position, target.transform.position);
@@ -288,7 +284,7 @@ public class AI2 : Humanoid
             } else if (circularMovement.Checkfor() == false)
             {
                 chaseTarget = Vector2.MoveTowards(transform.position, target.transform.position * minaf, minaf );
-                Debug.Log(chaseTarget);
+                // Debug.Log(chaseTarget);
             }
             agent.SetDestination(chaseTarget);
             break;
@@ -319,15 +315,15 @@ public class AI2 : Humanoid
             Vector2 closestPoint = possiblePoints[0];
             for (int i = 0; i < possiblePoints.Count; i++)
             {
-                Debug.Log(Vector2.Distance(transform.position, possiblePoints[i]));
-                Debug.Log(Vector2.Distance(transform.position, closestPoint));
+                // Debug.Log(Vector2.Distance(transform.position, possiblePoints[i]));
+                // Debug.Log(Vector2.Distance(transform.position, closestPoint));
                 if (Vector2.Distance(transform.position, possiblePoints[i]) < Vector2.Distance(transform.position, closestPoint))
                 {
                     closestPoint = possiblePoints[i];
                 }
             }
             agent.SetDestination(closestPoint);
-            Debug.DrawLine(transform.position, closestPoint, Color.red);
+            // Debug.DrawLine(transform.position, closestPoint, Color.red);
         }
         TurnWeapon(transform.position, transform.position + agent.desiredVelocity, Time.fixedDeltaTime);
     }
@@ -342,7 +338,7 @@ public class AI2 : Humanoid
             Vector2 dir = new Vector2(Mathf.Cos(Mathf.PI * 2 * i / amountOfPoints), Mathf.Sin(Mathf.PI * 2 * i / amountOfPoints)).MNormalize();
 
             Vector2 point = (Vector2)target.transform.position + dir * distance;
-            Debug.DrawLine(target.transform.position, point, Color.red);
+            // Debug.DrawLine(target.transform.position, point, Color.red);
 
             if (NavMesh.SamplePosition(point, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas))
             {
@@ -464,4 +460,19 @@ public class AI2 : Humanoid
         possiblePoints = new List<Vector2>();
     }
 
+    public void StartDodging(Projectile projectile) 
+    {
+        if(dodgeTimer <= 0) {
+            Vector2 shooterDirection = projectile.shooter.transform.position - transform.position;
+            Vector2 dodgeDirection;
+            if(Random.Range(0, 2) == 1) {
+                dodgeDirection = new Vector2(-shooterDirection.y, shooterDirection.x);
+            } else {
+                dodgeDirection = new Vector2(shooterDirection.y, -shooterDirection.x);
+            }
+            dodging = true;
+            agent.SetDestination(rb.position + dodgeDirection);
+            rb.MovePosition(rb.position + dodgeDirection * movementSpeed * Time.fixedDeltaTime * (dodgeMultiplier * .5f));
+        }
+    }
 }

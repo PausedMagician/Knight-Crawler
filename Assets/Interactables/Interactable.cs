@@ -34,7 +34,7 @@ public class Interactable : MonoBehaviour {
         }
     }
     public virtual void Interact() {
-        Debug.Log("Interacted with " + gameObject.name);
+        // Debug.Log("Interacted with " + gameObject.name);
         interactPrompt.SetActive(false);
         if(interactedText != null) {
             interactedText.SetActive(true);

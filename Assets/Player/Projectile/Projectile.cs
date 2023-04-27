@@ -21,11 +21,11 @@ public class Projectile : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 nextStep = Vector2.Lerp(transform.position, (Vector2)transform.position + (direction * speed), 0.1f);
-        AIdodge();
 
         if (!CheckDirection(transform.position, nextStep))
         {
             Move(nextStep);
+            AIdodge();
         }
         else
         {
@@ -49,7 +49,7 @@ public class Projectile : MonoBehaviour
             return;
         }
         Rotate();
-        speed -= 1 * Time.fixedDeltaTime;
+        // speed -= 1 * Time.fixedDeltaTime;
     }
     void Die()
     {
@@ -58,25 +58,23 @@ public class Projectile : MonoBehaviour
         this.enabled = false;
     }
 
-    public bool AIdodge()
+    public void AIdodge()
     {
-        Vector2 nextStep = Vector2.Lerp(transform.position, (Vector2)transform.position + direction, 1f);
+        // Debug.Log(shooter.Name.fullName);
+        Vector2 nextStep = Vector2.Lerp(transform.position, (Vector2)transform.position + direction, 0.1f);
         Vector2 froms = transform.position;
         Vector2 tos = nextStep;
         Vector2 trueDirection = (tos - froms);
-        RaycastHit2D AIdodge = Physics2D.Raycast(transform.position, trueDirection);
-        Debug.DrawRay(transform.position, trueDirection, Color.green);
-        if (AIdodge.collider.gameObject.name == "AI (1)")
-        {
-            return true;
-        }
-        else if (AIdodge.collider.gameObject.name != "AI (1)")
-        {
-            return false;
-        }
-        else
-        {
-            return false;
+        RaycastHit2D hit;
+        // Debug.DrawRay(transform.position, trueDirection.normalized * 1.2f, Color.green, 0.2f);
+        // Debug.Log($"{AIdodge.collider.gameObject.name} was hit");
+        if(hit = Physics2D.Raycast(transform.position, trueDirection, 1.2f)) {
+            if (hit.collider.gameObject.GetComponent<AI2>())
+            {
+                AI2 ai;
+                ai = hit.collider.gameObject.GetComponent<AI2>();
+                ai.StartDodging(this);
+            }
         }
     }
 

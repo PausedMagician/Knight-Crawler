@@ -27,7 +27,7 @@ public class Item : Interactable
         }
         posOffset = transform.position;
         gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
-        Debug.Log((int)item.rarity);
+        // Debug.Log((int)item.rarity);
     }
 
     public void FixedUpdate() 
