@@ -20,10 +20,10 @@ public class Humanoid : MonoBehaviour
     public int maxHealth = 100;
     public int health = 100;
     public int regenSpeed = 2;
-    public float movementSpeed = 5f;
+    public float movementSpeed = 7f;
     public float sprintspeed = 1.3f;
-    public float dodgeMultiplier = 10f;
-    public float dodgeCooldown = 1f;
+    public float dodgeMultiplier = 7f;
+    public float dodgeCooldown = 0.3f;
     [Header("Script Variables")]
     public bool dodging = false, sprinting = false;
     public Rigidbody2D rb;
@@ -206,12 +206,33 @@ public class Humanoid : MonoBehaviour
     public Armor EquipArmor(Armor armor) {
         Armor tempArmor = equippedArmor;
         this.equippedArmor = armor;
+        maxHealth = 100;
+        foreach (Effect effect in equippedArmor.effects.FindAll(effect => effect.specificType == Effector.HealthBoost))
+        {
+            if(effect.amountType == AmountType.Percentage) {
+                maxHealth = (int)((float)maxHealth * (1f + ((float)effect.amount / 100)));
+                continue;
+            } else {
+                maxHealth += effect.amount;
+            }
+        }
+        movementSpeed = 7;
+        foreach (Effect effect in equippedArmor.effects.FindAll(effect => effect.specificType == Effector.Speed))
+        {
+            if(effect.amountType == AmountType.Percentage) {
+                movementSpeed = ((float)movementSpeed * (1f + ((float)effect.amount / 100)));
+                continue;
+            } else {
+                movementSpeed += effect.amount;
+            }
+        }
         return tempArmor;
     }
 
     public Armor UnEquipArmor() {
         Armor tempArmor = equippedArmor;
         this.equippedArmor = null;
+        maxHealth = 100;
         return tempArmor;
     }
 

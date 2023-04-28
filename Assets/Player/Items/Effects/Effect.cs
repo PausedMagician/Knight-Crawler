@@ -23,7 +23,7 @@ public abstract class Effect
                 return new HealthRegen(amount, obj, amountType);
             case (Effector.Speed, Weapon):
             case (Effector.Speed, Armor):
-                return new Speed(amount, obj, amountType);
+                return new Speed(amount, obj);
             case (Effector.Tracking, Ranged):
             case (Effector.Tracking, Magic):
                 return new Tracking(amount, obj, amountType);

@@ -341,7 +341,7 @@ MonoBehaviour:
   regenSpeed: 2
   movementSpeed: 5
   sprintspeed: 1.3
-  dodgeMultiplier: 10
+  dodgeMultiplier: 2.5
   dodgeCooldown: 1
   dodging: 0
   sprinting: 0
@@ -387,7 +387,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.328125
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 50
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0

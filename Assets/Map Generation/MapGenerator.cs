@@ -62,6 +62,9 @@ public class MapGenerator : MonoBehaviour
     {
         pointsToDebug.Clear();
         linesToDebug.Clear();
+        chestRooms.Clear();
+        hallways.Clear();
+        rooms.Clear();
         if (useRandomSeed)
         {
             seed = UnityEngine.Random.Range(0, 1000000);
@@ -481,13 +484,15 @@ public class MapGenerator : MonoBehaviour
     public void PlaceBonfire() {
         //Place 1 Bonfire in the center of a random room, then find a room far away from the Bonfire and place an Exit there
         Rect room = rooms[pseudoRandom.Next(rooms.Count)];
+        rooms.Remove(room);
         Instantiate(bonfirePrefab, new Vector3(room.center.x, room.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
-        Rect chestRoom = rooms[pseudoRandom.Next(rooms.Count)];
-        while (chestRoom.center.x == room.center.x && chestRoom.center.y == room.center.y) {
-            chestRoom = rooms[pseudoRandom.Next(rooms.Count)];
+        Rect exitRoom = rooms[pseudoRandom.Next(rooms.Count)];
+        while (exitRoom.center.x == room.center.x && exitRoom.center.y == room.center.y) {
+            exitRoom = rooms[pseudoRandom.Next(rooms.Count)];
         }
+        chestRooms.Add(exitRoom);
         // Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(chestRoom.center.x, chestRoom.center.y * 2, 0), Quaternion.identity, propsContainer.transform);
-        Instantiate(exitPrefab, new Vector3(chestRoom.center.x, chestRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
+        Instantiate(exitPrefab, new Vector3(exitRoom.center.x, exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
     }
 
     IEnumerator PlaceEnemies() {

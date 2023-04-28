@@ -476,6 +476,10 @@ public class AI2 : Humanoid
 
     public void StartDodging(Projectile projectile)
     {
+        if(state == AIState.Dead)
+        {
+            return;
+        }
         if (dodgeTimer <= 0)
         {
             Vector2 shooterDirection = projectile.shooter.transform.position - transform.position;
@@ -489,23 +493,60 @@ public class AI2 : Humanoid
                 dodgeDirection = new Vector2(shooterDirection.y, -shooterDirection.x);
             }
             
-            RaycastHit2D hit;
-            hit = Physics2D.Raycast(transform.position, dodgeDirection, 5f);
+            RaycastHit2D[] hits;
+            //Order by distance closest hit first
+            hits = Physics2D.RaycastAll(rb.position, dodgeDirection, dodgeMultiplier).OrderBy(h => h.distance).ToArray();
+            Debug.DrawRay(transform.position, dodgeDirection.normalized * 1f, Color.red, 6f);
             // Debug.DrawRay(transform.position, dodgeDirection.normalized * 3f, Color.red, 6f);
-            if (hit.collider.gameObject)
+            bool dodge = true;
+            foreach (RaycastHit2D hit in hits)
             {
+                if(hit.collider.gameObject.GetComponent<AI2>() == this)
+                {
+                    continue;
+                }
+                else if (hit.collider.isTrigger)
+                {
+                    continue;
+                }
+                else {
+                    dodge = false;
+                    break;
+                }
+            }
+            if(dodge)
+            {
+                dodging = true;
+                agent.SetDestination(rb.position + dodgeDirection);
+                rb.MovePosition(Vector2.Lerp(rb.position, (rb.position + dodgeDirection.normalized * dodgeMultiplier), 0.5f));
+            } else {
                 dodgeDirection = dodgeDirection*-1;
-                dodging = true;
-                agent.SetDestination(rb.position + dodgeDirection);
-                rb.MovePosition(rb.position + dodgeDirection * movementSpeed * Time.fixedDeltaTime * dodgeMultiplier);
-            }else if (hit.collider.isTrigger)
-            {
-
-            }else
-            {
-                dodging = true;
-                agent.SetDestination(rb.position + dodgeDirection);
-                rb.MovePosition(rb.position + dodgeDirection * movementSpeed * Time.fixedDeltaTime * dodgeMultiplier);
+                RaycastHit2D[] hits2;
+                hits2 = Physics2D.RaycastAll(rb.position, dodgeDirection, dodgeMultiplier).OrderBy(h => h.distance).ToArray();
+                Debug.DrawRay(transform.position, dodgeDirection.normalized * 1f, Color.red, 6f);
+                // Debug.DrawRay(transform.position, dodgeDirection.normalized * 3f, Color.red, 6f);
+                bool dodge2 = true;
+                foreach (RaycastHit2D hit in hits2)
+                {
+                    if(hit.collider.gameObject.GetComponent<AI2>() == this)
+                    {
+                        continue;
+                    }
+                    else if (hit.collider.isTrigger)
+                    {
+                        continue;
+                    }
+                    else {
+                        dodge2 = false;
+                        break;
+                    }
+                }
+                if(dodge2)
+                {
+                    dodging = true;
+                    agent.SetDestination(rb.position + dodgeDirection);
+                    rb.MovePosition(Vector2.Lerp(rb.position, (rb.position + dodgeDirection.normalized * dodgeMultiplier), 0.5f));
+                }
             }
         }
     }

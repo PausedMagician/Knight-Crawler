@@ -67,19 +67,19 @@ public sealed class GameController : MonoBehaviour
         Weapon thing = null;
         for (int i = 0; i < 15; i++)
         {
-            thing = CreateMelee((Rarity)Random.Range(0, 5), Random.Range(1, 10));
+            thing = CreateWeapon(GameController.GetRarity(), Random.Range(1, 10), 0);
             player.inventory.AddItem(thing);
         }
         for (int i = 0; i < 15; i++)
         {
-            thing = CreateRanged((Rarity)Random.Range(0, 5), Random.Range(1, 10));
+            thing = CreateWeapon(GameController.GetRarity(), Random.Range(1, 10), 1);
             player.inventory.AddItem(thing);
         }
         player.inventory.EquipWeapon(thing);
         Armor armor = null;
         for (int i = 0; i < 10; i++)
         {
-            armor = CreateArmor((Rarity)Random.Range(0, 5), Random.Range(1, 10));
+            armor = CreateArmor(GameController.GetRarity(), Random.Range(1, 10));
             player.inventory.AddItem(armor);
         }
         player.inventory.EquipArmor(armor);
@@ -162,19 +162,46 @@ public sealed class GameController : MonoBehaviour
         return points;
     }
 
-    public Weapon CreateWeapon(Rarity rarity, int level) {
-        int weaponType = Random.Range(0, 3);
+    public Weapon CreateWeapon(Rarity rarity, int level, int weaponType) {
+        Weapon weapon = null;
         switch (weaponType)
         {
             case 0:
-                return CreateMelee(rarity, level);
+                weapon = CreateMelee(rarity, level);
+                break;
             case 1:
-                return CreateRanged(rarity, level);
+                weapon = CreateRanged(rarity, level);
+                break;
             case 2:
-                // return CreateMagic(rarity, level, random);
+                // return CreateMagic(rarity, level);
+                // break;
             default:
-                return CreateMelee(rarity, level);
+                weapon = CreateMelee(rarity, level);
+                break;
         }
+        DamageCalculation(weapon);
+        return weapon;
+    }
+    public Weapon CreateWeapon(Rarity rarity, int level) {
+        int weaponType = Random.Range(0, 3);
+        Weapon weapon = null;
+        switch (weaponType)
+        {
+            case 0:
+                weapon = CreateMelee(rarity, level);
+                break;
+            case 1:
+                weapon = CreateRanged(rarity, level);
+                break;
+            case 2:
+                // return CreateMagic(rarity, level);
+                // break;
+            default:
+                weapon = CreateMelee(rarity, level);
+                break;
+        }
+        DamageCalculation(weapon);
+        return weapon;
     }
     public Weapon CreateWeapon(Rarity rarity, int level, System.Random random) {
         int weaponType = random.Next(0, 3);
@@ -194,6 +221,11 @@ public sealed class GameController : MonoBehaviour
                 weapon = CreateMelee(rarity, level, random);
                 break;
         }
+        DamageCalculation(weapon);
+        return weapon;
+    }
+
+    public Weapon DamageCalculation(Weapon weapon) {
         //For each effect in weapon.effects where effect.type == EffectType.Damage, add effect.amount to weapon.damage
         foreach (Effect effect in weapon.effects.FindAll(effect => effect.type == EffectType.Damage).ToList())
         {
@@ -220,7 +252,6 @@ public sealed class GameController : MonoBehaviour
         }
         return weapon;
     }
-
     public Melee CreateMelee(Rarity rarity, int level)
     {
         int points = GetPoints(rarity, level);
@@ -371,7 +402,6 @@ public sealed class GameController : MonoBehaviour
                 armor.defense += (int)(effect.amount * 0.01f * armor.defense);
             }
         }
-
         return armor;
     }
     public Armor CreateArmor(Rarity rarity, int level, System.Random random)
@@ -396,6 +426,19 @@ public sealed class GameController : MonoBehaviour
         armor.level = level;
         armor.sprite = armorSprites[(int)armor.armorType][selected];
         armor.rarity = rarity;
+        //Get all effects of defense type and add them to the armor variable
+        armor.defense = 0;
+        foreach (Effect effect in effects.FindAll(effect => effect.specificType == Effector.Damage).ToList())
+        {
+            if(effect.amountType == AmountType.Flat)
+            {
+                armor.defense += effect.amount;
+            }
+            else
+            {
+                armor.defense += (int)(effect.amount * 0.01f * armor.defense);
+            }
+        }
         return armor;
     }
     
