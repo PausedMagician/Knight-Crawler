@@ -480,6 +480,7 @@ public class AI2 : Humanoid
         {
             return;
         }
+        Attacked(projectile.shooter);
         if (dodgeTimer <= 0)
         {
             Vector2 shooterDirection = projectile.shooter.transform.position - transform.position;

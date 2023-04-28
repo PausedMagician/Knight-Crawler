@@ -23,7 +23,7 @@ public class Bonfire : Interactable
             active = true;
             animator.SetBool("Active", active);
             animator.SetTrigger("Light");
-            GameController.SetLastRested(this);
+            GameController.GetInstance().SetLastRested(this);
         }
     }
 
@@ -34,13 +34,44 @@ public class Bonfire : Interactable
         animator = GetComponent<Animator>();
         if (active)
         {
-            GameController.SetLastRested(this);
+            GameController.GetInstance().SetLastRested(this);
         }
         GameController.OnBonfireUpdate += UpdateBonfire;
     }
+    private void OnEnable() {
+        GameController.OnBonfireUpdate += UpdateBonfire;
+    }
+    private void OnDisable() {
+        GameController.OnBonfireUpdate -= UpdateBonfire;
+    }
+    public void StartBonfire() {
+        if (active)
+        {
+            GameController.GetInstance().SetLastRested(this);
+        }
+    }
     public void UpdateBonfire()
     {
+        Debug.Log(this);
+        if(!this.animator) {
+            this.animator = this.gameObject.GetComponent<Animator>();
+        }
+        if (GameController.GetInstance().lastRested == this)
+        {
+            active = true;
+        }
+        else
+        {
+            active = false;
+        }
         animator.SetBool("Active", active);
+    }
+
+    private void OnDestroy() {
+        GameController.OnBonfireUpdate -= UpdateBonfire;
+        if(active) {
+            GameController.GetInstance().SetLastRested(null);
+        }
     }
 
     private void OnDrawGizmosSelected()

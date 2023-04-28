@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Threading.Tasks;
 using NavMeshPlus.Components;
+using System.Linq;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -23,20 +24,20 @@ public class MapGenerator : MonoBehaviour
     public int width;
     public int height;
     public int seed;
-    public bool useRandomSeed;
+    public bool useRandomSeed = true;
     public int minRoomSize;
     public int maxRoomSize;
     public int minRooms;
     public int maxRooms;
-    public int minRoomDistance;
+    public int minRoomDistance = 2;
     public int maxRoomDistance;
     public int level = 0;
     System.Random pseudoRandom;
     public int agentAmount;
     public int walkMin;
     public int walkMax;
-    public int enemyMin;
-    public int enemyMax;
+    public float minHallwaysMultiplier = 1;
+    public float maxHallwayMultiplier = 3;
     [Header("Decoration Settings")]
     public int decorMin;
     public int decorMax;
@@ -44,38 +45,59 @@ public class MapGenerator : MonoBehaviour
     public GameObject propsContainer;
     public GameObject[] lightPrefabs;
     public GameObject[] enemyPrefabs;
+    public int enemyMin;
+    public int enemyMax;
     public GameObject[] chestPrefabs;
+    public int chestChance;
     public GameObject bonfirePrefab;
     public GameObject exitPrefab;
 
     [Header("Debug")]
     public bool debugRooms;
-    public List<Rect> rooms = new List<Rect>();
+    private DebugRoom startRoom;
+    public List<DebugRoom> rooms = new List<DebugRoom>();
     public List<Rect> chestRooms = new List<Rect>();
     public List<Rect[]> hallways = new List<Rect[]>();
     public bool debugPoints;
     public List<Vector2> pointsToDebug = new List<Vector2>();
     public bool debugLines;
-    public List<Vector2[]> linesToDebug = new List<Vector2[]>();
+    public List<DebugPoint> linesToDebug = new List<DebugPoint>();
+
+    private void Start() {
+        GenerateMap();
+        GameController.GetInstance().StartGame();
+    }
 
     public void GenerateMap()
     {
-        pointsToDebug.Clear();
-        linesToDebug.Clear();
-        chestRooms.Clear();
-        hallways.Clear();
-        rooms.Clear();
+        var watch = new System.Diagnostics.Stopwatch();
+
+        watch.Start();
+
         if (useRandomSeed)
         {
             seed = UnityEngine.Random.Range(0, 1000000);
         }
         pseudoRandom = new System.Random((seed + level).GetHashCode());
         ClearMap();
-        StartCoroutine(CreateRooms());
+        CreateRooms();
+        Invoke("CreateNav", 1);
+
+        watch.Stop();
+        Debug.Log($"Execution Time: {watch.ElapsedMilliseconds} ms");
+    }
+
+    void CreateNav() {
+        GameObject.FindObjectOfType<NavMeshSurface>().BuildNavMeshAsync();
     }
 
     public void ClearMap()
     {
+        pointsToDebug.Clear();
+        linesToDebug.Clear();
+        chestRooms.Clear();
+        hallways.Clear();
+        rooms.Clear();
         DestroyImmediate(propsContainer);
         propsContainer = new GameObject("Props");
         propsContainer.transform.parent = transform;
@@ -97,7 +119,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    public IEnumerator CreateRooms()
+    public void CreateRooms()
     {
         rooms.Clear();
         int roomCount = pseudoRandom.Next(minRooms, maxRooms);
@@ -105,11 +127,11 @@ public class MapGenerator : MonoBehaviour
         {
             int roomWidth = pseudoRandom.Next(minRoomSize, maxRoomSize);
             int roomHeight = pseudoRandom.Next(minRoomSize / 2, maxRoomSize / 2);
-            int roomX = pseudoRandom.Next(2, (width * 2) - 2 - roomWidth);
-            int roomY = pseudoRandom.Next(2, height - 2 - roomHeight);
+            int roomX = pseudoRandom.Next(0, (width * 2) - roomWidth);
+            int roomY = pseudoRandom.Next(0, height - roomHeight);
             Rect room = new Rect(roomX, roomY, roomWidth, roomHeight);
             bool overlaps = false;
-            foreach (Rect otherRoom in rooms)
+            foreach (Rect otherRoom in rooms.Select(r => r.room).ToList())
             {
                 Rect sizedUpRoom = otherRoom;
                 sizedUpRoom.xMin -= minRoomDistance;
@@ -124,10 +146,10 @@ public class MapGenerator : MonoBehaviour
             }
             if (!overlaps)
             {
-                rooms.Add(room);
+                rooms.Add(new DebugRoom(room, Color.red));
             }
         }
-        foreach (Rect room in rooms)
+        foreach (Rect room in rooms.Select(r => r.room).ToList())
         {
             //Walls are 2 tiles tall and 1 tile wide
             for (int x = (int)room.xMin; x < room.xMax; x++)
@@ -181,7 +203,7 @@ public class MapGenerator : MonoBehaviour
         }
         //Make minimum span tree between rooms
         List<Rect> minimumSpanTree = new List<Rect>();
-        List<Rect> MSPRooms = new List<Rect>(this.rooms);
+        List<Rect> MSPRooms = new List<Rect>(this.rooms.Select(r => r.room).ToList());
         minimumSpanTree.Add(MSPRooms[0]);
         MSPRooms.RemoveAt(0);
         while (MSPRooms.Count > 0)
@@ -207,7 +229,27 @@ public class MapGenerator : MonoBehaviour
             hallways.Add(new Rect[] { closestRoom, closestMinimumSpanTreeRoom });
             MSPRooms.Remove(closestRoom);
         }
-
+        int failsafe = 0;
+        while (hallways.Count < Mathf.RoundToInt((float)rooms.Count * ((float)pseudoRandom.Next(Mathf.RoundToInt(minHallwaysMultiplier * 10), Mathf.RoundToInt(maxHallwayMultiplier * 10)) / 10f)))
+        {
+            failsafe++;
+            // Debug.Log("Failsafe: " + failsafe + "\nHallways: " + hallways.Count + "\nRooms: " + rooms.Count + "\nRooms / 2: " + rooms.Count / 2 + "\n");
+            if (failsafe > rooms.Count * 2)
+            {
+                break;
+            }
+            Rect startRoom = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(0, rooms.Count)];
+            Rect endRoom = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(0, rooms.Count)];
+            if (startRoom == endRoom)
+            {
+                continue;
+            }
+            if (hallways.Contains(new Rect[] { startRoom, endRoom }) || hallways.Contains(new Rect[] { endRoom, startRoom }))
+            {
+                continue;
+            }
+            hallways.Add(new Rect[] { startRoom, endRoom });
+        }
         foreach (Rect[] hallway in hallways)
         {
             Rect startRoom = hallway[0];
@@ -218,7 +260,7 @@ public class MapGenerator : MonoBehaviour
             Vector2Int previousTile = path[0];
             foreach (Vector2Int tile in path)
             {
-                linesToDebug.Add(new Vector2[] { previousTile, tile });
+                linesToDebug.Add(new DebugPoint(new Vector2[] { previousTile, tile }, Color.red));
                 wallTilemap.SetTile(new Vector3Int(tile.x, tile.y, 0), null);
                 roofTilemap.SetTile(new Vector3Int(tile.x, tile.y * 2, 0), null);
                 roofTilemap.SetTile(new Vector3Int(tile.x, (tile.y * 2) + 1, 0), null);
@@ -229,11 +271,10 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        StartCoroutine(CleanUp());
-        StartCoroutine(PlaceProps());
+        CleanUp();
+        PlaceProps();
         PlaceBonfire();
-        StartCoroutine(PlaceChests());
-        yield return null;
+        PlaceChests();
     }
 
     private Vector2Int[] BestCoordinateMatch(Rect startRoom, Rect endRoom)
@@ -242,27 +283,27 @@ public class MapGenerator : MonoBehaviour
         float bestDistance = float.MaxValue;
         Vector2Int[] startRoomCoordinates =
         {
-            // new Vector2Int((int)startRoom.xMin, (int)startRoom.yMin),
-            // new Vector2Int((int)startRoom.xMin, (int)startRoom.yMax),
-            // new Vector2Int((int)startRoom.xMax, (int)startRoom.yMin),
-            // new Vector2Int((int)startRoom.xMax, (int)startRoom.yMax),
-            new Vector2Int((int)startRoom.x, (int)startRoom.y),
-            new Vector2Int((int)startRoom.x, (int)startRoom.yMax),
-            new Vector2Int((int)startRoom.x, (int)startRoom.yMin),
-            new Vector2Int((int)startRoom.xMax, (int)startRoom.y),
-            new Vector2Int((int)startRoom.xMin, (int)startRoom.y)
+            new Vector2Int((int)startRoom.xMin + 1, (int)startRoom.yMin + 1),
+            new Vector2Int((int)startRoom.xMin + 1, (int)startRoom.yMax - 1),
+            new Vector2Int((int)startRoom.xMax - 1, (int)startRoom.yMin + 1),
+            new Vector2Int((int)startRoom.xMax - 1, (int)startRoom.yMax - 1),
+            new Vector2Int((int)startRoom.center.x, (int)startRoom.center.y),
+            new Vector2Int((int)startRoom.center.x, (int)startRoom.yMax - 1),
+            new Vector2Int((int)startRoom.center.x, (int)startRoom.yMin + 1),
+            new Vector2Int((int)startRoom.xMax - 1, (int)startRoom.center.y),
+            new Vector2Int((int)startRoom.xMin + 1, (int)startRoom.center.y)
         };
         Vector2Int[] endRoomCoordinates =
         {
-            // new Vector2Int((int)endRoom.xMin, (int)endRoom.yMin),
-            // new Vector2Int((int)endRoom.xMin, (int)endRoom.yMax),
-            // new Vector2Int((int)endRoom.xMax, (int)endRoom.yMin),
-            // new Vector2Int((int)endRoom.xMax, (int)endRoom.yMax),
-            new Vector2Int((int)endRoom.x, (int)endRoom.y),
-            new Vector2Int((int)endRoom.x, (int)endRoom.yMax),
-            new Vector2Int((int)endRoom.x, (int)endRoom.yMin),
-            new Vector2Int((int)endRoom.xMax, (int)endRoom.y),
-            new Vector2Int((int)endRoom.xMin, (int)endRoom.y)
+            new Vector2Int((int)endRoom.xMin + 1, (int)endRoom.yMin + 1),
+            new Vector2Int((int)endRoom.xMin + 1, (int)endRoom.yMax - 1),
+            new Vector2Int((int)endRoom.xMax - 1, (int)endRoom.yMin + 1),
+            new Vector2Int((int)endRoom.xMax - 1, (int)endRoom.yMax - 1),
+            new Vector2Int((int)endRoom.center.x, (int)endRoom.center.y),
+            new Vector2Int((int)endRoom.center.x, (int)endRoom.yMax - 1),
+            new Vector2Int((int)endRoom.center.x, (int)endRoom.yMin + 1),
+            new Vector2Int((int)endRoom.xMax - 1, (int)endRoom.center.y),
+            new Vector2Int((int)endRoom.xMin + 1, (int)endRoom.center.y)
         };
         foreach (Vector2Int startCoordinate in startRoomCoordinates)
         {
@@ -279,13 +320,13 @@ public class MapGenerator : MonoBehaviour
         }
         pointsToDebug.Add(bestCoordinateMatch[0]);
         pointsToDebug.Add(bestCoordinateMatch[1]);
-        linesToDebug.Add(new Vector2[] { bestCoordinateMatch[0], bestCoordinateMatch[1] });
+        linesToDebug.Add(new DebugPoint(new Vector2[] { bestCoordinateMatch[0], bestCoordinateMatch[1] }, Color.yellow));
         return bestCoordinateMatch;
     }
 
     private List<Vector2Int> AStar(Vector2Int start, Vector2Int end)
     {
-        //AStart algorithm from start to end point
+        //AStar algorithm from start to end point
         List<Vector2Int> path = new List<Vector2Int>();
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
         Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
@@ -325,7 +366,7 @@ public class MapGenerator : MonoBehaviour
 
     }
 
-    IEnumerator PlaceLighting()
+    void PlaceLighting()
     {
         //Scatter lighting over empty areas of the map
         for (int x = 0; x < width * 2; x++)
@@ -403,13 +444,12 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        yield return null;
     }
 
-    IEnumerator PlaceProps()
+    void PlaceProps()
     {
         //Place props in rooms
-        foreach (Rect room in rooms)
+        foreach (Rect room in rooms.Select(r => r.room).ToList())
         {
             int propAmount = pseudoRandom.Next(decorMin, decorMax);
             for (int i = 0; i < propAmount; i++)
@@ -429,10 +469,27 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        yield return null;
     }
 
-    IEnumerator PlaceChests() {
+    void PlaceChests()
+    {
+        //Get Random Rooms and place chests
+        foreach (Rect room in rooms.Where(r => r.room != startRoom.room && !chestRooms.Contains(r.room)).Select(r => r.room).ToList())
+        {
+            if (pseudoRandom.Next(0, 100) < chestChance)
+            {
+                int x = (int)room.center.x;
+                int y = (int)room.yMax;
+                //Finding location untill there's space for it.
+                while (wallTilemap.GetTile(new Vector3Int(x, y, 0)) != null)
+                {
+                    y--;
+                }
+                linesToDebug.Add(new DebugPoint(new Vector2[] { new Vector2Int((int)room.center.x, (int)room.center.y), new Vector2Int(x, y - 1) }, Color.cyan));
+                Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(x + 0.5f, (y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
+                rooms[rooms.FindIndex(r => r.room == room)] = new DebugRoom(room, Color.yellow);
+            }
+        }
         //Find secluded places and place chests
         for (int x = 0; x < width * 2; x++)
         {
@@ -444,30 +501,20 @@ public class MapGenerator : MonoBehaviour
                     {
                         if (wallTilemap.GetTile(new Vector3Int(x + 1, y, 0)) == null && wallTilemap.GetTile(new Vector3Int(x - 1, y, 0)) == null)
                         {
+                            if (CheckIfInHallway(new Vector2Int(x, y))) continue;
                             if (pseudoRandom.Next(0, 100) < 10)
                             {
-                                //Check if this is inside a room and if so put the room in chestRooms
-                                Rect insideRoom = new Rect();
-                                bool insideRoomCheck = false;
-                                bool allowed = true;
-                                foreach (Rect room in rooms)
+                                bool inRoom = false;
+                                //Check if this is inside a room
+                                foreach (Rect room in rooms.Select(r => r.room).ToList())
                                 {
                                     if (room.Contains(new Vector2(x, y)))
                                     {
-                                        if(!chestRooms.Contains(room)) {
-                                            insideRoomCheck = true;
-                                            insideRoom = room;
-                                            chestRooms.Add(room);
-                                            linesToDebug.Add(new Vector2[] { room.center, new Vector2(insideRoom.center.x + 0.5f, (insideRoom.yMax) - 1f) });
-                                        } else {
-                                            allowed = false;
-                                        }
+                                        inRoom = true;
                                     }
                                 }
-                                if(!allowed) continue;
-                                if(insideRoomCheck) {
-                                    Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(insideRoom.center.x + 0.5f, (insideRoom.yMax * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
-                                } else {
+                                if (!inRoom)
+                                {
                                     Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(x + 0.5f, (y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
                                 }
                             }
@@ -476,29 +523,36 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        GameObject.FindObjectOfType<NavMeshSurface>().BuildNavMesh();
-        StartCoroutine(PlaceEnemies());
-        yield return null;
+        PlaceEnemies();
     }
 
-    public void PlaceBonfire() {
+    public void PlaceBonfire()
+    {
         //Place 1 Bonfire in the center of a random room, then find a room far away from the Bonfire and place an Exit there
-        Rect room = rooms[pseudoRandom.Next(rooms.Count)];
-        rooms.Remove(room);
-        Instantiate(bonfirePrefab, new Vector3(room.center.x, room.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
-        Rect exitRoom = rooms[pseudoRandom.Next(rooms.Count)];
-        while (exitRoom.center.x == room.center.x && exitRoom.center.y == room.center.y) {
-            exitRoom = rooms[pseudoRandom.Next(rooms.Count)];
+        Rect room = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(rooms.Count)];
+        GameObject bon = Instantiate(bonfirePrefab, new Vector3(room.center.x, room.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
+        Bonfire bonfire = bon.GetComponent<Bonfire>();
+        bonfire.active = true;
+        bonfire.StartBonfire();
+        startRoom = new DebugRoom(room, Color.green);
+        rooms[rooms.FindIndex(r => r.room == startRoom.room)] = startRoom;
+        Rect exitRoom = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(rooms.Count)];
+        while (exitRoom.center.x == room.center.x && exitRoom.center.y == room.center.y)
+        {
+            exitRoom = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(rooms.Count)];
         }
+        rooms[rooms.FindIndex(r => r.room == exitRoom)] = new DebugRoom(exitRoom, new Color(255f/255f, 117f/255f, 24f/255f));
         chestRooms.Add(exitRoom);
         // Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(chestRoom.center.x, chestRoom.center.y * 2, 0), Quaternion.identity, propsContainer.transform);
         Instantiate(exitPrefab, new Vector3(exitRoom.center.x, exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
     }
 
-    IEnumerator PlaceEnemies() {
+    void PlaceEnemies()
+    {
         //Scatter enemies in rooms, but not in the room with the Bonfire and if there is a chest room make the enemy level slightly higher, and their amount more
-        foreach (Rect room in rooms)
+        foreach (Rect room in rooms.Select(r => r.room).ToList())
         {
+            if (room == startRoom.room) continue;
             if (!chestRooms.Contains(room))
             {
                 int enemyAmount = pseudoRandom.Next(enemyMin, enemyMax);
@@ -538,10 +592,9 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        yield return null;
     }
 
-    IEnumerator CleanUp(int iterations = 2)
+    void CleanUp(int iterations = 2)
     {
         for (int iteration = 0; iteration < iterations; iteration++)
         {
@@ -586,33 +639,72 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        StartCoroutine(PlaceLighting());
-        yield return null;
+        PlaceLighting();
+    }
+
+    bool CheckIfInHallway(Vector2Int point)
+    {
+        foreach (DebugPoint debugPoint in linesToDebug)
+        {
+            if (debugPoint.points[0].x == point.x && debugPoint.points[0].y == point.y)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        if(pointsToDebug != null && debugPoints) {
+        if (pointsToDebug != null && debugPoints)
+        {
             foreach (Vector2 point in pointsToDebug)
             {
                 Gizmos.DrawSphere(point, 0.1f);
             }
         }
-        if(linesToDebug != null && debugLines) {
-            foreach (Vector2[] line in linesToDebug)
+        if (linesToDebug != null && debugLines)
+        {
+            foreach (DebugPoint point in linesToDebug)
             {
-                Gizmos.DrawLine(new Vector2(line[0].x, line[0].y * 2), new Vector2(line[1].x, line[1].y * 2));
+                Gizmos.color = point.color;
+                Gizmos.DrawLine(new Vector2(point.points[0].x, point.points[0].y * 2), new Vector2(point.points[1].x, point.points[1].y * 2));
             }
         }
-        if(rooms != null && debugRooms) {
-            foreach (Rect room in rooms)
+        if (rooms != null && debugRooms)
+        {
+            foreach (DebugRoom room in rooms)
             {
-                Gizmos.DrawWireCube(new Vector3(room.center.x, room.center.y * 2, 0), new Vector3(room.width, room.height * 2, 0));
+                Gizmos.color = room.color;
+                Gizmos.DrawWireCube(new Vector3(room.room.center.x, room.room.center.y * 2, 0), new Vector3(room.room.width, room.room.height * 2, 0));
             }
         }
     }
 
+}
+
+[System.Serializable]
+public struct DebugPoint
+{
+    public Vector2[] points;
+    public Color color;
+    public DebugPoint(Vector2[] points, Color color)
+    {
+        this.points = points;
+        this.color = color;
+    }
+}
+[System.Serializable]
+public struct DebugRoom
+{
+    public Rect room;
+    public Color color;
+    public DebugRoom(Rect room, Color color)
+    {
+        this.room = room;
+        this.color = color;
+    }
 }
 
 internal class PriorityQueue<T>
@@ -646,3 +738,4 @@ internal class PriorityQueue<T>
         return bestItem;
     }
 }
+

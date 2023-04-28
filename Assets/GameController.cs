@@ -16,6 +16,8 @@ public sealed class GameController : MonoBehaviour
 
     void Awake()
     {
+        //Remove all listeners from OnBonfireUpdate.
+        OnBonfireUpdate = null;
         UpdateSprites();
         names = JObject.Parse(GameController.LoadResourceTextfile("NamesLarger.json"));
         firstNames = names.GetValue("firstName") as JArray;
@@ -38,8 +40,8 @@ public sealed class GameController : MonoBehaviour
 
     #endregion
 
-    public static Bonfire lastRested;
-    public static void SetLastRested(Bonfire bonfire)
+    public Bonfire lastRested;
+    public void SetLastRested(Bonfire bonfire)
     {
         lastRested = bonfire;
         OnBonfireUpdate?.Invoke();
@@ -491,10 +493,12 @@ public sealed class GameController : MonoBehaviour
         return targetFile.text;
     }
 
-    public static void StartGame()
+    public void StartGame()
     {
-        if (lastRested != null)
+        Debug.Log("Starting game");
+        if (this.lastRested != null)
         {
+            Debug.Log("Loading last rested");
             Player.GetInstance().transform.position = (Vector2)lastRested.transform.position + lastRested.spawnPoint;
         }
     }

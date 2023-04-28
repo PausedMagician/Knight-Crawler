@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -65,15 +66,19 @@ public class Projectile : MonoBehaviour
         Vector2 froms = transform.position;
         Vector2 tos = nextStep;
         Vector2 trueDirection = (tos - froms);
-        RaycastHit2D hit;
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, trueDirection, 1.2f).OrderBy(h => h.distance).ToArray();
         // Debug.DrawRay(transform.position, trueDirection.normalized * 1.2f, Color.green, 0.2f);
         // Debug.Log($"{AIdodge.collider.gameObject.name} was hit");
-        if(hit = Physics2D.Raycast(transform.position, trueDirection, 1.2f)) {
-            if (hit.collider.gameObject.GetComponent<AI2>())
-            {
-                AI2 ai;
-                ai = hit.collider.gameObject.GetComponent<AI2>();
-                ai.StartDodging(this);
+        if(hits.Length > 0) {
+            foreach(RaycastHit2D hit in hits) {
+                if(hit.collider.gameObject.GetComponent<AI2>()) {
+                    AI2 ai;
+                    ai = hit.collider.gameObject.GetComponent<AI2>();
+                    ai.StartDodging(this);
+                }
+                else if(hit.collider.isTrigger) {
+                    continue;
+                }
             }
         }
     }
@@ -81,40 +86,39 @@ public class Projectile : MonoBehaviour
     bool CheckDirection(Vector2 from, Vector2 to)
     {
         Vector2 trueDirection = (to - from);
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, trueDirection, trueDirection.magnitude);
-        if (hit)
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, trueDirection, trueDirection.magnitude).OrderBy(h => h.distance).ToArray();
+        if (hits.Length > 0)
         {
-            Humanoid attacked = hit.collider.GetComponent<Humanoid>();
-            if (attacked)
-            {
-                if (attacked == shooter)
+            foreach(RaycastHit2D hit in hits) {
+                Humanoid attacked = hit.collider.GetComponent<Humanoid>();
+                if (attacked)
                 {
-                    return false;
+                    if (attacked == shooter)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        attacked.TakeDamage(shooter.equippedWeapon, shooter);
+                        transform.SetParent(attacked.transform);
+                        // Debug.Log($"{hit.collider.gameObject.name} was hit");
+                        transform.position = hit.point;
+                        return true;
+                    }
+                }
+                else if (hit.collider.isTrigger)
+                {
+                    continue;
                 }
                 else
                 {
-                    attacked.TakeDamage(shooter.equippedWeapon, shooter);
-                    transform.SetParent(attacked.transform);
                     // Debug.Log($"{hit.collider.gameObject.name} was hit");
                     transform.position = hit.point;
                     return true;
                 }
             }
-            else if (hit.collider.isTrigger)
-            {
-                return false;
-            }
-            else
-            {
-                // Debug.Log($"{hit.collider.gameObject.name} was hit");
-                transform.position = hit.point;
-                return true;
-            }
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
 }

@@ -6,7 +6,8 @@ using UnityEngine.Events;
 using TMPro;
 
 [System.Serializable]
-public struct HumanoidName {
+public struct HumanoidName
+{
     public string fullName;
     public string firstName;
     public string[] surNames;
@@ -37,10 +38,12 @@ public class Humanoid : MonoBehaviour
     public UnityAction onDamage;
 
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         GameController.Tick += Regen;
     }
-    private void OnDisable() {
+    private void OnDisable()
+    {
         GameController.Tick -= Regen;
     }
 
@@ -53,11 +56,13 @@ public class Humanoid : MonoBehaviour
     //     Start();
     // }
 
-    public void Start() {
+    public void Start()
+    {
         rb = GetComponent<Rigidbody2D>();
         rb.freezeRotation = true;
         weaponManifesto = GetComponentInChildren<WeaponManifesto>();
-        if(!weaponManifesto) {
+        if (!weaponManifesto)
+        {
             GameObject gam = Instantiate(Resources.Load<GameObject>("Prefabs/WeaponManifesto"), transform);
             weaponManifesto = gam.GetComponent<WeaponManifesto>();
             weaponManifesto.owner = this;
@@ -67,33 +72,48 @@ public class Humanoid : MonoBehaviour
         health = maxHealth;
     }
 
-    public void FixedUpdate() {
+    public void FixedUpdate()
+    {
         Move();
-        if (dodgeTimer > 0) {
+        if (dodgeTimer > 0)
+        {
             dodgeTimer -= Time.fixedDeltaTime;
         }
     }
 
-    void Move() {
-        if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
-            if (sprinting) {
+    void Move()
+    {
+        if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
+        {
+            if (sprinting)
+            {
                 rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * sprintspeed * Time.fixedDeltaTime);
                 sprinting = false;
-            }else if (dodging) {
+            }
+            else if (dodging)
+            {
                 dodgeTimer = dodgeCooldown;
                 dodging = false;
-            } else if (dodgeTimer > 0.25f) {
+            }
+            else if (dodgeTimer > 0.25f)
+            {
                 rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime * dodgeMultiplier);
-            } else {
+            }
+            else
+            {
                 rb.MovePosition(rb.position + movementDirection.normalized * movementSpeed * Time.fixedDeltaTime);
             }
-        } else {
+        }
+        else
+        {
             movementDirection = Vector2.zero;
         }
     }
 
-    protected void TurnWeapon(Vector2 _transform, Vector2 target, float _time, float extraDegrees = 0f) {
-        if(target == Vector2.zero) {
+    protected void TurnWeapon(Vector2 _transform, Vector2 target, float _time, float extraDegrees = 0f)
+    {
+        if (target == Vector2.zero)
+        {
             return;
         }
         Vector2 direction = target - _transform;
@@ -109,57 +129,93 @@ public class Humanoid : MonoBehaviour
         weaponManifesto.container.transform.rotation = rotation2;
     }
 
-    protected virtual void Attack() {
-        if(equippedWeapon != null) {
+    protected virtual void Attack()
+    {
+        if (equippedWeapon != null)
+        {
             weaponManifesto.Attack();
         }
     }
 
-    public int TakeDamage(Weapon weapon, Humanoid attacker) {
-        if(dodgeTimer > 0f || health == 0) {
+    public int TakeDamage(Weapon weapon, Humanoid attacker)
+    {
+        if (dodgeTimer > 0f || health == 0)
+        {
             return 0;
         }
         onDamage?.Invoke();
         this.health -= GameController.CalculateDamage(weapon, equippedArmor, out int heal);
-        if(health <= 0) {
+        if (health <= 0)
+        {
             health = 0;
             Die();
-        } else if(this is AI2) {
+        }
+        else if (this is AI2)
+        {
             AI2 ai = this as AI2;
             ai.target = attacker;
             ai.timer = ai.timerMax * 1.5f;
-            if(ai.agressive || ai.defaultState == AI2.AIState.Patrol || ai.defaultState == AI2.AIState.Chase || ai.state == AI2.AIState.Chase) {
+            if (ai.agressive || ai.defaultState == AI2.AIState.Patrol || ai.defaultState == AI2.AIState.Chase || ai.state == AI2.AIState.Chase)
+            {
                 ai.state = AI2.AIState.Chase;
                 ai.patrolTimer = 0f;
-            } else {
+            }
+            else
+            {
                 ai.state = AI2.AIState.Flee;
             }
         }
         return heal;
     }
+    public void Attacked(Humanoid attacker)
+    {
+        if (this is AI2)
+        {
+            AI2 ai = this as AI2;
+            ai.target = attacker;
+            ai.timer = ai.timerMax * 1.5f;
+            if (ai.agressive || ai.defaultState == AI2.AIState.Patrol || ai.defaultState == AI2.AIState.Chase || ai.state == AI2.AIState.Chase)
+            {
+                ai.state = AI2.AIState.Chase;
+                ai.patrolTimer = 0f;
+            }
+            else
+            {
+                ai.state = AI2.AIState.Flee;
+            }
+        }
+    }
 
-    public void Heal(int heal) {
+    public void Heal(int heal)
+    {
         this.health += heal;
-        if(health > maxHealth) {
+        if (health > maxHealth)
+        {
             health = maxHealth;
         }
         onDamage?.Invoke();
     }
 
-    public void Regen() {
-        if(this is AI2) {
+    public void Regen()
+    {
+        if (this is AI2)
+        {
             AI2 ai = this as AI2;
-            if(ai.target || ai.state == AI2.AIState.Dead) {
+            if (ai.target || ai.state == AI2.AIState.Dead)
+            {
                 return;
             }
         }
-        if(targetedBy.Count > 0) {
+        if (targetedBy.Count > 0)
+        {
             return;
         }
-        if(health == maxHealth) {
+        if (health == maxHealth)
+        {
             return;
         }
-        if(!equippedArmor) {
+        if (!equippedArmor)
+        {
             health += regenSpeed;
             return;
         }
@@ -168,68 +224,84 @@ public class Humanoid : MonoBehaviour
         for (int i = 0; i < equippedArmor.effects.Count; i++)
         {
             effect = equippedArmor.effects[i];
-            if(effect.specificType == Effector.HealthRegen) {
-                if(effect.amountType == AmountType.Percentage) {
+            if (effect.specificType == Effector.HealthRegen)
+            {
+                if (effect.amountType == AmountType.Percentage)
+                {
                     toRegen *= (1f + ((float)effect.amount / 100));
-                } else {
+                }
+                else
+                {
                     toRegen += regenSpeed + effect.amount;
                 }
             }
         }
         health += Mathf.RoundToInt(toRegen);
-        if(health > maxHealth) {
+        if (health > maxHealth)
+        {
             health = maxHealth;
         }
     }
 
-    public virtual void Die() {
-        if (hearts <= 0 )
+    public virtual void Die()
+    {
+        if (hearts <= 0)
         {
             Debug.LogWarning("Dead");
         }
     }
-    
-    public Weapon EquipWeapon(Weapon weapon) {
+
+    public Weapon EquipWeapon(Weapon weapon)
+    {
         Weapon tempWeapon = equippedWeapon;
         this.equippedWeapon = weapon;
         this.weaponManifesto.UpdateWeapon();
         return tempWeapon;
     }
 
-    public Weapon UnEquipWeapon() {
+    public Weapon UnEquipWeapon()
+    {
         Weapon tempWeapon = equippedWeapon;
         this.equippedWeapon = null;
         this.weaponManifesto.UpdateWeapon();
         return tempWeapon;
     }
 
-    public Armor EquipArmor(Armor armor) {
+    public Armor EquipArmor(Armor armor)
+    {
         Armor tempArmor = equippedArmor;
         this.equippedArmor = armor;
         maxHealth = 100;
         foreach (Effect effect in equippedArmor.effects.FindAll(effect => effect.specificType == Effector.HealthBoost))
         {
-            if(effect.amountType == AmountType.Percentage) {
+            if (effect.amountType == AmountType.Percentage)
+            {
                 maxHealth = (int)((float)maxHealth * (1f + ((float)effect.amount / 100)));
                 continue;
-            } else {
+            }
+            else
+            {
                 maxHealth += effect.amount;
             }
         }
         movementSpeed = 7;
         foreach (Effect effect in equippedArmor.effects.FindAll(effect => effect.specificType == Effector.Speed))
         {
-            if(effect.amountType == AmountType.Percentage) {
+            if (effect.amountType == AmountType.Percentage)
+            {
                 movementSpeed = ((float)movementSpeed * (1f + ((float)effect.amount / 100)));
                 continue;
-            } else {
+            }
+            else
+            {
                 movementSpeed += effect.amount;
             }
         }
         return tempArmor;
     }
 
-    public Armor UnEquipArmor() {
+    public Armor UnEquipArmor()
+    {
         Armor tempArmor = equippedArmor;
         this.equippedArmor = null;
         maxHealth = 100;
@@ -237,13 +309,16 @@ public class Humanoid : MonoBehaviour
     }
 
 
-    public override string ToString() {
+    public override string ToString()
+    {
         return $"Name: {Name}, Movement Speed: {movementSpeed}, Sprint Speed: {sprintspeed}, Dodge Multiplier: {dodgeMultiplier}, Hearts: {hearts}\n Equipped Weapon: {equippedWeapon}, Equipped Armor: {equippedArmor}";
     }
 
 
-    private void OnMouseDown() {
-        if(DebugMenu.selecting) {
+    private void OnMouseDown()
+    {
+        if (DebugMenu.selecting)
+        {
             DebugMenu.GetInstance().OpenSelectMenu(this);
         }
     }
