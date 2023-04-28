@@ -121,6 +121,37 @@ public sealed class GameController : MonoBehaviour
     }
 
 
+    public static Rarity GetRarity(System.Random random = null)
+    {
+        int rarity;
+        if(random == null)
+        {
+            rarity = Random.Range(0, 100);
+        } else {
+            rarity = random.Next(0, 100);
+        }
+        if (rarity < 50)
+        {
+            return Rarity.Common;
+        }
+        else if (rarity < 75)
+        {
+            return Rarity.Uncommon;
+        }
+        else if (rarity < 90)
+        {
+            return Rarity.Rare;
+        }
+        else if (rarity < 99)
+        {
+            return Rarity.Epic;
+        }
+        else
+        {
+            return Rarity.Legendary;
+        }
+    }
+
     int GetPoints(Rarity rarity, int level)
     {
         // float k1 = 0.001f;
@@ -129,6 +160,65 @@ public sealed class GameController : MonoBehaviour
         // int points = (int)Mathf.Round((level * Mathf.Pow((int)rarity + 1, k3) * Mathf.Pow(10, level * k1) + 5 * Mathf.Pow((int)rarity + 1, k2)));
         int points = Mathf.RoundToInt(level * ((int)rarity + 1 / 5 * 1.25f) + ((int)rarity + 1) * 5);
         return points;
+    }
+
+    public Weapon CreateWeapon(Rarity rarity, int level) {
+        int weaponType = Random.Range(0, 3);
+        switch (weaponType)
+        {
+            case 0:
+                return CreateMelee(rarity, level);
+            case 1:
+                return CreateRanged(rarity, level);
+            case 2:
+                // return CreateMagic(rarity, level, random);
+            default:
+                return CreateMelee(rarity, level);
+        }
+    }
+    public Weapon CreateWeapon(Rarity rarity, int level, System.Random random) {
+        int weaponType = random.Next(0, 3);
+        Weapon weapon = null;
+        switch (weaponType)
+        {
+            case 0:
+                weapon = CreateMelee(rarity, level, random);
+                break;
+            case 1:
+                weapon = CreateRanged(rarity, level, random);
+                break;
+            case 2:
+                // return CreateMagic(rarity, level, random);
+                // break;
+            default:
+                weapon = CreateMelee(rarity, level, random);
+                break;
+        }
+        //For each effect in weapon.effects where effect.type == EffectType.Damage, add effect.amount to weapon.damage
+        foreach (Effect effect in weapon.effects.FindAll(effect => effect.type == EffectType.Damage).ToList())
+        {
+            if (effect.amountType == AmountType.Flat)
+            {
+                weapon.damage += effect.amount;
+            }
+            else
+            {
+                weapon.damage = (int)(effect.amount * 0.01f * weapon.damage);
+            }
+        }
+        //For each effect in weapon.effects where effect.type == EffectType.HealthRegen, add effect.amount to weapon.heal
+        foreach (Effect effect in weapon.effects.FindAll(effect => effect.specificType == Effector.HealthRegen).ToList())
+        {
+            if (effect.amountType == AmountType.Flat)
+            {
+                weapon.heal += effect.amount;
+            }
+            else
+            {
+                weapon.heal += (int)(effect.amount * 0.01f * weapon.damage);
+            }
+        }
+        return weapon;
     }
 
     public Melee CreateMelee(Rarity rarity, int level)
@@ -142,6 +232,32 @@ public sealed class GameController : MonoBehaviour
         effects.AddRange(Effect.CreateEffects(points, maxEffects, melee));
         effects.TrimEffects();
         int selected = Random.Range(0, meleeSprites.Length);
+        string selectedEffect = "";
+        if (effects.Count > 1)
+        {
+            selectedEffect = $" of {effects[1].name}";
+        }
+        melee.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {meleeSprites[selected].name}{selectedEffect}");
+        melee.effects = effects;
+        if (points > 100) { melee.cost = (int)Mathf.Round(points * 0.1f) * 10; } else { melee.cost = points; }
+        melee.level = level;
+        melee.sprite = meleeSprites[selected];
+        melee.maxCombo = Random.Range(2, 4);
+        melee.animationSet = (AnimationSet)Random.Range(0, 3);
+        melee.rarity = rarity;
+        return melee;
+    }
+    public Melee CreateMelee(Rarity rarity, int level, System.Random random)
+    {
+        int points = GetPoints(rarity, level);
+        int maxEffects = (int)rarity + 2;
+        Melee melee = ScriptableObject.CreateInstance<Melee>();
+        List<Effect> effects = new List<Effect>();
+        effects.Add(Effect.CreateEffect(Effector.Damage, melee, (int)points / 4, AmountType.Flat));
+        points -= (int)points / 4;
+        effects.AddRange(Effect.CreateEffects(points, maxEffects, melee));
+        effects.TrimEffects();
+        int selected = random.Next(0, meleeSprites.Length);
         string selectedEffect = "";
         if (effects.Count > 1)
         {
@@ -188,6 +304,36 @@ public sealed class GameController : MonoBehaviour
 
         return ranged;
     }
+    public Ranged CreateRanged(Rarity rarity, int level, System.Random random)
+    {
+        int points = GetPoints(rarity, level);
+        int maxEffects = (int)rarity + 2;
+        Ranged ranged = ScriptableObject.CreateInstance<Ranged>();
+        List<Effect> effects = new List<Effect>();
+        effects.Add(Effect.CreateEffect(Effector.Damage, ranged, (int)points / 4, AmountType.Flat));
+        points -= (int)points / 4;
+        effects.AddRange(Effect.CreateEffects(points, maxEffects, ranged));
+        effects.TrimEffects();
+        int selected = random.Next(0, rangedSprites.Length);
+        string selectedEffect = "";
+        if (effects.Count > 1)
+        {
+            selectedEffect = $" of {effects[1].name}";
+        }
+        ranged.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {rangedSprites[selected].name}{selectedEffect}");
+        ranged.effects = effects;
+        if (points > 100) { ranged.cost = (int)Mathf.Round(points * 0.1f) * 10; } else { ranged.cost = points; }
+        ranged.level = level;
+        ranged.sprite = rangedSprites[selected];
+        ranged.maxCombo = Random.Range(2, 4);
+        ranged.animationSet = (AnimationSet)Random.Range(0, 3);
+        ranged.rarity = rarity;
+
+        ranged.projectileSprite = rangedProjectileSprites[0];
+        // rangedProjectileSprites.Length;
+
+        return ranged;
+    }
 
 
     public Armor CreateArmor(Rarity rarity, int level)
@@ -212,62 +358,61 @@ public sealed class GameController : MonoBehaviour
         armor.level = level;
         armor.sprite = armorSprites[(int)armor.armorType][selected];
         armor.rarity = rarity;
+        //Get all effects of defense type and add them to the armor variable
+        armor.defense = 0;
+        foreach (Effect effect in effects.FindAll(effect => effect.specificType == Effector.Damage).ToList())
+        {
+            if(effect.amountType == AmountType.Flat)
+            {
+                armor.defense += effect.amount;
+            }
+            else
+            {
+                armor.defense += (int)(effect.amount * 0.01f * armor.defense);
+            }
+        }
+
         return armor;
     }
+    public Armor CreateArmor(Rarity rarity, int level, System.Random random)
+    {
+        int points = GetPoints(rarity, level);
+        int maxEffects = (int)rarity + 2;
+        Armor armor = ScriptableObject.CreateInstance<Armor>();
+        List<Effect> effects = new List<Effect>();
+        effects.Add(Effect.CreateEffect(Effector.Damage, armor, (int)points / 4, AmountType.Flat));
+        points -= (int)points / 4;
+        effects.AddRange(Effect.CreateEffects(points, maxEffects, armor));
+        effects.TrimEffects();
+        int selected = random.Next(0, armorSprites[(int)armor.armorType].Length);
+        string selectedEffect = "";
+        if (effects.Count > 1)
+        {
+            selectedEffect = $" of {effects[1].name}";
+        }
+        armor.itemName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{rarity.ToString()} {armorSprites[(int)armor.armorType][selected].name}{selectedEffect}"); ;
+        armor.effects = effects;
+        if (points > 100) { armor.cost = (int)Mathf.Round(points * 0.1f) * 10; } else { armor.cost = points; }
+        armor.level = level;
+        armor.sprite = armorSprites[(int)armor.armorType][selected];
+        armor.rarity = rarity;
+        return armor;
+    }
+    
 
     public static int CalculateDamage(Weapon weapon, Armor hitting, out int heal)
     {
-        int Damage = 0;
+        int Damage = weapon.damage;
         heal = 0;
         if (weapon == null)
         {
             return Damage;
         }
-        for (int i = 0; i < weapon.effects.Count; i++)
-        {
-            Effect effect = weapon.effects[i];
-            if (effect.type == EffectType.Damage)
-            {
-                if (effect.amountType == AmountType.Flat)
-                {
-                    Damage += effect.amount;
-                }
-                else
-                {
-                    Damage *= (1 + (effect.amount / 100));
-                }
-            }
-            else if (effect.specificType == Effector.HealthRegen)
-            {
-                if (effect.amountType == AmountType.Flat)
-                {
-                    heal += effect.amount;
-                }
-                else
-                {
-                    heal *= (1 + (effect.amount / 100));
-                }
-            }
-        }
         if (hitting == null)
         {
             return Damage;
         }
-        for (int i = 0; i < hitting.effects.Count; i++)
-        {
-            Effect effect = hitting.effects[i];
-            if (effect.type == EffectType.Damage)
-            {
-                if (effect.amountType == AmountType.Flat)
-                {
-                    Damage -= effect.amount;
-                }
-                else
-                {
-                    Damage /= (1 + (effect.amount / 100));
-                }
-            }
-        }
+        Damage -= hitting.defense;
         if (Damage < 0)
         {
             Damage = 0;
@@ -275,7 +420,8 @@ public sealed class GameController : MonoBehaviour
         return Damage;
     }
 
-    public static HumanoidName GetRandomName() {
+    public static HumanoidName GetRandomName()
+    {
         HumanoidName returnName = new HumanoidName();
         returnName.firstName = firstNames[Random.Range(0, firstNames.Count)].ToString();
         List<string> surnames = new List<string>();

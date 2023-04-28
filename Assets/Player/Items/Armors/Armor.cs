@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Armor : ItemData
 {
+    public int defense;
     public List<Effect> effects = new List<Effect>();
     public ArmorType armorType;
     public int cost;

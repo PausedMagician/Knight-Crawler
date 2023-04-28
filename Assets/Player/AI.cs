@@ -8,8 +8,8 @@ public class AI : Humanoid
     new void Start()
     {
         base.Start();
-        EquipArmor(GameController.GetInstance().CreateArmor(Rarity.common, 1));
-        EquipWeapon(GameController.GetInstance().CreateMelee(Rarity.common, 1));
+        EquipArmor(GameController.GetInstance().CreateArmor(Rarity.Common, 1));
+        EquipWeapon(GameController.GetInstance().CreateMelee(Rarity.Common, 1));
     }
     new void FixedUpdate()
     {

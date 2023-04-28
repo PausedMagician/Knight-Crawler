@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class Item : Interactable
 {
@@ -27,6 +28,7 @@ public class Item : Interactable
         }
         posOffset = transform.position;
         gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
+        gameObject.GetComponentInChildren<Light2D>().color = materials[(int)item.rarity].color;
         // Debug.Log((int)item.rarity);
     }
 

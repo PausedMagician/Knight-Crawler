@@ -128,7 +128,7 @@ public class Humanoid : MonoBehaviour
             AI2 ai = this as AI2;
             ai.target = attacker;
             ai.timer = ai.timerMax * 1.5f;
-            if(ai.agressive || ai.defaultState == AI2.AIState.Patrol) {
+            if(ai.agressive || ai.defaultState == AI2.AIState.Patrol || ai.defaultState == AI2.AIState.Chase || ai.state == AI2.AIState.Chase) {
                 ai.state = AI2.AIState.Chase;
                 ai.patrolTimer = 0f;
             } else {
