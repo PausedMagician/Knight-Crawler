@@ -46,7 +46,7 @@ public sealed class GameController : MonoBehaviour
         lastRested = bonfire;
         OnBonfireUpdate?.Invoke();
     }
-    public static Player player;
+    public Player player;
 
     public Sprite[] meleeSprites;
     public Sprite[] rangedSprites;
@@ -65,9 +65,9 @@ public sealed class GameController : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.FindObjectOfType<Player>();
-
-        StartGame();
+        if(!player) {
+            player = GameObject.FindObjectOfType<Player>();
+        }
     }
 
 
@@ -484,6 +484,9 @@ public sealed class GameController : MonoBehaviour
     {
         Debug.Log("Starting game");
 
+        player.gameObject.SetActive(true);
+        player.enabled = true;
+        
         //Give player items based on class
         switch(player._class) {
             case Humanoid.HumanoidClass.Warrior:

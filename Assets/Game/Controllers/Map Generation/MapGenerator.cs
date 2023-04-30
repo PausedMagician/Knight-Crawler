@@ -62,13 +62,18 @@ public class MapGenerator : MonoBehaviour
     public List<Vector2> pointsToDebug = new List<Vector2>();
     public bool debugLines;
     public List<DebugPoint> linesToDebug = new List<DebugPoint>();
+    public bool alwaysGenerate;
+    public GameController gameController;
 
     private void Start() {
-        GenerateMap();
-        GameController.GetInstance().StartGame();
+        if(alwaysGenerate) {
+            GenerateMap();
+            gameController.StartGame();
+            gameController.player.enabled = false;
+        }
     }
 
-    public void GenerateMap()
+    public bool GenerateMap()
     {
         var watch = new System.Diagnostics.Stopwatch();
 
@@ -85,6 +90,7 @@ public class MapGenerator : MonoBehaviour
 
         watch.Stop();
         Debug.Log($"Execution Time: {watch.ElapsedMilliseconds} ms");
+        return true;
     }
 
     void CreateNav() {
@@ -381,7 +387,7 @@ public class MapGenerator : MonoBehaviour
                         bool nearbyLight = false;
                         foreach (Transform child in propsContainer.transform)
                         {
-                            if (Vector3.Distance(child.position, new Vector3(x + 0.5f, (y * 2) + 0.5f, 0)) < 5)
+                            if (Vector3.Distance(child.position, new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) + 0.5f, 0)) < 5)
                             {
                                 nearbyLight = true;
                             }
@@ -438,7 +444,7 @@ public class MapGenerator : MonoBehaviour
                         }
                         if (!nearbyLight && !blocksCorridor)
                         {
-                            Instantiate(lightPrefabs[pseudoRandom.Next(lightPrefabs.Length)], new Vector3(x + 0.5f, (y * 2) + 0.5f, 0), Quaternion.identity, propsContainer.transform);
+                            Instantiate(lightPrefabs[pseudoRandom.Next(lightPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) + 0.5f, 0), Quaternion.identity, propsContainer.transform);
                         }
                     }
                 }
@@ -486,7 +492,7 @@ public class MapGenerator : MonoBehaviour
                     y--;
                 }
                 linesToDebug.Add(new DebugPoint(new Vector2[] { new Vector2Int((int)room.center.x, (int)room.center.y), new Vector2Int(x, y - 1) }, Color.cyan));
-                Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(x + 0.5f, (y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
+                Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
                 rooms[rooms.FindIndex(r => r.room == room)] = new DebugRoom(room, Color.yellow);
             }
         }
@@ -515,7 +521,7 @@ public class MapGenerator : MonoBehaviour
                                 }
                                 if (!inRoom)
                                 {
-                                    Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(x + 0.5f, (y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
+                                    Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
                                 }
                             }
                         }
@@ -530,7 +536,7 @@ public class MapGenerator : MonoBehaviour
     {
         //Place 1 Bonfire in the center of a random room, then find a room far away from the Bonfire and place an Exit there
         Rect room = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(rooms.Count)];
-        GameObject bon = Instantiate(bonfirePrefab, new Vector3(room.center.x, room.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
+        GameObject bon = Instantiate(bonfirePrefab, new Vector3(transform.position.x + room.center.x, transform.position.y + room.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
         Bonfire bonfire = bon.GetComponent<Bonfire>();
         bonfire.active = true;
         bonfire.StartBonfire();
@@ -544,7 +550,7 @@ public class MapGenerator : MonoBehaviour
         rooms[rooms.FindIndex(r => r.room == exitRoom)] = new DebugRoom(exitRoom, new Color(255f/255f, 117f/255f, 24f/255f));
         chestRooms.Add(exitRoom);
         // Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(chestRoom.center.x, chestRoom.center.y * 2, 0), Quaternion.identity, propsContainer.transform);
-        Instantiate(exitPrefab, new Vector3(exitRoom.center.x, exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
+        Instantiate(exitPrefab, new Vector3(transform.position.x + exitRoom.center.x, transform.position.y + exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
     }
 
     void PlaceEnemies()
@@ -562,7 +568,7 @@ public class MapGenerator : MonoBehaviour
                     int y = pseudoRandom.Next((int)room.yMin, (int)room.yMax);
                     if (wallTilemap.GetTile(new Vector3Int(x, y, 0)) == null)
                     {
-                        GameObject enemy = Instantiate(enemyPrefabs[pseudoRandom.Next(enemyPrefabs.Length)], new Vector3(x + 0.5f, (y * 2) + 0.5f, 0), Quaternion.identity, propsContainer.transform);
+                        GameObject enemy = Instantiate(enemyPrefabs[pseudoRandom.Next(enemyPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) + 0.5f, 0), Quaternion.identity, propsContainer.transform);
                         AI2 ai = enemy.GetComponent<AI2>();
                         ai.levelRange = new Vector2Int(level + 1, level + 4);
                         //Equip the AI
@@ -581,7 +587,7 @@ public class MapGenerator : MonoBehaviour
                     int y = pseudoRandom.Next((int)room.yMin, (int)room.yMax);
                     if (wallTilemap.GetTile(new Vector3Int(x, y, 0)) == null)
                     {
-                        GameObject enemy = Instantiate(enemyPrefabs[pseudoRandom.Next(enemyPrefabs.Length)], new Vector3(x + 0.5f, (y * 2) + 0.5f, 0), Quaternion.identity, propsContainer.transform);
+                        GameObject enemy = Instantiate(enemyPrefabs[pseudoRandom.Next(enemyPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) + 0.5f, 0), Quaternion.identity, propsContainer.transform);
                         AI2 ai = enemy.GetComponent<AI2>();
                         ai.levelRange = new Vector2Int(level + 1, level + 2);
                         //Equip the AI
