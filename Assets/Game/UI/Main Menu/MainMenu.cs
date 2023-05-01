@@ -22,10 +22,12 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame() {
         startMenu.SetActive(false);
-        if(mapGenerator.GenerateMap()) {
-            mapGeneratorPreview.ClearMap();
-            mapGeneratorPreview.gameController.EndGame();
-            mapGenerator.gameController.StartGame();
+        if(mapGenerator) {
+            if(mapGenerator.GenerateMap()) {
+                mapGeneratorPreview.ClearMap();
+                mapGeneratorPreview.gameController.EndGame();
+                mapGenerator.gameController.StartGame();
+            }
         }
     }
 

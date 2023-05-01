@@ -1,20 +1,43 @@
 using UnityEngine;
 using TMPro;
+using System.Linq;
+using UnityEngine.Events;
 
 public class Interactable : MonoBehaviour {
 
     public Collider2D m_ObjectCollider;
-    public Player player;
     public GameObject interactPrompt;
     public GameObject interactedText;
     public float interactTextTime = 2f;
     public bool isInteractable = false;
     public Player interacting;
     public bool isLocked = false;
+
+    public UnityAction<Player> OnInteract, OnEnter, OnLeave;
+
+
+    private void OnEnable() {
+        OnInteract += Interact;
+        OnEnter += Entering;
+        OnLeave += Leaving;
+    }
+    private void OnDisable() {
+        if (OnInteract != null) {
+            OnInteract -= Interact;
+        }
+        if (OnEnter != null) {
+            OnEnter -= Entering;
+        }
+        if (OnLeave != null) {
+            OnLeave -= Leaving;
+        }
+    }
+
+
     private void Update() {
         if (isInteractable && !isLocked) {
             if (Input.GetKeyDown(KeyCode.E)) {
-                Interact(interacting);
+                OnInteract?.Invoke(interacting);
             }
         }
     }
@@ -23,17 +46,15 @@ public class Interactable : MonoBehaviour {
         Player player = coll.gameObject.GetComponent<Player>();
         if (player && !isLocked)
         {
-            isInteractable = true;
-            interacting = player;
-            interactPrompt.SetActive(true);
+            OnEnter?.Invoke(player);
         }
     }
     void OnTriggerExit2D(Collider2D coll)
     {
-        if (coll.gameObject.GetComponent<Player>() && !isLocked)
+        Player player = coll.gameObject.GetComponent<Player>();
+        if (player && !isLocked)
         {
-            isInteractable = false;
-            interactPrompt.SetActive(false);
+            OnLeave?.Invoke(player);
         }
     }
     public virtual void Interact(Player player) {
@@ -44,7 +65,16 @@ public class Interactable : MonoBehaviour {
             Invoke("DisableInteractText", interactTextTime);
         }
     }
-    void DisableInteractText()
+    public virtual void Entering(Player player) {
+        isInteractable = true;
+        interacting = player;
+        interactPrompt.SetActive(true);
+    }
+    public virtual void Leaving(Player player) {
+        isInteractable = false;
+        interactPrompt.SetActive(false);
+    }
+    public void DisableInteractText(Player player)
     {
         interactedText.SetActive(false);
     }

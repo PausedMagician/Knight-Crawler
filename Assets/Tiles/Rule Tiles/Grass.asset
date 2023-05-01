@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
+  m_Name: Grass
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 580015753, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+  m_DefaultGameObject: {fileID: 0}
+  m_DefaultColliderType: 1
+  m_TilingRules:
+  - m_Id: 0
+    m_Sprites:
+    - {fileID: -801521802, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 154488868, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 154488868, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 1758351535, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 1986039702, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -788553378, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 221582782, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -1729487317, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -475994947, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 1038260569, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 1656218038, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: 2120079043, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -1540566684, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -590167903, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -601441115, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -1017524378, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    - {fileID: -906225723, guid: abc68231ab31449428cadb9520b5fbce, type: 3}
+    m_GameObject: {fileID: 0}
+    m_MinAnimationSpeed: 1
+    m_MaxAnimationSpeed: 1
+    m_PerlinScale: 0.5
+    m_Output: 1
+    m_ColliderType: 1
+    m_RandomTransform: 0
+    m_Neighbors: 
+    m_NeighborPositions:
+    - {x: -1, y: 1, z: 0}
+    - {x: 0, y: 1, z: 0}
+    - {x: 1, y: 1, z: 0}
+    - {x: -1, y: 0, z: 0}
+    - {x: 1, y: 0, z: 0}
+    - {x: -1, y: -1, z: 0}
+    - {x: 0, y: -1, z: 0}
+    - {x: 1, y: -1, z: 0}
+    m_RuleTransform: 0
