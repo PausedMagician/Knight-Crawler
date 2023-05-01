@@ -14,13 +14,4 @@ public class StartMenu : MonoBehaviour
         main.SetActive(true);
         settings.SetActive(false);
     }
-
-
-    //Settings
-
-    
-    public void ApplySettings() {
-        
-    }
-
 }

@@ -486,6 +486,8 @@ public sealed class GameController : MonoBehaviour
 
         player.gameObject.SetActive(true);
         player.enabled = true;
+        Debug.Log("player");
+        Debug.Log(player.equippedWeapon);
         
         //Give player items based on class
         switch(player._class) {
@@ -507,8 +509,15 @@ public sealed class GameController : MonoBehaviour
         if (this.lastRested != null)
         {
             Debug.Log("Loading last rested");
-            Player.GetInstance().transform.position = (Vector2)lastRested.transform.position + lastRested.spawnPoint;
+            player.transform.position = (Vector2)lastRested.transform.position + lastRested.spawnPoint;
         }
+    }
+
+    public void EndGame() {
+        Debug.Log("Ending game");
+        player.enabled = false;
+        player.gameObject.SetActive(false);
+        lastRested = null;
     }
 
 

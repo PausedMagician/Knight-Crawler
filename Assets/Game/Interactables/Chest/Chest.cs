@@ -13,10 +13,10 @@ public class Chest : Interactable
     public ParticleSystem particles;
 
 
-    public override void Interact()
+    public override void Interact(Player player)
     {
         
-        base.Interact();
+        base.Interact(player);
         dropCount = Random.Range(1, 10);
         // Debug.Log(dropCount);
         if (items.Length == 0)

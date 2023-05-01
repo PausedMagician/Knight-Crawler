@@ -8,6 +8,8 @@ public class MainMenu : MonoBehaviour
 
     public GameObject startMenu;
     public GameObject pauseMenu;
+    public MapGenerator mapGenerator;
+    public MapGenerator mapGeneratorPreview;
 
     public void ToggleMenu() {
         if(pauseMenu.activeSelf) {
@@ -20,10 +22,18 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame() {
         startMenu.SetActive(false);
+        if(mapGenerator.GenerateMap()) {
+            mapGeneratorPreview.ClearMap();
+            mapGeneratorPreview.gameController.EndGame();
+            mapGenerator.gameController.StartGame();
+        }
     }
 
     public void ReturnToMenu() {
+        mapGeneratorPreview.Start();
         startMenu.SetActive(true);
+        mapGenerator.ClearMap();
+        mapGenerator.gameController.EndGame();
     }
 
     public void QuitGame() {

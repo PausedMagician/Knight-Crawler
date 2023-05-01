@@ -39,10 +39,10 @@ public class Item : Interactable
         transform.position = tempPos;
     }
 
-    public override void Interact()
+    public override void Interact(Player player)
     {
-        base.Interact();
-        Inventory.GetInstance().AddItem(item);
+        base.Interact(player);
+        player.inventory.AddItem(item);
         Destroy(gameObject);
     }
 }

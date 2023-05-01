@@ -78,6 +78,9 @@ public class WeaponManifesto : MonoBehaviour
         if (owner.equippedWeapon != null)
         {
             // Debug.Log("Weapon not null");
+            if(spriteRenderer == null) {
+                spriteRenderer = weaponPrefab.GetComponentInChildren<SpriteRenderer>();
+            }
             spriteRenderer.sprite = owner.equippedWeapon.sprite;
             maxCombo = owner.equippedWeapon.maxCombo;
             animationSet = owner.equippedWeapon.animationSet;
@@ -92,6 +95,9 @@ public class WeaponManifesto : MonoBehaviour
             else if (owner.equippedWeapon is Magic)
             {
                 animationType = AnimationType.magic;
+            }
+            if(animator == null) {
+                animator = weaponPrefab.GetComponentInChildren<Animator>();
             }
             animator.SetInteger("MaxCombo", maxCombo);
             animator.SetInteger("AnimationSet", (int)animationSet);

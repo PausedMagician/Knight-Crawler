@@ -8,9 +8,10 @@ public class Bonfire : Interactable
     public bool active = false;
     public Vector2 spawnPoint;
     public Animator animator;
+    public GameController gameController;
 
     
-    public override void Interact()
+    public override void Interact(Player player)
     {
         if (active)
         {
@@ -23,7 +24,7 @@ public class Bonfire : Interactable
             active = true;
             animator.SetBool("Active", active);
             animator.SetTrigger("Light");
-            GameController.GetInstance().SetLastRested(this);
+            gameController.SetLastRested(this);
         }
     }
 
@@ -34,7 +35,7 @@ public class Bonfire : Interactable
         animator = GetComponent<Animator>();
         if (active)
         {
-            GameController.GetInstance().SetLastRested(this);
+            gameController.SetLastRested(this);
         }
         GameController.OnBonfireUpdate += UpdateBonfire;
     }
@@ -47,7 +48,7 @@ public class Bonfire : Interactable
     public void StartBonfire() {
         if (active)
         {
-            GameController.GetInstance().SetLastRested(this);
+            gameController.SetLastRested(this);
         }
     }
     public void UpdateBonfire()
@@ -56,7 +57,7 @@ public class Bonfire : Interactable
         if(!this.animator) {
             this.animator = this.gameObject.GetComponent<Animator>();
         }
-        if (GameController.GetInstance().lastRested == this)
+        if (gameController.lastRested == this)
         {
             active = true;
         }
@@ -70,7 +71,7 @@ public class Bonfire : Interactable
     private void OnDestroy() {
         GameController.OnBonfireUpdate -= UpdateBonfire;
         if(active) {
-            GameController.GetInstance().SetLastRested(null);
+            gameController.SetLastRested(null);
         }
     }
 

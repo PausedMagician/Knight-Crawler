@@ -65,7 +65,7 @@ public class MapGenerator : MonoBehaviour
     public bool alwaysGenerate;
     public GameController gameController;
 
-    private void Start() {
+    public void Start() {
         if(alwaysGenerate) {
             GenerateMap();
             gameController.StartGame();
@@ -536,8 +536,9 @@ public class MapGenerator : MonoBehaviour
     {
         //Place 1 Bonfire in the center of a random room, then find a room far away from the Bonfire and place an Exit there
         Rect room = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(rooms.Count)];
-        GameObject bon = Instantiate(bonfirePrefab, new Vector3(transform.position.x + room.center.x, transform.position.y + room.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
-        Bonfire bonfire = bon.GetComponent<Bonfire>();
+        GameObject startBon = Instantiate(bonfirePrefab, new Vector3(transform.position.x + room.center.x, transform.position.y + room.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
+        Bonfire bonfire = startBon.GetComponent<Bonfire>();
+        bonfire.gameController = gameController;
         bonfire.active = true;
         bonfire.StartBonfire();
         startRoom = new DebugRoom(room, Color.green);
@@ -550,7 +551,9 @@ public class MapGenerator : MonoBehaviour
         rooms[rooms.FindIndex(r => r.room == exitRoom)] = new DebugRoom(exitRoom, new Color(255f/255f, 117f/255f, 24f/255f));
         chestRooms.Add(exitRoom);
         // Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(chestRoom.center.x, chestRoom.center.y * 2, 0), Quaternion.identity, propsContainer.transform);
-        Instantiate(exitPrefab, new Vector3(transform.position.x + exitRoom.center.x, transform.position.y + exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
+        GameObject exitBon = Instantiate(exitPrefab, new Vector3(transform.position.x + exitRoom.center.x, transform.position.y + exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
+        Bonfire exit = exitBon.GetComponent<Bonfire>();
+        exit.gameController = gameController;
     }
 
     void PlaceEnemies()
@@ -572,8 +575,8 @@ public class MapGenerator : MonoBehaviour
                         AI2 ai = enemy.GetComponent<AI2>();
                         ai.levelRange = new Vector2Int(level + 1, level + 4);
                         //Equip the AI
-                        ai.EquipArmor(GameController.GetInstance().CreateArmor(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
-                        ai.EquipWeapon(GameController.GetInstance().CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
+                        ai.EquipArmor(gameController.CreateArmor(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
+                        ai.EquipWeapon(gameController.CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.agressive = true;
                     }
                 }
@@ -591,8 +594,8 @@ public class MapGenerator : MonoBehaviour
                         AI2 ai = enemy.GetComponent<AI2>();
                         ai.levelRange = new Vector2Int(level + 1, level + 2);
                         //Equip the AI
-                        ai.EquipArmor(GameController.GetInstance().CreateArmor(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
-                        ai.EquipWeapon(GameController.GetInstance().CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
+                        ai.EquipArmor(gameController.CreateArmor(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
+                        ai.EquipWeapon(gameController.CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.agressive = true;
                     }
                 }
