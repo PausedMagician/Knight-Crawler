@@ -483,27 +483,29 @@ public sealed class GameController : MonoBehaviour
     public void StartGame()
     {
         Debug.Log("Starting game");
+        if(player.equippedArmor != null || player.equippedWeapon != null || player.inventory.items.Count > 0)
+        {
 
-        player.gameObject.SetActive(true);
-        player.enabled = true;
-        Debug.Log("player");
-        Debug.Log(player.equippedWeapon);
-        
-        //Give player items based on class
-        switch(player._class) {
-            case Humanoid.HumanoidClass.Warrior:
-            default:
-                player.EquipWeapon(this.CreateWeapon(Rarity.Common, 1, 0));
-                player.EquipArmor(this.CreateArmor(Rarity.Common, 1));
-                break;
-            case Humanoid.HumanoidClass.Ranger:
-                player.EquipWeapon(this.CreateWeapon(Rarity.Common, 1, 1));
-                player.EquipArmor(this.CreateArmor(Rarity.Common, 1));
-                break;
-            case Humanoid.HumanoidClass.Mage:
-                player.EquipWeapon(this.CreateWeapon(Rarity.Common, 1, 2));
-                player.EquipArmor(this.CreateArmor(Rarity.Common, 1));
-                break;
+        } else {
+            player.gameObject.SetActive(true);
+            player.enabled = true;
+
+            //Give player items based on class
+            switch(player._class) {
+                case Humanoid.HumanoidClass.Warrior:
+                default:
+                    player.EquipWeapon(this.CreateWeapon(Rarity.Common, 1, 0));
+                    player.EquipArmor(this.CreateArmor(Rarity.Common, 1));
+                    break;
+                case Humanoid.HumanoidClass.Ranger:
+                    player.EquipWeapon(this.CreateWeapon(Rarity.Common, 1, 1));
+                    player.EquipArmor(this.CreateArmor(Rarity.Common, 1));
+                    break;
+                case Humanoid.HumanoidClass.Mage:
+                    player.EquipWeapon(this.CreateWeapon(Rarity.Common, 1, 2));
+                    player.EquipArmor(this.CreateArmor(Rarity.Common, 1));
+                    break;
+            }
         }
 
         if (this.lastRested != null)

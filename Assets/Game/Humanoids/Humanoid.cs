@@ -69,7 +69,10 @@ public class Humanoid : MonoBehaviour
             weaponManifesto = gam.GetComponent<WeaponManifesto>();
             weaponManifesto.owner = this;
         }
-        Name = GameController.GetRandomName();
+        if (Name.fullName == "")
+        {
+            Name = GameController.GetRandomName();
+        }
         nameText.text = Name.fullName;
         health = maxHealth;
     }

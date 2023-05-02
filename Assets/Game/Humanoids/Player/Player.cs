@@ -32,7 +32,7 @@ public class Player : Humanoid
     #endregion
 
     public Inventory inventory;
-
+    public Interactable interactingWith;
 
     void Update()
     {

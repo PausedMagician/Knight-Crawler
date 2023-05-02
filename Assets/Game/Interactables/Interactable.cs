@@ -44,17 +44,35 @@ public class Interactable : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D coll)
     {
         Player player = coll.gameObject.GetComponent<Player>();
+        if (player && !isLocked && player.interactingWith == null)
+        {
+            player.interactingWith = this;
+            OnEnter?.Invoke(player);
+        }
+    }
+    private void OnTriggerStay2D(Collider2D other) {
+        Player player = other.gameObject.GetComponent<Player>();
         if (player && !isLocked)
         {
-            OnEnter?.Invoke(player);
+            if(player.interactingWith == null) {
+                player.interactingWith = this;
+                OnEnter?.Invoke(player);
+            } else if(player.interactingWith != this) {
+                OnLeave?.Invoke(player);
+            }
         }
     }
     void OnTriggerExit2D(Collider2D coll)
     {
         Player player = coll.gameObject.GetComponent<Player>();
-        if (player && !isLocked)
+        if (player)
         {
-            OnLeave?.Invoke(player);
+            if(player.interactingWith == this) {
+                player.interactingWith = null;
+            }
+            if(!isLocked) {
+                OnLeave?.Invoke(player);
+            }
         }
     }
     public virtual void Interact(Player player) {
