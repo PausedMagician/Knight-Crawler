@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Globalization;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public sealed class GameController : MonoBehaviour
 {
@@ -47,6 +48,7 @@ public sealed class GameController : MonoBehaviour
         OnBonfireUpdate?.Invoke();
     }
     public Player player;
+    public GameObject itemPrefab;
 
     public Sprite[] meleeSprites;
     public Sprite[] rangedSprites;
@@ -65,7 +67,8 @@ public sealed class GameController : MonoBehaviour
 
     private void Start()
     {
-        if(!player) {
+        if (!player)
+        {
             player = GameObject.FindObjectOfType<Player>();
         }
     }
@@ -106,10 +109,12 @@ public sealed class GameController : MonoBehaviour
     public static Rarity GetRarity(System.Random random = null)
     {
         int rarity;
-        if(random == null)
+        if (random == null)
         {
             rarity = Random.Range(0, 100);
-        } else {
+        }
+        else
+        {
             rarity = random.Next(0, 100);
         }
         if (rarity < 50)
@@ -144,7 +149,8 @@ public sealed class GameController : MonoBehaviour
         return points;
     }
 
-    public Weapon CreateWeapon(Rarity rarity, int level, int weaponType) {
+    public Weapon CreateWeapon(Rarity rarity, int level, int weaponType)
+    {
         Weapon weapon = null;
         switch (weaponType)
         {
@@ -155,8 +161,8 @@ public sealed class GameController : MonoBehaviour
                 weapon = CreateRanged(rarity, level);
                 break;
             case 2:
-                // return CreateMagic(rarity, level);
-                // break;
+            // return CreateMagic(rarity, level);
+            // break;
             default:
                 weapon = CreateMelee(rarity, level);
                 break;
@@ -164,7 +170,8 @@ public sealed class GameController : MonoBehaviour
         DamageCalculation(weapon);
         return weapon;
     }
-    public Weapon CreateWeapon(Rarity rarity, int level) {
+    public Weapon CreateWeapon(Rarity rarity, int level)
+    {
         int weaponType = Random.Range(0, 3);
         Weapon weapon = null;
         switch (weaponType)
@@ -176,8 +183,8 @@ public sealed class GameController : MonoBehaviour
                 weapon = CreateRanged(rarity, level);
                 break;
             case 2:
-                // return CreateMagic(rarity, level);
-                // break;
+            // return CreateMagic(rarity, level);
+            // break;
             default:
                 weapon = CreateMelee(rarity, level);
                 break;
@@ -185,7 +192,8 @@ public sealed class GameController : MonoBehaviour
         weapon = DamageCalculation(weapon);
         return weapon;
     }
-    public Weapon CreateWeapon(Rarity rarity, int level, System.Random random) {
+    public Weapon CreateWeapon(Rarity rarity, int level, System.Random random)
+    {
         int weaponType = random.Next(0, 3);
         Weapon weapon = null;
         switch (weaponType)
@@ -197,8 +205,8 @@ public sealed class GameController : MonoBehaviour
                 weapon = CreateRanged(rarity, level, random);
                 break;
             case 2:
-                // return CreateMagic(rarity, level, random);
-                // break;
+            // return CreateMagic(rarity, level, random);
+            // break;
             default:
                 weapon = CreateMelee(rarity, level, random);
                 break;
@@ -207,7 +215,8 @@ public sealed class GameController : MonoBehaviour
         return weapon;
     }
 
-    public Weapon DamageCalculation(Weapon weapon) {
+    public Weapon DamageCalculation(Weapon weapon)
+    {
         weapon.damage = 0;
         //For each effect in weapon.effects where effect.type == EffectType.Damage, add effect.amount to weapon.damage
         foreach (Effect effect in weapon.effects.ToList().FindAll(effect => effect.type == EffectType.Damage).ToList())
@@ -381,7 +390,7 @@ public sealed class GameController : MonoBehaviour
         armor.defense = 0;
         foreach (Effect effect in effects.FindAll(effect => effect.specificType == Effector.Damage).ToList())
         {
-            if(effect.amountType == AmountType.Flat)
+            if (effect.amountType == AmountType.Flat)
             {
                 armor.defense += effect.amount;
             }
@@ -419,7 +428,7 @@ public sealed class GameController : MonoBehaviour
         armor.defense = 0;
         foreach (Effect effect in effects.FindAll(effect => effect.specificType == Effector.Damage).ToList())
         {
-            if(effect.amountType == AmountType.Flat)
+            if (effect.amountType == AmountType.Flat)
             {
                 armor.defense += effect.amount;
             }
@@ -430,7 +439,7 @@ public sealed class GameController : MonoBehaviour
         }
         return armor;
     }
-    
+
 
     public static int CalculateDamage(Weapon weapon, Armor hitting, out int heal)
     {
@@ -483,15 +492,18 @@ public sealed class GameController : MonoBehaviour
     public void StartGame()
     {
         Debug.Log("Starting game");
-        if(player.equippedArmor != null || player.equippedWeapon != null || player.inventory.items.Count > 0)
+        if (player.equippedArmor != null || player.equippedWeapon != null || player.inventory.items.Count > 0)
         {
 
-        } else {
+        }
+        else
+        {
             player.gameObject.SetActive(true);
             player.enabled = true;
 
             //Give player items based on class
-            switch(player._class) {
+            switch (player._class)
+            {
                 case Humanoid.HumanoidClass.Warrior:
                 default:
                     player.EquipWeapon(this.CreateWeapon(Rarity.Common, 1, 0));
@@ -515,11 +527,18 @@ public sealed class GameController : MonoBehaviour
         }
     }
 
-    public void EndGame() {
+    public void EndGame()
+    {
         Debug.Log("Ending game");
         player.enabled = false;
         player.gameObject.SetActive(false);
         lastRested = null;
+    }
+
+    public static void ReturnToStart()
+    {
+        SceneManager.UnloadSceneAsync("Main Game");
+        SceneManager.LoadScene("Start");
     }
 
 

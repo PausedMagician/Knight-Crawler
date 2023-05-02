@@ -6,12 +6,11 @@ using TMPro;
 public class Chest : Interactable
 {
     public ItemData[] items;
-
-    [SerializeField] GameObject itemPrefab;
     int dropCount;
     public Sprite OpenChest;
     public ParticleSystem particles;
 
+    public int level = 1;
 
     public override void Interact(Player player)
     {
@@ -26,8 +25,9 @@ public class Chest : Interactable
                 dropCount -= 1;
                 Vector2 pos = transform.position;
                 pos += new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.2f, -1f)).normalized * Random.Range(1.2f, 1.5f);
-                GameObject go = Instantiate(itemPrefab);
+                GameObject go = Instantiate(GameController.GetInstance().itemPrefab, pos, Quaternion.identity);
                 go.transform.position = pos;
+                go.GetComponent<Item>().RandomItem(level, level + 2);
             }
             // items = new Item[Random.Range(1, 4)];
             // for (int i = 0; i < items.Length; i++)

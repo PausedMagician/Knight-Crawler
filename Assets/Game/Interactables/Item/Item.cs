@@ -10,21 +10,20 @@ public class Item : Interactable
     private float frequency = 0.5f;
     private float amplitude = 0.1f;
     Vector3 posOffset = new Vector3();
-    Vector3 tempPos = new Vector3();    
+    Vector3 tempPos = new Vector3();
 
-    public void Start()
-    {
+    public void SetItem(ItemData item) {
+        posOffset = transform.position;
+        gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
+        gameObject.GetComponentInChildren<Light2D>().color = materials[(int)item.rarity].color;
+        // Debug.Log((int)item.rarity);
+    }
+
+    public void RandomItem(int min = 0, int max = 4) {
         if (Random.Range(0, 2) == 0)
-            item = GameController.GetInstance().CreateArmor((Rarity)Random.Range(0, 5), Random.Range(1, 10));
+            item = GameController.GetInstance().CreateArmor((Rarity)Random.Range(0, 5), Random.Range(min, max));
         else {
-            int randomint = Random.Range(0, 4);
-            if(randomint == 0) {
-                item = GameController.GetInstance().CreateMelee((Rarity)Random.Range(0, 5), Random.Range(1, 10));
-            } else if (randomint == 1) {
-                item = GameController.GetInstance().CreateRanged((Rarity)Random.Range(0, 5), Random.Range(1, 10));
-            } else {
-                item = GameController.GetInstance().CreateRanged((Rarity)Random.Range(0, 5), Random.Range(1, 10));
-            }
+            item = GameController.GetInstance().CreateMelee((Rarity)Random.Range(0, 5), Random.Range(min, max));
         }
         posOffset = transform.position;
         gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
