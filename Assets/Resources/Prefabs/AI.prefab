@@ -337,13 +337,14 @@ MonoBehaviour:
     firstName: 
     surNames: []
   hearts: 3
-  maxHealth: 100
-  health: 100
+  maxHealth: 1
+  health: 1
   regenSpeed: 2
   movementSpeed: 5
   sprintspeed: 1.3
   dodgeMultiplier: 2.5
   dodgeCooldown: 1
+  _class: 0
   dodging: 0
   sprinting: 0
   rb: {fileID: 4050821278904858030}
@@ -356,7 +357,7 @@ MonoBehaviour:
   targetedBy: []
   agressive: 0
   defaultState: 0
-  viewDistance: 10
+  viewDistance: 7.5
   levelRange: {x: 1, y: 5}
   agent: {fileID: 4050821278904858025}
   animator: {fileID: 4050821278904858031}

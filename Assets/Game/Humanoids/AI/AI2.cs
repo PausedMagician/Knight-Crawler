@@ -46,6 +46,7 @@ public class AI2 : Humanoid
 
     new private void FixedUpdate()
     {
+        Checkfor();
         if (sprinting)
         {
             agent.speed = movementSpeed * sprintspeed;
@@ -282,7 +283,7 @@ public class AI2 : Humanoid
                 {
                     sprinting = true;
                 }
-                if (circularMovement.Checkfor() == true)
+                if (Checkfor() == true)
                 {
                     if (Vector2.Distance(chaseTarget, transform.position) < agent.radius * 1.75f)
                     {
@@ -294,9 +295,9 @@ public class AI2 : Humanoid
                         }
                     }
                 }
-                else if (circularMovement.Checkfor() == false)
+                else if (Checkfor() == false)
                 {
-                    chaseTarget = Vector2.MoveTowards(transform.position, target.transform.position * minaf, minaf);
+                    // chaseTarget = Vector2.MoveTowards(transform.position, target.transform.position * minaf, minaf);
                     // Debug.Log(chaseTarget);
                 }
                 agent.SetDestination(chaseTarget);
@@ -474,10 +475,40 @@ public class AI2 : Humanoid
         possiblePoints = new List<Vector2>();
     }
 
+    public bool Checkfor()
+    {
+        if(target) {
+            Vector2 froms = transform.position;
+            Vector2 tos = target.transform.position;
+            Vector2 trueDirection = (tos - froms);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, trueDirection);
+            Debug.DrawRay(transform.position, trueDirection , Color.green);
+            if (hit.collider.gameObject.name == "Player" || hit.collider.isTrigger)
+            {
+                // Debug.Log("Player");
+                Debug.Log($"{hit.collider.gameObject.name} was hit");
+                return true;
+            }
+            else if (hit.collider.gameObject.name != "Player")
+            {
+                // Debug.Log("Not Player");
+                Debug.Log($"{hit.collider.gameObject.name} was hit");
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public void StartDodging(Projectile projectile)
     {
         if(state == AIState.Dead)
         {
+            Object.Destroy(gameObject, 2.0f);
             return;
         }
         Attacked(projectile.shooter);
