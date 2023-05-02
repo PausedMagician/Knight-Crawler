@@ -12,18 +12,21 @@ public class Item : Interactable
     Vector3 posOffset = new Vector3();
     Vector3 tempPos = new Vector3();
 
-    public void SetItem(ItemData item) {
+    public void SetItem(ItemData item)
+    {
         posOffset = transform.position;
         gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
         gameObject.GetComponentInChildren<Light2D>().color = materials[(int)item.rarity].color;
         // Debug.Log((int)item.rarity);
     }
 
-    public void RandomItem(int min = 0, int max = 4) {
+    public void RandomItem(int min = 0, int max = 4)
+    {
         if (Random.Range(0, 2) == 0)
-            item = GameController.GetInstance().CreateArmor((Rarity)Random.Range(0, 5), Random.Range(min, max));
-        else {
-            item = GameController.GetInstance().CreateMelee((Rarity)Random.Range(0, 5), Random.Range(min, max));
+            item = GameController.GetInstance().CreateArmor(GameController.GetRarity(), Random.Range(min, max));
+        else
+        {
+            item = GameController.GetInstance().CreateMelee(GameController.GetRarity(), Random.Range(min, max));
         }
         posOffset = transform.position;
         gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
@@ -31,10 +34,10 @@ public class Item : Interactable
         // Debug.Log((int)item.rarity);
     }
 
-    public void FixedUpdate() 
+    public void FixedUpdate()
     {
         tempPos = posOffset;
-        tempPos.y += Mathf.Sin(Time.fixedTime * Mathf.PI * frequency)* amplitude;
+        tempPos.y += Mathf.Sin(Time.fixedTime * Mathf.PI * frequency) * amplitude;
         transform.position = tempPos;
     }
 
