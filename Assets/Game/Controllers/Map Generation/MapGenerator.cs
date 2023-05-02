@@ -492,7 +492,7 @@ public class MapGenerator : MonoBehaviour
                     y--;
                 }
                 linesToDebug.Add(new DebugPoint(new Vector2[] { new Vector2Int((int)room.center.x, (int)room.center.y), new Vector2Int(x, y - 1) }, Color.cyan));
-                Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
+                Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform).GetComponent<Chest>().level = level;
                 rooms[rooms.FindIndex(r => r.room == room)] = new DebugRoom(room, Color.yellow);
             }
         }
@@ -521,7 +521,7 @@ public class MapGenerator : MonoBehaviour
                                 }
                                 if (!inRoom)
                                 {
-                                    Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
+                                    Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform).GetComponent<Chest>().level = level;
                                 }
                             }
                         }

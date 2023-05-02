@@ -9,5 +9,6 @@ public class Exit : Interactable
         base.Interact(player);
         mapGenerator.level++;
         mapGenerator.GenerateMap();
+        mapGenerator.gameController.SendPlayerToBonfire();
     }
 }

@@ -47,6 +47,10 @@ public sealed class GameController : MonoBehaviour
         lastRested = bonfire;
         OnBonfireUpdate?.Invoke();
     }
+    public void SendPlayerToBonfire()
+    {
+        player.transform.position = (Vector2)lastRested.transform.position + lastRested.spawnPoint;
+    }
     public Player player;
     public GameObject itemPrefab;
 
