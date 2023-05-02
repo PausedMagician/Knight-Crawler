@@ -167,7 +167,7 @@ public sealed class GameController : MonoBehaviour
                 weapon = CreateMelee(rarity, level);
                 break;
         }
-        DamageCalculation(weapon);
+        weapon = DamageCalculation(weapon);
         return weapon;
     }
     public Weapon CreateWeapon(Rarity rarity, int level)
