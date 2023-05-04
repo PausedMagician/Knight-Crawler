@@ -90,7 +90,7 @@ public class MapGenerator : MonoBehaviour
         pseudoRandom = new System.Random((seed + level).GetHashCode());
         ClearMap();
         CreateRooms();
-        Invoke("CreateNav", 1);
+        Invoke("CreateNav", 0.1f);
 
         watch.Stop();
         Debug.Log($"Execution Time: {watch.ElapsedMilliseconds} ms");
@@ -99,7 +99,8 @@ public class MapGenerator : MonoBehaviour
 
     void CreateNav()
     {
-        GameObject.FindObjectOfType<NavMeshSurface>().BuildNavMeshAsync();
+        GameObject.FindObjectOfType<NavMeshSurface>().BuildNavMesh();
+        PlaceEnemies();
     }
 
     public void ClearMap()
@@ -115,6 +116,8 @@ public class MapGenerator : MonoBehaviour
         wallTilemap.ClearAllTiles();
         roofTilemap.ClearAllTiles();
         floorTilemap.ClearAllTiles();
+        unwalkableDecorationTilemap.ClearAllTiles();
+        walkableDecorationTilemap.ClearAllTiles();
         int extra = 5;
         for (int x = -extra; x < (width + extra) * 2; x++)
         {
@@ -465,17 +468,20 @@ public class MapGenerator : MonoBehaviour
             int propAmount = pseudoRandom.Next(decorMin, decorMax);
             for (int i = 0; i < propAmount; i++)
             {
-                int x = pseudoRandom.Next((int)room.xMin, (int)room.xMax);
-                int y = pseudoRandom.Next((int)room.yMin, (int)room.yMax);
-                if (wallTilemap.GetTile(new Vector3Int(x, y, 0)) == null)
+                int x = pseudoRandom.Next((int)room.xMin + 1, (int)room.xMax - 1);
+                int y = pseudoRandom.Next((int)room.yMin + 1, (int)room.yMax - 1);
+                if (wallTilemap.GetTile(new Vector3Int(x, y * 2, 0)) == null)
                 {
-                    if (pseudoRandom.Next(0, 100) < 50)
+                    if (pseudoRandom.Next(0, 100) < 75)
                     {
-                        walkableDecorationTilemap.SetTile(new Vector3Int(x, y, 0), walkableDecorationTiles);
+                        walkableDecorationTilemap.SetTile(new Vector3Int(x, y * 2, 0), walkableDecorationTiles);
                     }
                     else
                     {
-                        unwalkableDecorationTilemap.SetTile(new Vector3Int(x, y, 0), unwalkableDecorationTiles);
+                        //Check if it blocks a hallway
+                        if(!CheckIfInHallway(new Vector2Int(x, y * 2))) {
+                            unwalkableDecorationTilemap.SetTile(new Vector3Int(x, y * 2, 0), unwalkableDecorationTiles);
+                        }
                     }
                 }
             }
@@ -546,7 +552,7 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        PlaceEnemies();
+        // PlaceEnemies();
     }
 
     public void PlaceBonfire()

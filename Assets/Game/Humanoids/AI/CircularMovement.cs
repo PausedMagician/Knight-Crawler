@@ -21,6 +21,9 @@ public class CircularMovement : MonoBehaviour
 
     public bool Checkfor(Humanoid target)
     {
+        if(target == null) {
+            return false;
+        }
         if (target != null)
         {
             Vector2 direction = ((Vector2)target.transform.position - (Vector2)transform.position);

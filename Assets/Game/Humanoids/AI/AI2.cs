@@ -39,9 +39,7 @@ public class AI2 : Humanoid
         // obstacle = GetComponent<NavMeshObstacle>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        circularMovement = GameObject.Find("DetectionRange").GetComponent<CircularMovement>();
-
-
+        circularMovement = this.GetComponentInChildren<CircularMovement>();
     }
 
 
@@ -89,6 +87,7 @@ public class AI2 : Humanoid
                 RunAway();
                 break;
             case AIState.Dead:
+                Die();
                 break;
             default:
                 break;
@@ -96,7 +95,6 @@ public class AI2 : Humanoid
     }
 
 
-    public bool targetInSight = false;
     public bool attacking = false;
     void CheckState()
     {
@@ -111,21 +109,6 @@ public class AI2 : Humanoid
         }
         if (timer > 0)
         {
-            if (Mathf.Round(timer) % 5 == 0 && target != null)
-            {
-                RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, target.transform.position - transform.position, viewDistance).OrderBy(h => h.distance).ToArray();
-                if (hits.Length > 0)
-                {
-                    if (hits[0].collider.gameObject.GetComponent<Humanoid>() == target)
-                    {
-                        targetInSight = true;
-                    }
-                }
-            }
-            if (targetInSight)
-            {
-                timer += Time.fixedDeltaTime / 2;
-            }
             timer -= Time.fixedDeltaTime;
         }
         else
@@ -141,6 +124,9 @@ public class AI2 : Humanoid
         if (state == AIState.Chase)
         {
             Chase();
+            if(!target) {
+                return;
+            }
             if (!target.targetedBy.Contains(this as Humanoid))
             {
                 target.targetedBy.Add(this);
@@ -380,6 +366,9 @@ public class AI2 : Humanoid
                 if (Vector2.Distance(chaseTarget, transform.position) < 5f && Vector2.Distance(chaseTarget, transform.position) > 2f)
                 {
                     sprinting = true;
+                }
+                if(!circularMovement) {
+                    circularMovement = this.GetComponentInChildren<CircularMovement>();
                 }
                 if (circularMovement.parent != this)
                 {
@@ -690,8 +679,6 @@ public class AI2 : Humanoid
                 dodgeDirection = dodgeDirection * -1;
                 RaycastHit2D[] hits2;
                 hits2 = Physics2D.RaycastAll(rb.position, dodgeDirection, dodgeMultiplier).OrderBy(h => h.distance).ToArray();
-                Debug.DrawRay(transform.position, dodgeDirection.normalized * 1f, Color.red, 6f);
-                // Debug.DrawRay(transform.position, dodgeDirection.normalized * 3f, Color.red, 6f);
                 bool dodge2 = true;
                 foreach (RaycastHit2D hit in hits2)
                 {

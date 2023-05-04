@@ -175,6 +175,7 @@ public class Humanoid : MonoBehaviour
         }
         onDamage?.Invoke();
         this.health -= GameController.CalculateDamage(weapon, equippedArmor, out int heal);
+        attacker.Heal(heal);
         if (health <= 0)
         {
             health = 0;

@@ -246,7 +246,7 @@ public sealed class GameController : MonoBehaviour
             }
             else
             {
-                weapon.heal += (int)(effect.amount * 0.01f * weapon.damage);
+                weapon.heal += Mathf.CeilToInt(effect.amount * 0.01f * weapon.damage);
             }
         }
         return weapon;
@@ -461,9 +461,11 @@ public sealed class GameController : MonoBehaviour
             return Damage;
         }
         Damage -= hitting.defense;
+        heal = weapon.heal;
         if (Damage < 0)
         {
             Damage = 0;
+            heal = 0;
         }
         return Damage;
     }

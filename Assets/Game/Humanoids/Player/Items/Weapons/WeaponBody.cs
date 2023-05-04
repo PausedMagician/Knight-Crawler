@@ -8,7 +8,7 @@ public class WeaponBody : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D other) {
         Humanoid humanoid;
         if(humanoid = other.GetComponent<Humanoid>()) {
-            weaponManifesto.owner.Heal(humanoid.TakeDamage(weaponManifesto.owner.equippedWeapon, weaponManifesto.owner));
+            humanoid.TakeDamage(weaponManifesto.owner.equippedWeapon, weaponManifesto.owner);
         }
     }
 }
