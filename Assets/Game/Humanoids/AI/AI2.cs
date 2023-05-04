@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using NavMeshPlus;
 using System.Linq;
 
+
 [RequireComponent(typeof(NavMeshAgent), typeof(Rigidbody2D), typeof(Animator))]
 // [RequireComponent(typeof(Rigidbody2D))]
 public class AI2 : Humanoid
@@ -46,7 +47,7 @@ public class AI2 : Humanoid
 
     new private void FixedUpdate()
     {
-        Checkfor();
+        circularMovement.Checkfor();
         if (sprinting)
         {
             agent.speed = movementSpeed * sprintspeed;
@@ -283,21 +284,21 @@ public class AI2 : Humanoid
                 {
                     sprinting = true;
                 }
-                if (Checkfor() == true)
+                if (circularMovement.Checkfor() == true)
                 {
-                    if (Vector2.Distance(chaseTarget, transform.position) < agent.radius * 1.75f)
+                    if (Vector2.Distance(chaseTarget, transform.position) > agent.radius * 1.75f)
                     {
                         if (!attacking)
                         {
                             attacking = true;
                             agent.isStopped = true;
-                            Invoke("Attack", 0.2f);
+                            Invoke("Attack", 1f);
                         }
                     }
                 }
-                else if (Checkfor() == false)
+                else if (circularMovement.Checkfor() == false)
                 {
-                    // chaseTarget = Vector2.MoveTowards(transform.position, target.transform.position * minaf, minaf);
+                    chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * .3f));
                     // Debug.Log(chaseTarget);
                 }
                 agent.SetDestination(chaseTarget);
@@ -369,8 +370,25 @@ public class AI2 : Humanoid
     public override void Die()
     {
         base.Die();
+        int level = 1;
         this.state = AIState.Dead;
         agent.isStopped = true;
+        Debug.Log("Dead");
+        if(equippedWeapon) {
+            Vector2 pos = transform.position;
+            pos += new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.2f, -1f)).normalized * Random.Range(1.2f, 1.5f);
+            GameObject go = Instantiate(GameController.GetInstance().itemPrefab, pos, Quaternion.identity);
+            go.transform.position = pos;
+            go.GetComponent<Item>().SetItem(equippedWeapon);
+        }
+        if(equippedArmor) {
+            Vector2 pos = transform.position;
+            pos += new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.2f, -1f)).normalized * Random.Range(1.2f, 1.5f);
+            GameObject go = Instantiate(GameController.GetInstance().itemPrefab, pos, Quaternion.identity);
+            go.transform.position = pos;
+            go.GetComponent<Item>().SetItem(equippedArmor);
+        }
+        Destroy(gameObject, .1f);
     }
     protected override void Attack()
     {
@@ -475,41 +493,44 @@ public class AI2 : Humanoid
         possiblePoints = new List<Vector2>();
     }
 
-    public bool Checkfor()
-    {
-        if(target) {
-            Vector2 froms = transform.position;
-            Vector2 tos = target.transform.position;
-            Vector2 trueDirection = (tos - froms);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, trueDirection);
-            Debug.DrawRay(transform.position, trueDirection , Color.green);
-            if (hit.collider.gameObject.name == "Player" || hit.collider.isTrigger)
-            {
-                // Debug.Log("Player");
-                Debug.Log($"{hit.collider.gameObject.name} was hit");
-                return true;
-            }
-            else if (hit.collider.gameObject.name != "Player")
-            {
-                // Debug.Log("Not Player");
-                Debug.Log($"{hit.collider.gameObject.name} was hit");
-                return false;
-            }
-            else
-            {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
+    // public bool Checkfor()
+    // {
+    //     if (target)
+    //     {
+    //         Vector2 froms = transform.position;
+    //         Vector2 tos = target.transform.position;
+    //         Vector2 trueDirection = (tos - froms);
+    //         RaycastHit2D hit = Physics2D.Raycast(transform.position, trueDirection);
+    //         // if (hit.collider.gameObject.name == "Player" || hit.collider.isTrigger)
+    //         // {
+    //         //     // Debug.Log("Player");
+    //         //     Debug.Log($"{hit.collider.gameObject.name} was hit");
+    //         //     return true;
+    //         // }
+    //         // else if (hit.collider.gameObject.name != "Player")
+    //         // {
+    //         //     // Debug.Log("Not Player");
+    //         //     Debug.Log($"{hit.collider.gameObject.name} was hit");
+    //         //     return false;
+    //         // }
+    //         // else
+    //         // {
+    //         //     return false;
+    //         // }
+    //         return true;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //     }
+    // }
 
     public void StartDodging(Projectile projectile)
     {
-        if(state == AIState.Dead)
+        if (state == AIState.Dead)
         {
-            Object.Destroy(gameObject, 2.0f);
             return;
+
         }
         Attacked(projectile.shooter);
         if (dodgeTimer <= 0)
@@ -524,7 +545,7 @@ public class AI2 : Humanoid
             {
                 dodgeDirection = new Vector2(shooterDirection.y, -shooterDirection.x);
             }
-            
+
             RaycastHit2D[] hits;
             //Order by distance closest hit first
             hits = Physics2D.RaycastAll(rb.position, dodgeDirection, dodgeMultiplier).OrderBy(h => h.distance).ToArray();
@@ -533,7 +554,7 @@ public class AI2 : Humanoid
             bool dodge = true;
             foreach (RaycastHit2D hit in hits)
             {
-                if(hit.collider.gameObject.GetComponent<AI2>() == this)
+                if (hit.collider.gameObject.GetComponent<AI2>() == this)
                 {
                     continue;
                 }
@@ -541,18 +562,21 @@ public class AI2 : Humanoid
                 {
                     continue;
                 }
-                else {
+                else
+                {
                     dodge = false;
                     break;
                 }
             }
-            if(dodge)
+            if (dodge)
             {
                 dodging = true;
                 agent.SetDestination(rb.position + dodgeDirection);
                 rb.MovePosition(Vector2.Lerp(rb.position, (rb.position + dodgeDirection.normalized * dodgeMultiplier), 0.5f));
-            } else {
-                dodgeDirection = dodgeDirection*-1;
+            }
+            else
+            {
+                dodgeDirection = dodgeDirection * -1;
                 RaycastHit2D[] hits2;
                 hits2 = Physics2D.RaycastAll(rb.position, dodgeDirection, dodgeMultiplier).OrderBy(h => h.distance).ToArray();
                 Debug.DrawRay(transform.position, dodgeDirection.normalized * 1f, Color.red, 6f);
@@ -560,7 +584,7 @@ public class AI2 : Humanoid
                 bool dodge2 = true;
                 foreach (RaycastHit2D hit in hits2)
                 {
-                    if(hit.collider.gameObject.GetComponent<AI2>() == this)
+                    if (hit.collider.gameObject.GetComponent<AI2>() == this)
                     {
                         continue;
                     }
@@ -568,12 +592,13 @@ public class AI2 : Humanoid
                     {
                         continue;
                     }
-                    else {
+                    else
+                    {
                         dodge2 = false;
                         break;
                     }
                 }
-                if(dodge2)
+                if (dodge2)
                 {
                     dodging = true;
                     agent.SetDestination(rb.position + dodgeDirection);

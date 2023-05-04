@@ -203,6 +203,10 @@ public class Humanoid : MonoBehaviour
 
     public void Regen()
     {
+        if (health <= 0)
+        {
+            return;
+        }
         if (this is AI2)
         {
             AI2 ai = this as AI2;

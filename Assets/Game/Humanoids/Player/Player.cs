@@ -8,6 +8,7 @@ public class Player : Humanoid
 
     #region Singleton
     public static Player instance;
+    public GameController gamecontroller;
 
 
     void Awake()
@@ -38,6 +39,7 @@ public class Player : Humanoid
 
     void Update()
     {
+        Dead();
         HandleInput();
         UpdateAnimator();
     }
@@ -107,5 +109,32 @@ public class Player : Humanoid
 
     }
 
+    public void Dead()
+    {
+        if (health == 0)
+        {
+            hearts--;
+            if (hearts != 0)
+            {
+                foreach (Humanoid attacker in targetedBy)
+                {
+                    attacker.targetedBy = null;
+                    targetedBy.Remove(attacker);
+                }
+                if (gamecontroller.lastRested != null)
+                {
+                    Bonfire lastRested = gamecontroller.lastRested;
+                    this.transform.position = (Vector2)lastRested.transform.position + lastRested.spawnPoint;
+                    health = maxHealth;
+                }
 
+            }
+            else
+            {
+                GameController.ReturnToStart();
+            }
+
+            // Destroy(gameObject, 2f);
+        }
+    }
 }
