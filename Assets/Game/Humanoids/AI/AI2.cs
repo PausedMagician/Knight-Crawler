@@ -87,7 +87,6 @@ public class AI2 : Humanoid
                 RunAway();
                 break;
             case AIState.Dead:
-                Die();
                 break;
             default:
                 break;
@@ -583,7 +582,6 @@ public class AI2 : Humanoid
     {
         state = defaultState;
         target = null;
-        targetInSight = false;
         chaseTarget = Vector2.zero;
         patrolTarget = Vector2.zero;
         wanderTarget = Vector2.zero;
