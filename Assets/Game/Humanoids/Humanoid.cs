@@ -184,8 +184,10 @@ public class Humanoid : MonoBehaviour
         else if (this is AI2)
         {
             AI2 ai = this as AI2;
-            ai.target = attacker;
-            ai.timer = ai.timerMax * 1.5f;
+            if(ai.team != attacker.team) {
+                ai.target = attacker;
+                ai.timer = ai.timerMax * 1.5f;
+            }
             if (ai.agressive || ai.defaultState == AI2.AIState.Patrol || ai.defaultState == AI2.AIState.Chase || ai.state == AI2.AIState.Chase)
             {
                 ai.state = AI2.AIState.Chase;

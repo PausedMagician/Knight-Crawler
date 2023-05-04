@@ -176,11 +176,23 @@ public class AI2 : Humanoid
         foreach (RaycastHit2D hit in hits)
         {
             Humanoid humanoid = hit.collider.gameObject.GetComponent<Humanoid>();
+            Debug.Log(humanoid.Name.fullName);
             if(humanoid != this) {
                 if(humanoid.team != this.team) {
-                    if(Physics2D.Raycast(transform.position, humanoid.transform.position - transform.position, viewDistance).collider.gameObject.GetComponent<Humanoid>() == humanoid) {
-                        target = humanoid;
-                        state = AIState.Chase;
+                    RaycastHit2D[] checkHits = Physics2D.RaycastAll(transform.position, humanoid.transform.position - transform.position, viewDistance).OrderBy(h => h.distance).ToArray();
+                    foreach (RaycastHit2D checkHit in checkHits)
+                    {
+                        if(checkHit.collider.gameObject.GetComponent<Humanoid>() == humanoid) {
+                            target = humanoid;
+                            state = AIState.Chase;
+                            break;
+                        } else if (checkHit.collider.isTrigger) {
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+                    if(target) {
                         break;
                     }
                 }
@@ -269,11 +281,19 @@ public class AI2 : Humanoid
     public float wanderRadius; //The radius around wanderPoint it will go
     void Wander()
     {
-        if (Vector2.Distance(transform.position, wanderPoint) < 1f)
+        if (Vector2.Distance(transform.position, wanderTarget) < 1f || wanderTarget == Vector2.zero)
         {
-            wanderTarget = new Vector2(Random.Range(wanderPoint.x - wanderRadius, wanderPoint.x + wanderRadius), Random.Range(wanderPoint.y - wanderRadius, wanderPoint.y + wanderRadius));
+            if(wanderRadius == -1) {
+                wanderTarget = (Vector2)transform.position + new Vector2(Random.Range(-10, 10), Random.Range(-10, 10));
+            } else {
+                wanderTarget = new Vector2(Random.Range(wanderPoint.x - wanderRadius, wanderPoint.x + wanderRadius), Random.Range(wanderPoint.y - wanderRadius, wanderPoint.y + wanderRadius));
+            }
             NavMesh.SamplePosition(wanderTarget, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
             wanderTarget = hit.position;
+            agent.SetDestination(wanderTarget);
+        }
+        if((Vector2)agent.destination != wanderTarget) {
+            agent.SetDestination(wanderTarget);
         }
     }
 
@@ -281,6 +301,13 @@ public class AI2 : Humanoid
     Vector2 chaseTarget;
     void Chase()
     {
+        if(!target) {
+            CheckForTargets();
+        }
+        if(!target) {
+            state = defaultState;
+            return;
+        }
         if (target.health <= 0)
         {
             target = null;
@@ -468,6 +495,12 @@ public class AI2 : Humanoid
             case AIState.Idle:
                 break;
             case AIState.Wander:
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(wanderPoint, wanderRadius);
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(wanderPoint, 0.5f);
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(wanderTarget, 0.5f);
                 break;
             case AIState.Patrol:
                 Gizmos.color = Color.green;

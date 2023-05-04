@@ -598,8 +598,12 @@ public class MapGenerator : MonoBehaviour
                         ai.defaultState = AI2.AIState.Wander;
                         ai.state = AI2.AIState.Wander;
                         ai.team = rooms.FindIndex(r => r.room == room);
-                        ai.wanderPoint = room.center;
-                        ai.wanderRadius = (int)(room.size.x * room.size.y / 4);
+                        ai.wanderPoint = new Vector2(transform.position.x + room.center.x, transform.position.y + (room.center.y * 2));
+                        if(pseudoRandom.Next(0, 100) < 50) {
+                            ai.wanderRadius = (int)((room.size.x + room.size.y) / 2);
+                        } else {
+                            ai.wanderRadius = -1;
+                        }
                     }
                 }
             }
@@ -640,10 +644,10 @@ public class MapGenerator : MonoBehaviour
                             ai.defaultState = AI2.AIState.Patrol;
                             ai.state = AI2.AIState.Patrol;
                             ai.patrolPoints = new List<Vector2>();
-                            ai.patrolPoints.Add(new Vector2(room.xMin + 1f, (room.yMin + 1f) * 2));
-                            ai.patrolPoints.Add(new Vector2(room.xMax - 1f, (room.yMin + 1f) * 2));
-                            ai.patrolPoints.Add(new Vector2(room.xMax - 1f, (room.yMax - 1f) * 2));
-                            ai.patrolPoints.Add(new Vector2(room.xMin + 1f, (room.yMax - 1f) * 2));
+                            ai.patrolPoints.Add(new Vector2(transform.position.x + room.xMin + 1f, transform.position.y + ((room.yMin + 1f) * 2)));
+                            ai.patrolPoints.Add(new Vector2(transform.position.x + room.xMax - 1f, transform.position.y + ((room.yMin + 1f) * 2)));
+                            ai.patrolPoints.Add(new Vector2(transform.position.x + room.xMax - 1f, transform.position.y + ((room.yMax - 1f) * 2)));
+                            ai.patrolPoints.Add(new Vector2(transform.position.x + room.xMin + 1f, transform.position.y + ((room.yMax - 1f) * 2)));
                             ai.patrolTimer = 0f;
                             ai.patrolIndex = i % 4;
                         }
