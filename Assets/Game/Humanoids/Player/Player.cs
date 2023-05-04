@@ -113,7 +113,7 @@ public class Player : Humanoid
     {
         if (health == 0)
         {
-            hearts--;
+            hearts = hearts -1 ;
             if (hearts != 0)
             {
                 foreach (Humanoid attacker in targetedBy)
