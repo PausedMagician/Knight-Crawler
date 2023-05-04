@@ -122,7 +122,6 @@ GameObject:
   - component: {fileID: 4086802431330083640}
   - component: {fileID: 3536355935308641186}
   - component: {fileID: 156990789775408641}
-  - component: {fileID: 5558823631585804785}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -217,21 +216,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
---- !u!111 &5558823631585804785
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6784765913950511622}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 14a3a03641bddc944abcd12ac9dd57a1, type: 2}
-  m_Animations: []
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!1 &7488432211130763827
 GameObject:
   m_ObjectHideFlags: 0
@@ -634,7 +618,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: ac99cae807456b840972eec6fc4efe5a, type: 2}
   - {fileID: 2100000, guid: cccd7396ef3fa3144b2f3e2e4df9c1c0, type: 2}
   item: {fileID: 0}
-  anim: {fileID: 0}
 --- !u!58 &7488432211815097045
 CircleCollider2D:
   m_ObjectHideFlags: 0

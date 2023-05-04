@@ -157,39 +157,38 @@ public class AI2 : Humanoid
 
     public void CheckForTargets()
     {
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, viewDistance, Vector2.zero).Where(h => h.collider.gameObject.GetComponent<Humanoid>() != null).OrderBy(h => h.distance).ToArray();
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, viewDistance, Vector2.zero).OrderBy(h => h.distance).ToArray();
         foreach (RaycastHit2D hit in hits)
         {
             Humanoid humanoid = hit.collider.gameObject.GetComponent<Humanoid>();
-            if(humanoid != this) {
-                if(humanoid.team != this.team) {
-                    Debug.Log("Not the same team");
-                    RaycastHit2D[] checkHits = Physics2D.RaycastAll(transform.position, humanoid.transform.position - transform.position, viewDistance).OrderBy(h => h.distance).ToArray();
-                    Debug.DrawRay(transform.position, humanoid.transform.position - transform.position, Color.red, 1f);
-                    foreach (RaycastHit2D checkHit in checkHits)
-                    {
-                        Humanoid checkHumanoid = checkHit.collider.gameObject.GetComponent<Humanoid>();
-                        if(checkHumanoid == this) {
-                            continue;
+            if(humanoid) {
+                if(humanoid != this) {
+                    if(humanoid.team != this.team) {
+                        RaycastHit2D[] checkHits = Physics2D.RaycastAll(transform.position, humanoid.transform.position - transform.position, viewDistance).OrderBy(h => h.distance).ToArray();
+                        foreach (RaycastHit2D checkHit in checkHits)
+                        {
+                            Humanoid checkHumanoid = checkHit.collider.gameObject.GetComponent<Humanoid>();
+                            if(checkHumanoid == this) {
+                                continue;
+                            }
+                            if(checkHumanoid == humanoid) {
+                                target = humanoid;
+                                state = AIState.Chase;
+                                break;
+                            } else if (checkHit.collider.transform.parent) {
+                                if(checkHit.collider.transform.parent.gameObject.name == "Floors") {
+                                    continue;
+                                }
+                            }
+                            if (checkHit.collider.isTrigger) {
+                                continue;
+                            } else {
+                                break;
+                            }
                         }
-                        if(checkHumanoid == humanoid) {
-                            Debug.Log("Found target");
-                            target = humanoid;
-                            state = AIState.Chase;
-                            break;
-                        } else if (checkHit.collider.transform.parent.gameObject.name == "Floors") {
-                            Debug.Log("Hit tilemap");
-                            continue;
-                        } else if (checkHit.collider.isTrigger) {
-                            Debug.Log("Hit trigger");
-                            continue;
-                        } else {
-                            Debug.Log("Didn't hit target");
+                        if(target) {
                             break;
                         }
-                    }
-                    if(target) {
-                        break;
                     }
                 }
             }

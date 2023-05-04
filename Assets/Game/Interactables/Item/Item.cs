@@ -7,21 +7,15 @@ public class Item : Interactable
 {
     public Material[] materials; //0 is common, 1 is uncommon, 2 is rare, 3 is epic, 4 is legendary.
     public ItemData item;
-    public Animation anim;
     // private float frequency = 0.5f;
     // private float amplitude = 0.1f;
     // Vector3 posOffset = new Vector3();
     // Vector3 tempPos = new Vector3();
 
-    void Start()
-    {
-        anim = gameObject.GetComponent<Animation>();
-        anim.Play("ItemHover");
-    }
     public void SetItem(ItemData item)
     {
         // posOffset = transform.position;
-        gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
+        gameObject.GetComponentInChildren<SpriteRenderer>().material = materials[(int)item.rarity];
         gameObject.GetComponentInChildren<Light2D>().color = materials[(int)item.rarity].color;
         this.item = item;
         // Debug.Log((int)item.rarity);
@@ -36,7 +30,7 @@ public class Item : Interactable
             item = GameController.GetInstance().CreateWeapon(GameController.GetRarity(), Random.Range(min, max));
         }
         // posOffset = transform.position;
-        gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
+        gameObject.GetComponentInChildren<SpriteRenderer>().material = materials[(int)item.rarity];
         gameObject.GetComponentInChildren<Light2D>().color = materials[(int)item.rarity].color;
         // Debug.Log((int)item.rarity);
     }

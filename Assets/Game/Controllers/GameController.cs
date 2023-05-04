@@ -546,8 +546,8 @@ public sealed class GameController : MonoBehaviour
 
     public static void ReturnToStart()
     {
-        SceneManager.UnloadSceneAsync("Main Game");
-        SceneManager.LoadScene("Start");
+        AsyncOperation ao = SceneManager.UnloadSceneAsync("Main Game");
+        ao.completed += (AsyncOperation obj) => { SceneManager.LoadScene("Start"); };
     }
 
 

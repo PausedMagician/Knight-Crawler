@@ -34,7 +34,6 @@ public class Bonfire : Interactable
         {
             gameController.SetLastRested(this);
         }
-        GameController.OnBonfireUpdate += UpdateBonfire;
     }
     new private void OnEnable()
     {

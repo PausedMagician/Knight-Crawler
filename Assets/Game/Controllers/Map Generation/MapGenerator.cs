@@ -607,7 +607,7 @@ public class MapGenerator : MonoBehaviour
                         ai.agressive = true;
                         ai.defaultState = AI2.AIState.Wander;
                         ai.state = AI2.AIState.Wander;
-                        ai.team = rooms.FindIndex(r => r.room == room);
+                        ai.team = rooms.FindIndex(r => r.room == room) + 1;
                         ai.gameObject.GetComponentInChildren<ShadowCaster2D>().gameObject.GetComponent<SpriteRenderer>().color = teamColor;
                         ai.wanderPoint = new Vector2(transform.position.x + room.center.x, transform.position.y + (room.center.y * 2));
                         if(pseudoRandom.Next(0, 100) < 50) {
@@ -637,7 +637,7 @@ public class MapGenerator : MonoBehaviour
                         ai.EquipArmor(gameController.CreateArmor(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.EquipWeapon(gameController.CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.agressive = true;
-                        ai.team = rooms.FindIndex(r => r.room == room);
+                        ai.team = rooms.FindIndex(r => r.room == room) + 1;
                         ai.gameObject.GetComponentInChildren<ShadowCaster2D>().gameObject.GetComponent<SpriteRenderer>().color = teamColor;
                         if (i == 0)
                         {

@@ -15,7 +15,6 @@ public class Player : Humanoid
     {
         if (instance != null)
         {
-            Debug.LogWarning("More than one instance of Player found!");
             return;
         }
         instance = this;
