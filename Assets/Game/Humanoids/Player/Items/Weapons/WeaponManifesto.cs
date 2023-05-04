@@ -58,9 +58,9 @@ public class WeaponManifesto : MonoBehaviour
                 // Debug.DrawLine(transform.position, transform.position + container.transform.right, Color.green, 1f);
                 // Debug.DrawLine(transform.position, transform.position + (container.transform.up + container.transform.right).normalized, Color.cyan, 1f);
                 obj.gameObject.GetComponent<SpriteRenderer>().sprite = weapon.projectileSprite;
+                animator.SetTrigger("Attack");
                 Invoke("ResetAttack", weapon.GetAttackSpeed());
             }
-
         }
         else
         {

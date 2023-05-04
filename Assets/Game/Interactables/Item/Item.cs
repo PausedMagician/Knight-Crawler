@@ -27,7 +27,7 @@ public class Item : Interactable
             item = GameController.GetInstance().CreateArmor(GameController.GetRarity(), Random.Range(min, max));
         else
         {
-            item = GameController.GetInstance().CreateMelee(GameController.GetRarity(), Random.Range(min, max));
+            item = GameController.GetInstance().CreateWeapon(GameController.GetRarity(), Random.Range(min, max));
         }
         posOffset = transform.position;
         gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];

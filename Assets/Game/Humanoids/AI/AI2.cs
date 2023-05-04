@@ -173,7 +173,7 @@ public class AI2 : Humanoid
         {
             point = patrolPoints[patrolIndex - 1];
         }
-        if (patrolTimer <= 0)
+        if (patrolTimer <= 0 && weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
         {
             patrolTarget = patrolPoints[patrolIndex] + new Vector2(Random.Range(-1, 1), Random.Range(-1, 1)).normalized * 0.5f;
             patrolIndex++;
@@ -184,7 +184,7 @@ public class AI2 : Humanoid
             }
             patrolTimer = Random.Range(patrolTimerValues.x, patrolTimerValues.y);
         }
-        else if (Vector2.Distance(patrolTarget, transform.position) < 1.5f || Vector2.Distance(point, transform.position) < 1.5f)
+        else if (Vector2.Distance(patrolTarget, transform.position) < 1.5f || Vector2.Distance(point, transform.position) < 1.5f && weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
         {
             // Debug.Log("Close " + Vector2.Distance(patrolTarget, transform.position));
             if (Mathf.Round(patrolTimer) % 3 == 0 && Mathf.Round(patrolTimer) != 0 && Vector2.Distance(agent.destination, transform.position) < 0.05f)
@@ -251,7 +251,9 @@ public class AI2 : Humanoid
                         Invoke("Attack", 0.2f);
                     }
                 }
-                agent.SetDestination(chaseTarget);
+                if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
+                    agent.SetDestination(chaseTarget);
+                }
                 break;
             case Magic:
             case Ranged:
@@ -301,7 +303,9 @@ public class AI2 : Humanoid
                     chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * .3f));
                     // Debug.Log(chaseTarget);
                 }
-                agent.SetDestination(chaseTarget);
+                if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
+                    agent.SetDestination(chaseTarget);
+                }
                 break;
         }
     }
@@ -337,7 +341,9 @@ public class AI2 : Humanoid
                     closestPoint = possiblePoints[i];
                 }
             }
-            agent.SetDestination(closestPoint);
+            if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
+                agent.SetDestination(closestPoint);
+            }
             // Debug.DrawLine(transform.position, closestPoint, Color.red);
         }
         TurnWeapon(transform.position, transform.position + agent.desiredVelocity, Time.fixedDeltaTime);
@@ -568,7 +574,7 @@ public class AI2 : Humanoid
                     break;
                 }
             }
-            if (dodge)
+            if (dodge && weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
             {
                 dodging = true;
                 agent.SetDestination(rb.position + dodgeDirection);
@@ -598,7 +604,7 @@ public class AI2 : Humanoid
                         break;
                     }
                 }
-                if (dodge2)
+                if (dodge2 && weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
                 {
                     dodging = true;
                     agent.SetDestination(rb.position + dodgeDirection);
