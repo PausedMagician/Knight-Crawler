@@ -35,11 +35,12 @@ public class WeaponManifesto : MonoBehaviour
                 rebind = false;
             }
             animator.SetTrigger("Attack");
-        }   
+        }
         else if (owner.equippedWeapon is Ranged)
         {
             Ranged weapon = owner.equippedWeapon as Ranged;
-            if(canAttack) {
+            if (canAttack)
+            {
                 canAttack = false;
                 // Instantiate and shoot projectile
                 GameObject obj = new GameObject("Proejct", typeof(SpriteRenderer), typeof(Projectile));
@@ -59,7 +60,7 @@ public class WeaponManifesto : MonoBehaviour
                 obj.gameObject.GetComponent<SpriteRenderer>().sprite = weapon.projectileSprite;
                 Invoke("ResetAttack", weapon.GetAttackSpeed());
             }
-    
+
         }
         else
         {
@@ -67,7 +68,8 @@ public class WeaponManifesto : MonoBehaviour
         }
     }
 
-    void ResetAttack() {
+    void ResetAttack()
+    {
         canAttack = true;
     }
 
@@ -78,7 +80,8 @@ public class WeaponManifesto : MonoBehaviour
         if (owner.equippedWeapon != null)
         {
             // Debug.Log("Weapon not null");
-            if(spriteRenderer == null) {
+            if (spriteRenderer == null)
+            {
                 spriteRenderer = weaponPrefab.GetComponentInChildren<SpriteRenderer>();
             }
             spriteRenderer.sprite = owner.equippedWeapon.sprite;
@@ -96,12 +99,14 @@ public class WeaponManifesto : MonoBehaviour
             {
                 animationType = AnimationType.magic;
             }
-            if(animator == null) {
+            if (animator == null)
+            {
                 animator = weaponPrefab.GetComponentInChildren<Animator>();
             }
             animator.SetInteger("MaxCombo", maxCombo);
             animator.SetInteger("AnimationSet", (int)animationSet);
             animator.SetInteger("AnimationType", (int)animationType);
+            animator.speed = owner.equippedWeapon.GetAttackSpeed();
             foreach (PolygonCollider2D collider2D in weaponPrefab.GetComponents<PolygonCollider2D>())
             {
                 Destroy(collider2D);
@@ -127,5 +132,5 @@ public class WeaponManifesto : MonoBehaviour
         // RangedManifesto.updateManifesto();
     }
 
-    
+
 }

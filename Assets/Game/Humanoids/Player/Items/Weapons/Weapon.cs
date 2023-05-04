@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public abstract class Weapon : ItemData
@@ -14,7 +15,8 @@ public abstract class Weapon : ItemData
     public AnimationSet animationSet;
     public Effect[] effects;
 
-    public Weapon(string name, int cost, int level) {
+    public Weapon(string name, int cost, int level)
+    {
         this.name = name;
         this.cost = cost;
         this.level = level;
@@ -33,31 +35,39 @@ public abstract class Weapon : ItemData
         }
     }
 
-    public string GetEffectsString() {
+    public string GetEffectsString()
+    {
         string effectsString = "";
-        foreach (Effect effect in effects) {
+        foreach (Effect effect in effects)
+        {
             effectsString += effect.ToString() + "\n";
         }
         return effectsString;
     }
 
-    public float GetAttackSpeed() {
-        float attackSpeed = 0.5f;
-        for (var i = 0; i < effects.Length; i++)
+    public float GetAttackSpeed()
+    {
+        float attackSpeed = 1f;
+        foreach (Effect effect in this.effects.Where(effect => effect.specificType == Effector.Speed).ToArray())
         {
-            Effect effect = effects[i];
-            if(effect.specificType == Effector.Speed) {
-                if(effect.amountType == AmountType.Flat) {
-                    attackSpeed += effect.amount;
-                } else {
-                    attackSpeed *= (1 + ((float)effect.amount / 100));
-                }
+            if (effect.amountType == AmountType.Flat)
+            {
+                attackSpeed += effect.amount;
+            }
+            else
+            {
+                attackSpeed *= (1 + ((float)effect.amount / 100));
             }
         }
-        return 1/attackSpeed;
+        if(this is Ranged || this is Magic) {
+            return 1 / attackSpeed;
+        } else {
+            return attackSpeed;
+        }
     }
 
-    public override string ToString() {
+    public override string ToString()
+    {
         return name + "\n" + "\nCost: " + cost + "\nLevel: " + level + "\nRarity: " + rarity + "\nEffects: " + GetEffectsString();
     }
 

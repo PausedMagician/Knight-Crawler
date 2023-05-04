@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,10 +34,28 @@ public class Player : Humanoid
 
     public Inventory inventory;
     public Interactable interactingWith;
+    public Animator animator;
 
     void Update()
     {
         HandleInput();
+        UpdateAnimator();
+    }
+
+    private void UpdateAnimator()
+    {
+        if(!animator) {
+            animator = this.gameObject.GetComponent<Animator>();
+        }
+        if(animator) {
+            if(!sprinting) {
+                animator.speed = this.movementSpeed / 7f;
+            } else {
+                animator.speed = (this.movementSpeed / 7f) * sprintspeed;
+            }
+            animator.SetFloat("X", movementDirection.x);
+            animator.SetFloat("Y", movementDirection.y);
+        }
     }
 
     // Vector2 right_hand = new Vector2(0.25f, 0), left_hand = new Vector2(-0.25f, 0);

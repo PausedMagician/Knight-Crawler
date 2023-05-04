@@ -10,18 +10,15 @@ public class Bonfire : Interactable
     public Animator animator;
     public GameController gameController;
 
-    
+
     public override void Interact(Player player)
     {
-        if (active)
-        {
-            active = false;
-            animator.SetBool("Active", active);
-        }
-        else
+        base.Interact(player);
+        if (!active)
         {
             Debug.Log("Bonfire Rested");
             active = true;
+            isLocked = true;
             animator.SetBool("Active", active);
             animator.SetTrigger("Light");
             gameController.SetLastRested(this);
@@ -39,38 +36,49 @@ public class Bonfire : Interactable
         }
         GameController.OnBonfireUpdate += UpdateBonfire;
     }
-    private void OnEnable() {
+    new private void OnEnable()
+    {
+        base.OnEnable();
         GameController.OnBonfireUpdate += UpdateBonfire;
     }
-    private void OnDisable() {
+    new private void OnDisable()
+    {
+        base.OnDisable();
         GameController.OnBonfireUpdate -= UpdateBonfire;
     }
-    public void StartBonfire() {
+    public void StartBonfire()
+    {
         if (active)
         {
             gameController.SetLastRested(this);
+            isLocked = true;
         }
     }
     public void UpdateBonfire()
     {
         Debug.Log(this);
-        if(!this.animator) {
+        if (!this.animator)
+        {
             this.animator = this.gameObject.GetComponent<Animator>();
         }
         if (gameController.lastRested == this)
         {
             active = true;
+            isLocked = true;
         }
         else
         {
             active = false;
+            isLocked = false;
         }
         animator.SetBool("Active", active);
     }
 
-    private void OnDestroy() {
+    private void OnDestroy()
+    {
         GameController.OnBonfireUpdate -= UpdateBonfire;
-        if(active) {
+        if (active)
+        {
             gameController.SetLastRested(null);
         }
     }

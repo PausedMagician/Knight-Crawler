@@ -16,12 +16,12 @@ public class Interactable : MonoBehaviour {
     public UnityAction<Player> OnInteract, OnEnter, OnLeave;
 
 
-    private void OnEnable() {
+    public void OnEnable() {
         OnInteract += Interact;
         OnEnter += Entering;
         OnLeave += Leaving;
     }
-    private void OnDisable() {
+    public void OnDisable() {
         if (OnInteract != null) {
             OnInteract -= Interact;
         }
