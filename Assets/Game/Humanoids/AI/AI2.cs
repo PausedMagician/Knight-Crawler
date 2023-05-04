@@ -346,7 +346,7 @@ public class AI2 : Humanoid
                 }
                 if (circularMovement.Checkfor(target))
                 {
-                    if (Vector2.Distance(chaseTarget, transform.position) > agent.radius * 1.75f)
+                    if (Vector2.Distance(chaseTarget, transform.position) < agent.radius * 1.75f)
                     {
                         if (!attacking)
                         {
