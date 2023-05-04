@@ -127,7 +127,6 @@ public class Humanoid : MonoBehaviour
             canMove = true;
             if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.5f)
             {
-                Debug.Log(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
                 canMove = false;
             }
         }
@@ -205,8 +204,10 @@ public class Humanoid : MonoBehaviour
         if (this is AI2)
         {
             AI2 ai = this as AI2;
-            ai.target = attacker;
-            ai.timer = ai.timerMax * 1.5f;
+            if(ai.team != attacker.team) {
+                ai.target = attacker;
+                ai.timer = ai.timerMax * 1.5f;
+            }
             if (ai.agressive || ai.defaultState == AI2.AIState.Patrol || ai.defaultState == AI2.AIState.Chase || ai.state == AI2.AIState.Chase)
             {
                 ai.state = AI2.AIState.Chase;

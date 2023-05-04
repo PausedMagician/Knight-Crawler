@@ -7,6 +7,7 @@ using System.Linq;
 public abstract class Weapon : ItemData
 {
     public int damage;
+    public float attackSpeed;
     public int heal;
     public int maxCombo;
     int combo;

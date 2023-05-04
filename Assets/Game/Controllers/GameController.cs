@@ -172,6 +172,7 @@ public sealed class GameController : MonoBehaviour
                 break;
         }
         weapon = DamageCalculation(weapon);
+        weapon.attackSpeed = weapon.GetAttackSpeed();
         return weapon;
     }
     public Weapon CreateWeapon(Rarity rarity, int level)
@@ -194,6 +195,7 @@ public sealed class GameController : MonoBehaviour
                 break;
         }
         weapon = DamageCalculation(weapon);
+        weapon.attackSpeed = weapon.GetAttackSpeed();
         return weapon;
     }
     public Weapon CreateWeapon(Rarity rarity, int level, System.Random random)
@@ -216,6 +218,7 @@ public sealed class GameController : MonoBehaviour
                 break;
         }
         weapon = DamageCalculation(weapon);
+        weapon.attackSpeed = weapon.GetAttackSpeed();
         return weapon;
     }
 

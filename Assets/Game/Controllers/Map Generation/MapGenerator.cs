@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 using System.Threading.Tasks;
 using NavMeshPlus.Components;
 using System.Linq;
+using UnityEngine.Rendering.Universal;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -578,6 +579,9 @@ public class MapGenerator : MonoBehaviour
         //Scatter enemies in rooms, but not in the room with the Bonfire and if there is a chest room make the enemy level slightly higher, and their amount more
         foreach (Rect room in rooms.Select(r => r.room).ToList())
         {
+            //Random color based on number
+            Color teamColor = new Color(pseudoRandom.Next(0, 255) / 255f, pseudoRandom.Next(0, 255) / 255f, pseudoRandom.Next(0, 255) / 255f);
+            Debug.Log(teamColor);
             if (room == startRoom.room) continue;
             if (!chestRooms.Contains(room))
             {
@@ -598,6 +602,7 @@ public class MapGenerator : MonoBehaviour
                         ai.defaultState = AI2.AIState.Wander;
                         ai.state = AI2.AIState.Wander;
                         ai.team = rooms.FindIndex(r => r.room == room);
+                        ai.gameObject.GetComponentInChildren<ShadowCaster2D>().gameObject.GetComponent<SpriteRenderer>().color = teamColor;
                         ai.wanderPoint = new Vector2(transform.position.x + room.center.x, transform.position.y + (room.center.y * 2));
                         if(pseudoRandom.Next(0, 100) < 50) {
                             ai.wanderRadius = (int)((room.size.x + room.size.y) / 2);
@@ -627,6 +632,7 @@ public class MapGenerator : MonoBehaviour
                         ai.EquipWeapon(gameController.CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.agressive = true;
                         ai.team = rooms.FindIndex(r => r.room == room);
+                        ai.gameObject.GetComponentInChildren<ShadowCaster2D>().gameObject.GetComponent<SpriteRenderer>().color = teamColor;
                         if (i == 0)
                         {
                             ai.defaultState = AI2.AIState.Guard;

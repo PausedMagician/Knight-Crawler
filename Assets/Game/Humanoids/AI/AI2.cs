@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using NavMeshPlus;
 using System.Linq;
-
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(Rigidbody2D), typeof(Animator))]
 // [RequireComponent(typeof(Rigidbody2D))]
@@ -176,19 +176,30 @@ public class AI2 : Humanoid
         foreach (RaycastHit2D hit in hits)
         {
             Humanoid humanoid = hit.collider.gameObject.GetComponent<Humanoid>();
-            Debug.Log(humanoid.Name.fullName);
             if(humanoid != this) {
                 if(humanoid.team != this.team) {
+                    Debug.Log("Not the same team");
                     RaycastHit2D[] checkHits = Physics2D.RaycastAll(transform.position, humanoid.transform.position - transform.position, viewDistance).OrderBy(h => h.distance).ToArray();
+                    Debug.DrawRay(transform.position, humanoid.transform.position - transform.position, Color.red, 1f);
                     foreach (RaycastHit2D checkHit in checkHits)
                     {
-                        if(checkHit.collider.gameObject.GetComponent<Humanoid>() == humanoid) {
+                        Humanoid checkHumanoid = checkHit.collider.gameObject.GetComponent<Humanoid>();
+                        if(checkHumanoid == this) {
+                            continue;
+                        }
+                        if(checkHumanoid == humanoid) {
+                            Debug.Log("Found target");
                             target = humanoid;
                             state = AIState.Chase;
                             break;
+                        } else if (checkHit.collider.transform.parent.gameObject.name == "Floors") {
+                            Debug.Log("Hit tilemap");
+                            continue;
                         } else if (checkHit.collider.isTrigger) {
+                            Debug.Log("Hit trigger");
                             continue;
                         } else {
+                            Debug.Log("Didn't hit target");
                             break;
                         }
                     }
@@ -281,6 +292,9 @@ public class AI2 : Humanoid
     public float wanderRadius; //The radius around wanderPoint it will go
     void Wander()
     {
+        if(wanderTarget == Vector2.positiveInfinity || wanderTarget == Vector2.negativeInfinity) {
+            wanderTarget = transform.position;
+        }
         if (Vector2.Distance(transform.position, wanderTarget) < 1f || wanderTarget == Vector2.zero)
         {
             if(wanderRadius == -1) {
@@ -288,7 +302,7 @@ public class AI2 : Humanoid
             } else {
                 wanderTarget = new Vector2(Random.Range(wanderPoint.x - wanderRadius, wanderPoint.x + wanderRadius), Random.Range(wanderPoint.y - wanderRadius, wanderPoint.y + wanderRadius));
             }
-            NavMesh.SamplePosition(wanderTarget, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
+            NavMesh.SamplePosition(wanderTarget, out NavMeshHit hit, 15f, NavMesh.AllAreas);
             wanderTarget = hit.position;
             agent.SetDestination(wanderTarget);
         }
@@ -399,12 +413,12 @@ public class AI2 : Humanoid
     {
         if (target == null)
         {
-            state = AIState.Idle;
+            state = defaultState;
             return;
         }
         if (Vector2.Distance(transform.position, target.transform.position) > viewDistance)
         {
-            state = AIState.Idle;
+            state = defaultState;
             return;
         }
         else
