@@ -88,7 +88,7 @@ public class Humanoid : MonoBehaviour
 
     void Move()
     {
-        if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
+        if (CanMove())
         {
             if (sprinting)
             {
@@ -113,6 +113,31 @@ public class Humanoid : MonoBehaviour
         {
             movementDirection = Vector2.zero;
         }
+    }
+
+    public bool CanMove()
+    {
+        if(equippedWeapon == null) {
+            return true;
+        }
+        bool canMove = false;
+        if (equippedWeapon is Ranged or Magic)
+        {
+            canMove = true;
+            if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.5f)
+            {
+                Debug.Log(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+                canMove = false;
+            }
+        }
+        else
+        {
+            if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
+            {
+                canMove = true;
+            }
+        }
+        return canMove;
     }
 
     protected void TurnWeapon(Vector2 _transform, Vector2 target, float _time, float extraDegrees = 0f)

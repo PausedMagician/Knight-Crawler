@@ -552,8 +552,8 @@ public class MapGenerator : MonoBehaviour
         chestRooms.Add(exitRoom);
         // Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(chestRoom.center.x, chestRoom.center.y * 2, 0), Quaternion.identity, propsContainer.transform);
         GameObject exitBon = Instantiate(exitPrefab, new Vector3(transform.position.x + exitRoom.center.x, transform.position.y + exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
-        Bonfire exit = exitBon.GetComponent<Bonfire>();
-        exit.gameController = gameController;
+        Exit exit = exitBon.GetComponent<Exit>();
+        exit.mapGenerator = this;
     }
 
     void PlaceEnemies()
