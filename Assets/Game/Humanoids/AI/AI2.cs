@@ -539,7 +539,8 @@ public class AI2 : Humanoid
 
         }
         Attacked(projectile.shooter);
-        if (dodgeTimer <= 0)
+        
+        if (dodgeTimer <= 0 && Random.Range(1, 101) < 25)
         {
             Vector2 shooterDirection = projectile.shooter.transform.position - transform.position;
             Vector2 dodgeDirection;
