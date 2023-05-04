@@ -17,6 +17,7 @@ public class Item : Interactable
         posOffset = transform.position;
         gameObject.GetComponent<SpriteRenderer>().material = materials[(int)item.rarity];
         gameObject.GetComponentInChildren<Light2D>().color = materials[(int)item.rarity].color;
+        this.item = item;
         // Debug.Log((int)item.rarity);
     }
 
