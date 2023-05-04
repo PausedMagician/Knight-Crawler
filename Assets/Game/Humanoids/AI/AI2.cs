@@ -297,10 +297,8 @@ public class AI2 : Humanoid
                 }
                 if (circularMovement.Checkfor(target))
                 {
-                    Debug.Log("Yup");
                     if (Vector2.Distance(chaseTarget, transform.position) > agent.radius * 1.75f)
                     {
-                        Debug.Log("Distance is good");
                         if (!attacking)
                         {
                             attacking = true;
@@ -311,7 +309,6 @@ public class AI2 : Humanoid
                 }
                 else
                 {
-                    Debug.Log("Nope");
                     chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * .3f));
                     // Debug.Log(chaseTarget);
                 }

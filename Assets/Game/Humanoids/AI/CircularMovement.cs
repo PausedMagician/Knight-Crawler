@@ -23,7 +23,6 @@ public class CircularMovement : MonoBehaviour
     {
         if (target != null)
         {
-            Debug.Log("Checking for");
             Vector2 direction = ((Vector2)target.transform.position - (Vector2)transform.position);
             Debug.DrawLine(transform.position, transform.position + (Vector3)direction, Color.red, 1f);
             Debug.DrawRay(transform.position, direction * 1.25f, Color.blue, 1f);
@@ -40,21 +39,17 @@ public class CircularMovement : MonoBehaviour
                 }
                 else if (hit.collider.gameObject.GetComponent<Humanoid>() == target)
                 {
-                    Debug.Log("Found");
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Hit something else");
                     return false;
                 }
             }
-            Debug.Log("Hit nothing");
             return false;
         }
         else
         {
-            Debug.Log("No target");
             return false;
         }
     }
