@@ -47,7 +47,8 @@ public class AI2 : Humanoid
 
     new private void FixedUpdate()
     {
-        if(CanMove()) {
+        if (CanMove())
+        {
             if (sprinting)
             {
                 agent.speed = movementSpeed * sprintspeed;
@@ -56,7 +57,9 @@ public class AI2 : Humanoid
             {
                 agent.speed = movementSpeed;
             }
-        } else {
+        }
+        else
+        {
             agent.speed = 0;
         }
         // Check what state it should be in.
@@ -72,6 +75,9 @@ public class AI2 : Humanoid
                 break;
             case AIState.Patrol:
                 Patrol();
+                break;
+            case AIState.Guard:
+                Guard();
                 break;
             case AIState.Chase:
                 Chase();
@@ -132,11 +138,6 @@ public class AI2 : Humanoid
             }
             timer = timerMax;
         }
-        if (health < maxHealth * (25 / 100))
-        {
-            state = AIState.Flee;
-            return;
-        }
         if (state == AIState.Chase)
         {
             Chase();
@@ -157,6 +158,34 @@ public class AI2 : Humanoid
                     break;
             }
         }
+        else if(state == AIState.Patrol || state == AIState.Guard) {
+            if(target) {
+                state = AIState.Chase;
+            }
+        }
+        if ((float)health < (float)maxHealth * (25f / 100f))
+        {
+            state = AIState.Flee;
+            return;
+        }
+    }
+
+    public void CheckForTargets()
+    {
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, viewDistance, Vector2.zero).Where(h => h.collider.gameObject.GetComponent<Humanoid>() != null).OrderBy(h => h.distance).ToArray();
+        foreach (RaycastHit2D hit in hits)
+        {
+            Humanoid humanoid = hit.collider.gameObject.GetComponent<Humanoid>();
+            if(humanoid != this) {
+                if(humanoid.team != this.team) {
+                    if(Physics2D.Raycast(transform.position, humanoid.transform.position - transform.position, viewDistance).collider.gameObject.GetComponent<Humanoid>() == humanoid) {
+                        target = humanoid;
+                        state = AIState.Chase;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     [Header("Patrol")]
@@ -167,6 +196,9 @@ public class AI2 : Humanoid
     public Vector2 patrolTimerValues = new Vector2(3, 5);
     void Patrol()
     {
+        if(!target) {
+            CheckForTargets();
+        }
         Vector2 point;
         if (patrolIndex == 0)
         {
@@ -208,7 +240,7 @@ public class AI2 : Humanoid
         }
         else
         {
-            // ????? what the fuck happened
+            agent.SetDestination(patrolTarget);
         }
         Vector2 dir;
         if (Vector2.Distance(agent.destination, transform.position) < 0.2f)
@@ -222,11 +254,27 @@ public class AI2 : Humanoid
         TurnWeapon(transform.position, dir, Time.fixedDeltaTime);
     }
 
+    [Header("Guard")]
+    public Vector2 guardPoint;
+    void Guard() {
+        CheckForTargets();
+        if(Vector2.Distance(transform.position, guardPoint) > 0.25f) {
+            agent.SetDestination(guardPoint);
+        }
+    }
+
     [Header("Wander")]
-    Vector2 wanderTarget;
+    public Vector2 wanderPoint; //Where it wanders around
+    public Vector2 wanderTarget; //It's current wander target
+    public float wanderRadius; //The radius around wanderPoint it will go
     void Wander()
     {
-
+        if (Vector2.Distance(transform.position, wanderPoint) < 1f)
+        {
+            wanderTarget = new Vector2(Random.Range(wanderPoint.x - wanderRadius, wanderPoint.x + wanderRadius), Random.Range(wanderPoint.y - wanderRadius, wanderPoint.y + wanderRadius));
+            NavMesh.SamplePosition(wanderTarget, out NavMeshHit hit, Mathf.Infinity, NavMesh.AllAreas);
+            wanderTarget = hit.position;
+        }
     }
 
     [Header("Chase")]
@@ -319,6 +367,7 @@ public class AI2 : Humanoid
     }
     [Header("Flee")]
     public List<Vector2> possiblePoints = new List<Vector2>();
+
     void RunAway()
     {
         if (target == null)
@@ -382,7 +431,6 @@ public class AI2 : Humanoid
     public override void Die()
     {
         base.Die();
-        int level = 1;
         this.state = AIState.Dead;
         agent.isStopped = true;
         Debug.Log("Dead");
@@ -464,6 +512,7 @@ public class AI2 : Humanoid
         Idle,
         Wander,
         Patrol,
+        Guard,
         Chase,
         Attack,
         Flee,

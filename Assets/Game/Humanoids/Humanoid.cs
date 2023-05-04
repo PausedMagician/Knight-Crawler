@@ -26,6 +26,7 @@ public class Humanoid : MonoBehaviour
     public float sprintspeed = 1.3f;
     public float dodgeMultiplier = 7f;
     public float dodgeCooldown = 0.3f;
+    public int team = 0;
     public HumanoidClass _class;
     [Header("Script Variables")]
     public bool dodging = false, sprinting = false;

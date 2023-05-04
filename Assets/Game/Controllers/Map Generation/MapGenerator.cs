@@ -57,6 +57,7 @@ public class MapGenerator : MonoBehaviour
     private DebugRoom startRoom;
     public List<DebugRoom> rooms = new List<DebugRoom>();
     public List<Rect> chestRooms = new List<Rect>();
+    public Dictionary<Rect, GameObject> chests = new Dictionary<Rect, GameObject>();
     public List<Rect[]> hallways = new List<Rect[]>();
     public bool debugPoints;
     public List<Vector2> pointsToDebug = new List<Vector2>();
@@ -65,8 +66,10 @@ public class MapGenerator : MonoBehaviour
     public bool alwaysGenerate;
     public GameController gameController;
 
-    public void Start() {
-        if(alwaysGenerate) {
+    public void Start()
+    {
+        if (alwaysGenerate)
+        {
             GenerateMap();
             gameController.StartGame();
             gameController.player.enabled = false;
@@ -93,7 +96,8 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
-    void CreateNav() {
+    void CreateNav()
+    {
         GameObject.FindObjectOfType<NavMeshSurface>().BuildNavMeshAsync();
     }
 
@@ -492,8 +496,20 @@ public class MapGenerator : MonoBehaviour
                     y--;
                 }
                 linesToDebug.Add(new DebugPoint(new Vector2[] { new Vector2Int((int)room.center.x, (int)room.center.y), new Vector2Int(x, y - 1) }, Color.cyan));
-                Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform).GetComponent<Chest>().level = level;
+                GameObject ch = Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(transform.position.x + x + 0.5f, (transform.position.y + y * 2) - 1f, 0), Quaternion.identity, propsContainer.transform);
+                ch.GetComponent<Chest>().level = level;
+                //Make sure the chest doesn't collide with any gameobject
+                foreach (Transform prop in propsContainer.transform)
+                {
+                    if (ch.GetComponent<Collider2D>().IsTouching(prop.GetComponent<Collider2D>()))
+                    {
+                        Destroy(prop);
+                        break;
+                    }
+                }
                 rooms[rooms.FindIndex(r => r.room == room)] = new DebugRoom(room, Color.yellow);
+                chestRooms.Add(room);
+                chests.Add(room, ch.gameObject);
             }
         }
         //Find secluded places and place chests
@@ -548,11 +564,12 @@ public class MapGenerator : MonoBehaviour
         {
             exitRoom = rooms.Select(r => r.room).ToList()[pseudoRandom.Next(rooms.Count)];
         }
-        rooms[rooms.FindIndex(r => r.room == exitRoom)] = new DebugRoom(exitRoom, new Color(255f/255f, 117f/255f, 24f/255f));
+        rooms[rooms.FindIndex(r => r.room == exitRoom)] = new DebugRoom(exitRoom, new Color(255f / 255f, 117f / 255f, 24f / 255f));
         chestRooms.Add(exitRoom);
         // Instantiate(chestPrefabs[pseudoRandom.Next(chestPrefabs.Length)], new Vector3(chestRoom.center.x, chestRoom.center.y * 2, 0), Quaternion.identity, propsContainer.transform);
         GameObject exitBon = Instantiate(exitPrefab, new Vector3(transform.position.x + exitRoom.center.x, transform.position.y + exitRoom.center.y * 2, 0.1f), Quaternion.identity, propsContainer.transform);
         Exit exit = exitBon.GetComponent<Exit>();
+        chests.Add(exitRoom, exit.gameObject);
         exit.mapGenerator = this;
     }
 
@@ -578,11 +595,19 @@ public class MapGenerator : MonoBehaviour
                         ai.EquipArmor(gameController.CreateArmor(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.EquipWeapon(gameController.CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.agressive = true;
+                        ai.defaultState = AI2.AIState.Wander;
+                        ai.state = AI2.AIState.Wander;
+                        ai.team = rooms.FindIndex(r => r.room == room);
+                        ai.wanderPoint = room.center;
+                        ai.wanderRadius = (int)(room.size.x * room.size.y / 4);
                     }
                 }
             }
             else
             {
+                //Find chest within room
+                GameObject objectOfValue = chests[room];
+
                 int enemyAmount = pseudoRandom.Next(enemyMin + 1, enemyMax + 2);
                 for (int i = 0; i < enemyAmount; i++)
                 {
@@ -597,6 +622,31 @@ public class MapGenerator : MonoBehaviour
                         ai.EquipArmor(gameController.CreateArmor(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.EquipWeapon(gameController.CreateWeapon(GameController.GetRarity(), pseudoRandom.Next((int)ai.levelRange.x, (int)ai.levelRange.y), pseudoRandom));
                         ai.agressive = true;
+                        ai.team = rooms.FindIndex(r => r.room == room);
+                        if (i == 0)
+                        {
+                            ai.defaultState = AI2.AIState.Guard;
+                            ai.state = AI2.AIState.Guard;
+                            ai.guardPoint = objectOfValue.transform.position + new Vector3(1, 0, 0);
+                        }
+                        else if (i == 1)
+                        {
+                            ai.defaultState = AI2.AIState.Guard;
+                            ai.state = AI2.AIState.Guard;
+                            ai.guardPoint = objectOfValue.transform.position + new Vector3(-1, 0, 0);
+                        }
+                        else
+                        {
+                            ai.defaultState = AI2.AIState.Patrol;
+                            ai.state = AI2.AIState.Patrol;
+                            ai.patrolPoints = new List<Vector2>();
+                            ai.patrolPoints.Add(new Vector2(room.xMin + 1f, (room.yMin + 1f) * 2));
+                            ai.patrolPoints.Add(new Vector2(room.xMax - 1f, (room.yMin + 1f) * 2));
+                            ai.patrolPoints.Add(new Vector2(room.xMax - 1f, (room.yMax - 1f) * 2));
+                            ai.patrolPoints.Add(new Vector2(room.xMin + 1f, (room.yMax - 1f) * 2));
+                            ai.patrolTimer = 0f;
+                            ai.patrolIndex = i % 4;
+                        }
                     }
                 }
             }
@@ -670,7 +720,7 @@ public class MapGenerator : MonoBehaviour
         {
             foreach (Vector2 point in pointsToDebug)
             {
-                Gizmos.DrawSphere(point, 0.1f);
+                Gizmos.DrawSphere((Vector2)transform.position + point, 0.1f);
             }
         }
         if (linesToDebug != null && debugLines)
@@ -678,7 +728,11 @@ public class MapGenerator : MonoBehaviour
             foreach (DebugPoint point in linesToDebug)
             {
                 Gizmos.color = point.color;
-                Gizmos.DrawLine(new Vector2(point.points[0].x, point.points[0].y * 2), new Vector2(point.points[1].x, point.points[1].y * 2));
+                if(point.points.Length == 2) {
+                    Gizmos.DrawLine(new Vector2(transform.position.x + point.points[0].x, transform.position.y + point.points[0].y * 2), new Vector2(transform.position.x + point.points[1].x, transform.position.y + point.points[1].y * 2));
+                } else {
+                    Gizmos.DrawWireSphere(new Vector2(transform.position.x + point.points[0].x, transform.position.y + point.points[0].y * 2), 2f);
+                }
             }
         }
         if (rooms != null && debugRooms)
@@ -686,7 +740,7 @@ public class MapGenerator : MonoBehaviour
             foreach (DebugRoom room in rooms)
             {
                 Gizmos.color = room.color;
-                Gizmos.DrawWireCube(new Vector3(room.room.center.x, room.room.center.y * 2, 0), new Vector3(room.room.width, room.room.height * 2, 0));
+                Gizmos.DrawWireCube(new Vector3(transform.position.x + room.room.center.x, transform.position.y + room.room.center.y * 2, 0), new Vector3(room.room.width, room.room.height * 2, 0));
             }
         }
     }
