@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4731113322348337321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4731113322348337320}
+  m_Layer: 0
+  m_Name: Props
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4731113322348337320
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4731113322348337321}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -15.781554, y: 9.711134, z: -2.5580416}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4731113323901923178}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4731113323901923180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4731113323901923178}
+  - component: {fileID: 4731113323901923179}
+  m_Layer: 0
+  m_Name: MapGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4731113323901923178
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4731113323901923180}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4731113322348337320}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4731113323901923179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4731113323901923180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17f21200c6936734990785c67018b046, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallTilemap: {fileID: 0}
+  roofTilemap: {fileID: 0}
+  floorTilemap: {fileID: 0}
+  unwalkableDecorationTilemap: {fileID: 0}
+  walkableDecorationTilemap: {fileID: 0}
+  wallTiles: {fileID: 11400000, guid: a267b798e3ed6f24e8a36745dc51a9da, type: 2}
+  roofTiles: {fileID: 11400000, guid: 00f90514c85351143b6ed9da8c5dc22f, type: 2}
+  floorTiles: {fileID: 11400000, guid: 0e8231ef46b1d0d4582424d47214d113, type: 2}
+  unwalkableDecorationTiles: {fileID: 11400000, guid: fecd22e0aa27f9a4a9bf6b6957a2259b, type: 2}
+  walkableDecorationTiles: {fileID: 11400000, guid: 9d6621007acebf141ad8e28846c2b551, type: 2}
+  width: 50
+  height: 50
+  seed: 857699
+  useRandomSeed: 0
+  minRoomSize: 10
+  maxRoomSize: 20
+  minRooms: 20
+  maxRooms: 50
+  minRoomDistance: 2
+  maxRoomDistance: 4
+  level: 1
+  agentAmount: 20
+  walkMin: 2
+  walkMax: 4
+  minHallwaysMultiplier: 2
+  maxHallwayMultiplier: 10
+  decorMin: 2
+  decorMax: 6
+  propsContainer: {fileID: 4731113322348337321}
+  lightPrefabs:
+  - {fileID: 8570354613848415732, guid: 72d21fcf86e73e146ba6a3ad9ef1f494, type: 3}
+  enemyPrefabs:
+  - {fileID: 4050821278904858029, guid: add060562b2cff64cb6fc0c2c27c85bf, type: 3}
+  enemyMin: 2
+  enemyMax: 3
+  chestPrefabs:
+  - {fileID: 4414020149314135996, guid: b5605c010ce1da44bba50461f1b22a57, type: 3}
+  chestChance: 25
+  bonfirePrefab: {fileID: 5492458788880797074, guid: b941159f493c72a4e85926c034d6f700, type: 3}
+  exitPrefab: {fileID: 5492458788880797074, guid: b941159f493c72a4e85926c034d6f700, type: 3}
+  debugRooms: 1
+  rooms: []
+  chestRooms: []
+  debugPoints: 0
+  pointsToDebug: []
+  debugLines: 1
+  linesToDebug: []

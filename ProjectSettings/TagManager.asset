@@ -3,14 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Wall
+  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Bloom
   - Water
   - UI
+  - Transparent
+  - Player
+  - Floor
+  - Nav
   - 
   - 
   - 
@@ -32,12 +38,14 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Background
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Bright
+    uniqueID: 3326219891
+    locked: 0
+  - name: Dark
+    uniqueID: 1917108399
     locked: 0

@@ -1,0 +1,42 @@
+{
+    "Text": "Hey there!",
+    "Replies": [
+        {
+            "Reply": "Hello!",
+            "Dialogue": {
+                "Text": "How are you?",
+                "Replies": [
+                    {
+                        "Reply": "Good!",
+                        "Action": "Die();"
+                    },
+                    {
+                        "Reply": "Bad!",
+                        "Dialogue": {
+                            "Text": "Oh no!",
+                            "Replies": [
+                                
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Reply": "Fuck you!",
+            "Dialogue": {
+                "Text": "I'm sorry to hear that, can I do anything for you?",
+                "Replies": [
+                    {
+                        "Reply": "I'm sorry!",
+                        "Action": "GiveQuest(1);"
+                    },
+                    {
+                        "Reply": "Fuck you!",
+                        "Action": "Kill();"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -2,7 +2,13 @@
 skinparam linetype polyline
 
 abstract class Item
-Item -right-|> MonoBehaviour
+Item -up-|> ScriptableObject
+
+class WeaponManifesto {
+    + Attack() : void
+    + Player player
+}
+WeaponManifesto -up-> MonoBehaviour
 
 namespace WeaponsSystem {
     abstract class Item
@@ -10,7 +16,11 @@ namespace WeaponsSystem {
         + int damage
         + int maxCombo
         - int combo
-        + attack()
+        + Sprite sprite
+        + string name
+        + int cost
+        + int level
+        + int rarity
     }
     abstract class Melee extends Weapon
     abstract class Ranged extends Weapon {
@@ -20,47 +30,16 @@ namespace WeaponsSystem {
         + int manaConsumption
     }
 
-    class ShortSword extends Melee {
-        + int damage
-        + int maxCombo
-        - int combo
-        + attack()
-    }
-    class LongSword extends Melee {
-        + int damage
-        + int maxCombo
-        - int combo
-        + attack()
-    }
-    class ShortBow extends Ranged {
-        + int damage
-        + int maxCombo
-        - int combo
-        + attack()
-    }
-    class LongBow extends Ranged {
-        + int damage
-        + int maxCombo
-        - int combo
-        + attack()
-    }
-    class Fireball extends Magic {
-        + int damage
-        + int maxCombo
-        - int combo
-        + attack()
-    }
-    class MagicMissile extends Magic {
-        + int damage
-        + int maxCombo
-        - int combo
-        + attack()
-    }
 }
 namespace ArmorSystem {
     abstract class Item
-    class Armor extends Item {
+    abstract class Armor extends Item {
         + List<Effect> effects
+        + Sprite sprite
+        + string name
+        + int cost
+        + int level
+        + int rarity
     }
     abstract class Effect {
         + int amount
@@ -109,24 +88,28 @@ class GameController {
     + Bonfire lastRested
 }
 
-class Inventory {
+class Inventory extends MonoBehaviour {
     + Player player
-    + item[] items
-    + EquipWeapon()
-    + AddItem()
-    + RemoveItem()
+    + List<Item> items
+    + EquipWeapon() : Weapon
+    + EquipArmor() : Armor
+    + AddItem() : void
+    + RemoveItem() : void
 }
 
 abstract class Player extends MonoBehaviour {
     + float movementSpeed
     + Rigidbody2D rb
     + Weapon equippedWeapon
+    + Armor equippedArmor
     + Inventory inventory
     - HandleInput() : void
     - Move() : void
     - Dodge() : void
     - Attack(): void
+    - Die() : void
     + EquipWeapon() : Weapon equippedWeapon
+    + EquipArmor() : Armor equippedArmor
 }
 class Knight extends Player {
     + float movementSpeed
