@@ -793,8 +793,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2459e463b93c2ec40bd7fc31d2d44d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationCenter: {fileID: 2180483606218761707}
-  target: {fileID: 0}
+  parent: {fileID: 2180483606218761700}
   rotationRadius: 1
 --- !u!1 &2180483607958919987
 GameObject:
@@ -869,7 +868,7 @@ MonoBehaviour:
   - {x: -0.29648256, y: -0.313442, z: 0}
   m_ShapePathHash: -482502843
   m_Mesh: {fileID: 0}
-  m_InstanceId: 182254
+  m_InstanceId: 50426
 --- !u!1 &2180483608122301273
 GameObject:
   m_ObjectHideFlags: 0

@@ -47,7 +47,6 @@ public class AI2 : Humanoid
 
     new private void FixedUpdate()
     {
-        circularMovement.Checkfor();
         if (sprinting)
         {
             agent.speed = movementSpeed * sprintspeed;
@@ -230,6 +229,12 @@ public class AI2 : Humanoid
     Vector2 chaseTarget;
     void Chase()
     {
+        if (target.health <= 0)
+        {
+            target = null;
+            state = defaultState;
+            return;
+        }
         switch (equippedWeapon)
         {
             case Melee:
@@ -251,7 +256,8 @@ public class AI2 : Humanoid
                         Invoke("Attack", 0.2f);
                     }
                 }
-                if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
+                if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
+                {
                     agent.SetDestination(chaseTarget);
                 }
                 break;
@@ -279,17 +285,22 @@ public class AI2 : Humanoid
                 // default:
                 //     break;
 
-
                 chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * .5f));
                 // Checkfor(transform.position, target.transform.position);
                 if (Vector2.Distance(chaseTarget, transform.position) < 5f && Vector2.Distance(chaseTarget, transform.position) > 2f)
                 {
                     sprinting = true;
                 }
-                if (circularMovement.Checkfor() == true)
+                if (circularMovement.parent != this)
                 {
+                    circularMovement.parent = this;
+                }
+                if (circularMovement.Checkfor(target))
+                {
+                    Debug.Log("Yup");
                     if (Vector2.Distance(chaseTarget, transform.position) > agent.radius * 1.75f)
                     {
+                        Debug.Log("Distance is good");
                         if (!attacking)
                         {
                             attacking = true;
@@ -298,12 +309,14 @@ public class AI2 : Humanoid
                         }
                     }
                 }
-                else if (circularMovement.Checkfor() == false)
+                else
                 {
+                    Debug.Log("Nope");
                     chaseTarget = target.transform.position + ((transform.position - target.transform.position).normalized * (viewDistance * .3f));
                     // Debug.Log(chaseTarget);
                 }
-                if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
+                if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
+                {
                     agent.SetDestination(chaseTarget);
                 }
                 break;
@@ -341,7 +354,8 @@ public class AI2 : Humanoid
                     closestPoint = possiblePoints[i];
                 }
             }
-            if(weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f) {
+            if (weaponManifesto.animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f)
+            {
                 agent.SetDestination(closestPoint);
             }
             // Debug.DrawLine(transform.position, closestPoint, Color.red);
@@ -380,14 +394,16 @@ public class AI2 : Humanoid
         this.state = AIState.Dead;
         agent.isStopped = true;
         Debug.Log("Dead");
-        if(equippedWeapon) {
+        if (equippedWeapon)
+        {
             Vector2 pos = transform.position;
             pos += new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.2f, -1f)).normalized * Random.Range(1.2f, 1.5f);
             GameObject go = Instantiate(GameController.GetInstance().itemPrefab, pos, Quaternion.identity);
             go.transform.position = pos;
             go.GetComponent<Item>().SetItem(equippedWeapon);
         }
-        if(equippedArmor) {
+        if (equippedArmor)
+        {
             Vector2 pos = transform.position;
             pos += new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.2f, -1f)).normalized * Random.Range(1.2f, 1.5f);
             GameObject go = Instantiate(GameController.GetInstance().itemPrefab, pos, Quaternion.identity);
@@ -539,7 +555,7 @@ public class AI2 : Humanoid
 
         }
         Attacked(projectile.shooter);
-        
+
         if (dodgeTimer <= 0 && Random.Range(1, 101) < 25)
         {
             Vector2 shooterDirection = projectile.shooter.transform.position - transform.position;

@@ -1,59 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CircularMovement : MonoBehaviour
 {
 
-    public Transform rotationCenter;
-    public GameObject target;
-    AI2 AI2_;
+    public AI2 parent;
     public float rotationRadius = 1f;
 
 
     void FixedUpdate()
     {
-        if (target == null)
+        if (parent.target)
         {
-            target = GameObject.FindWithTag("Player");
-        }
-        
-        if (target)
-        {
-            transform.position = Vector2.MoveTowards(rotationCenter.position, target.transform.position, rotationRadius);
-            Checkfor();
+            transform.position = Vector2.MoveTowards(parent.transform.position, parent.target.transform.position, rotationRadius);
         }
     }
 
 
-    public bool Checkfor()
+    public bool Checkfor(Humanoid target)
     {
-        if (target)
+        if (target != null)
         {
-            Vector2 froms = transform.position;
-            Vector2 tos = target.transform.position;
-            Vector2 trueDirection = (tos - froms);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, trueDirection);
-            // Debug.DrawRay(transform.position, trueDirection, Color.green);
-            if (hit.collider.gameObject.tag == "Player" || hit.collider.isTrigger)
+            Debug.Log("Checking for");
+            Vector2 direction = ((Vector2)target.transform.position - (Vector2)transform.position);
+            Debug.DrawLine(transform.position, transform.position + (Vector3)direction, Color.red, 1f);
+            Debug.DrawRay(transform.position, direction * 1.25f, Color.blue, 1f);
+            RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, direction, direction.magnitude * 1.25f).OrderBy(h => h.distance).ToArray();
+            foreach (RaycastHit2D hit in hits)
             {
-                // Debug.Log("Player");
-                // Debug.Log($"{hit.collider.gameObject.name} was hit");
-                return true;
+                if(hit.collider.transform.parent) {
+                    if(hit.collider.transform.parent.gameObject.name == "Floors") {
+                        continue;
+                    }
+                }
+                if(hit.collider.isTrigger || hit.collider.gameObject == parent.gameObject) {
+                    continue;
+                }
+                else if (hit.collider.gameObject.GetComponent<Humanoid>() == target)
+                {
+                    Debug.Log("Found");
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("Hit something else");
+                    return false;
+                }
             }
-            else if (hit.collider.gameObject.tag != "Player")
-            {
-                // Debug.Log("Not Player");
-                // Debug.Log($"{hit.collider.gameObject.name} was hit");
-                return false;
-            }
-            else
-            {
-                return false;
-            }
+            Debug.Log("Hit nothing");
+            return false;
         }
         else
         {
+            Debug.Log("No target");
             return false;
         }
     }
